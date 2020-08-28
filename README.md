@@ -1,2 +1,2 @@
 # Specialization-project
- Github repository for TMT4500
+ Github repository for TMT4500 at NTNU.
