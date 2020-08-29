@@ -5,35 +5,42 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import os
 
-def get_df(sheets):
-    #df = pd.read_excel(r'.\Data\Workbook.xlsx', sheet_name = sheets) #For github data
-    filepath = os.path.join(r'C:\Users', os.getlogin(), r'OneDrive\Specialization Project\3_Project plan\Lab\Data\Workbook.xlsx') # for data in onedrive
-    df = pd.read_excel(filepath, sheet_name = sheets)
-    return df
-
+### Declare variables ###
 sheets = ['Template', 'Lab1'] # Name of sheets in Workbook to be plotted
-df = get_df(sheets)
+username = os.getlogin()
+
+def get_dataframe(sheets):
+    ''' Create pandas dataframe from excel data
+    Args:
+        sheets: List of excel sheet names
+    Returns:
+        df: DataFrame dictionary with sheet name as key
+    '''
+    workbook_filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Data\Workbook.xlsx') # for data in onedrive
+    df = pd.read_excel(workbook_filepath, sheet_name = sheets)
+    return df
 
 def set_graph(df):
     ''' Iterate over excel workbook sheets to find graph data and save picture
     Args:
         - df: Pandas DataFrame
     '''
-    for sheet in sheets:
+    for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
-        labels = df[sheet][columns[0]].tolist()
-        for i in range(1, len(columns), 3):
-            xdata = df[sheet][columns[i]].tolist()
-            ydata = df[sheet][columns[i+1]].tolist()
-            plt.plot(xdata, ydata, label = columns[i+2])
+        for i in range(1, len(columns), 3): # Iterate BCD data columns
+            xdata = df[sheet][columns[i]].tolist() # B
+            ydata = df[sheet][columns[i+1]].tolist() # C
+            plt.plot(xdata, ydata, label = columns[i+2]) # D
+        labels = df[sheet][columns[0]].tolist() # A column
         plt.title(labels[0])
         plt.xlabel(labels[1])
         plt.ylabel(labels[2])
         plt.legend()
         plt.grid()
-        #filepath = os.path.join(r'.\Plots', sheet) #for data on Github folder
-        filepath = os.path.join(r'C:\Users', os.getlogin(), r'OneDrive\Specialization Project\3_Project plan\Lab\Plots', sheet) # for data in onedrive
-        plt.savefig(filepath, dpi = 100)
+        graph_filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, sheet) # for data in onedrive
+        plt.savefig(graph_filepath, dpi = 300)
         plt.clf()
+    print('Graphs saved! Have a great day', username + '.')
 
+df = get_dataframe(sheets)
 set_graph(df)
