@@ -22,7 +22,7 @@ def get_dataframe(sheets):
 def set_graph(df):
     ''' Iterate over excel workbook sheets to find graph data and save picture
     Args:
-        - df: Pandas DataFrame
+        - df: Pandas DataFrame of excel workbook
     '''
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
@@ -31,9 +31,9 @@ def set_graph(df):
             ydata = df[sheet][columns[i+1]].tolist() # C
             plt.plot(xdata, ydata, label = columns[i+2]) # D
         labels = df[sheet][columns[0]].tolist() # A column
-        plt.title(labels[0])
-        plt.xlabel(labels[1])
-        plt.ylabel(labels[2])
+        plt.title(labels[0]) # column A, row 2
+        plt.xlabel(labels[1]) # Row 3
+        plt.ylabel(labels[2]) # Row 4
         plt.legend()
         plt.grid()
         graph_filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, sheet) # for data in onedrive
