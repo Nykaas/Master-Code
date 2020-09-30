@@ -14,7 +14,7 @@ offset_Hg = 0.9
 def get_process(process):
     if process == 'CV_Ni':
         excelfile = 'CV_Ni_RDE.xlsx'
-        sheets = ['10', '20', '30', '40', '50', '60', '70', '80', '90', '100', '10cycles', 'Alpha', '10to100', 'Capacitance'] # Name of sheets in excelfile
+        sheets = ['10', '20', '30', '40', '50', '60', '70', '80', '90', '100', '10cycles', 'Alpha', '10to100', 'ECSA'] # Name of sheets in excelfile
     if process == 'example process':
         excelfile = 'example.xlsx'
         sheets = ['nameofsheet']
@@ -38,20 +38,26 @@ def set_graph(df):
     '''
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
-        for i in range(1, len(columns), 3): # Iterate BCD data columns
-            xdata = df[sheet][columns[i]].tolist() # B column
-            if process == 'CV_Ni':
-                xdata = list(map(lambda x: x + offset_Hg, xdata)) # Correct Hg offset 0.9 V
-            ydata = df[sheet][columns[i+1]].tolist() # C column
-            if len(columns) == 3: # Disable legend
-                plt.plot(xdata, ydata) # D column
+        for i in range(1, len(columns), 3): # Iterate data columns
+            xdata = df[sheet][columns[i]].tolist()
+            ydata = df[sheet][columns[i+1]].tolist()
+            if process == 'CV_Ni' and sheet != 'ECSA': # Correct Hg offset 0.9 V
+                xdata = list(map(lambda x: x + offset_Hg, xdata)) 
+            if sheet == 'ECSA': # Linear regression for ECSA & RF
+                xdata = np.array(xdata)
+                ydata = np.array(ydata)
+                m, b = np.polyfit(xdata, ydata, 1)
+                plt.scatter(xdata, ydata, marker = 'x')
+                plt.plot(xdata, m*xdata + b)
+            elif len(columns) == 3: # Disable legend
+                plt.plot(xdata, ydata)
             else: # Enable legend
-                plt.plot(xdata, ydata, label = columns[i+2]) # D
+                plt.plot(xdata, ydata, label = columns[i+2])
                 plt.legend()
-        labels = df[sheet][columns[0]].tolist() # A column
-        plt.title(labels[0]) # column A, row 2
-        plt.xlabel(labels[1]) # column A, row 3
-        plt.ylabel(labels[2]) # column A, row 4
+        labels = df[sheet][columns[0]].tolist()
+        plt.title(labels[0])
+        plt.xlabel(labels[1])
+        plt.ylabel(labels[2])
         graph_filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, sheet) # for data in onedrive
         plt.savefig(graph_filepath, dpi = 300)
         plt.clf()
