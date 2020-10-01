@@ -4,42 +4,67 @@ import pandas as pd
 from pathlib import Path
 import os
 
-### Declare variables ###
-sheets = ['Template', 'Lab1'] # Name of sheets in Workbook to be plotted
-username = os.getlogin()
 
-def get_dataframe(sheets):
+### Declare variables ###
+username = os.getlogin()
+excelfile = 'CV_Ni_RDE.xlsx'
+offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
+
+### Functions ###
+def get_dataframe(excelfile):
     ''' Create pandas dataframe from excel data
     Args:
-        sheets: List of excel sheet names
+        excelfile: Path to excelfile for given process in variables
     Returns:
         df: DataFrame dictionary with sheet name as key
     '''
-    workbook_filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Data\Workbook.xlsx') # for data in onedrive
-    df = pd.read_excel(workbook_filepath, sheet_name = sheets)
+    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Data', excelfile) # for data in onedrive
+    df = pd.read_excel(filepath, sheet_name = None) # None can be list of sheet names in string
     return df
 
-def set_graph(df):
+def set_graph(df, excelfile):
     ''' Iterate over excel workbook sheets to find graph data and save picture
     Args:
         - df: Pandas DataFrame of excel workbook
+        - excelfile: Path to excelfile for given process in variables
     '''
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
-        for i in range(1, len(columns), 3): # Iterate BCD data columns
-            xdata = df[sheet][columns[i]].tolist() # B
-            ydata = df[sheet][columns[i+1]].tolist() # C
-            plt.plot(xdata, ydata, label = columns[i+2]) # D
-        labels = df[sheet][columns[0]].tolist() # A column
-        plt.title(labels[0]) # column A, row 2
-        plt.xlabel(labels[1]) # Row 3
-        plt.ylabel(labels[2]) # Row 4
-        plt.legend()
-        plt.grid()
+        for i in range(1, len(columns), 3): # Iterate data columns
+            xdata = np.array(df[sheet][columns[i]].tolist())
+            ydata = np.array(df[sheet][columns[i+1]].tolist())
+            if excelfile == 'CV_Ni_RDE.xlsx' and sheet != ('ECSA-cap' or 'ECSA-alpha'): # Correct Hg offset
+                xdata = list(map(lambda x: x + offset_Hg, xdata)) 
+            if sheet == 'ECSA-cap': # Linear regression for ECSA capacitance method & RF
+                #xdata = np.array(xdata)
+                #ydata = np.array(ydata)
+                m, b = np.polyfit(xdata, ydata, 1)
+                plt.scatter(xdata, ydata, marker = 'x')
+                plt.plot(xdata, m*xdata + b)
+            # if sheet == 'ECSA-alpha': # Calculating ECSA and RF by
+            #     xdata = np.array(xdata)
+            #     ydata = np.array(ydata)
+            #     integral = 0
+            #     for i, j in enumerate(xdata):
+            #         if i == len(xdata)-1:
+            #             break
+            #         temp_sum = (ydata[j+1]+ydata[j]) * (xdata[j+1]-xdata[j])
+            #         integral += temp_sum
+            elif len(columns) == 3: # Disable legend
+                plt.plot(xdata, ydata)
+            else: # Enable legend
+                plt.plot(xdata, ydata, label = columns[i+2])
+                plt.legend()
+        labels = df[sheet][columns[0]].tolist()
+        plt.title(labels[0])
+        plt.xlabel(labels[1])
+        plt.ylabel(labels[2])
         graph_filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, sheet) # for data in onedrive
         plt.savefig(graph_filepath, dpi = 300)
         plt.clf()
     print('Graphs saved! Have a great day', username + '.')
 
-df = get_dataframe(sheets)
-set_graph(df)
+df = get_dataframe(excelfile)
+set_graph(df, excelfile)
+
+
