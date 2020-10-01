@@ -11,24 +11,20 @@ process = 'CV_Ni'
 offset_Hg = 0.9
 
 ### Functions ###
-def get_process(process):
+def get_excelfile(process):
     if process == 'CV_Ni':
         excelfile = 'CV_Ni_RDE.xlsx'
-        sheets = ['10', '20', '30', '40', '50', '60', '70', '80', '90', '100', '10cycles', 'Alpha', '10to100', 'ECSA'] # Name of sheets in excelfile
-    if process == 'example process':
-        excelfile = 'example.xlsx'
-        sheets = ['nameofsheet']
-    return excelfile, sheets
+    return excelfile
 
-def get_dataframe(process, excelfile, sheets):
+def get_dataframe(excelfile):
     ''' Create pandas dataframe from excel data
     Args:
-        sheets: List of excel sheet names
+        excelfile: Path to excelfile for given process in variables
     Returns:
         df: DataFrame dictionary with sheet name as key
     '''
     filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Data', excelfile) # for data in onedrive
-    df = pd.read_excel(filepath, sheet_name = sheets)
+    df = pd.read_excel(filepath, sheet_name = None) # None can be list of sheet names in string
     return df
 
 def set_graph(df):
@@ -63,8 +59,8 @@ def set_graph(df):
         plt.clf()
     print('Graphs saved! Have a great day', username + '.')
 
-excelfile, sheets = get_process(process)
-df = get_dataframe(process, excelfile, sheets)
+excelfile = get_excelfile(process)
+df = get_dataframe(excelfile)
 set_graph(df)
 
 
