@@ -26,13 +26,14 @@ def set_graph(df, excelfile):
     ''' Iterate over excel workbook sheets to find graph data and save picture
     Args:
         - df: Pandas DataFrame of excel workbook
+        - excelfile: Path to excelfile for given process in variables
     '''
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
         for i in range(1, len(columns), 3): # Iterate data columns
             xdata = df[sheet][columns[i]].tolist()
             ydata = df[sheet][columns[i+1]].tolist()
-            if excelfile == 'CV_Ni_RDE.xlsx' and sheet != 'ECSA': # Correct Hg offset 0.9 V
+            if excelfile == 'CV_Ni_RDE.xlsx' and sheet != 'ECSA': # Correct Hg offset
                 xdata = list(map(lambda x: x + offset_Hg, xdata)) 
             if sheet == 'ECSA': # Linear regression for ECSA & RF
                 xdata = np.array(xdata)
