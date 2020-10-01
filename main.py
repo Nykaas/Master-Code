@@ -33,14 +33,23 @@ def set_graph(df, excelfile):
         for i in range(1, len(columns), 3): # Iterate data columns
             xdata = np.array(df[sheet][columns[i]].tolist())
             ydata = np.array(df[sheet][columns[i+1]].tolist())
-            if excelfile == 'CV_Ni_RDE.xlsx' and sheet != 'ECSA': # Correct Hg offset
+            if excelfile == 'CV_Ni_RDE.xlsx' and sheet != ('ECSA-cap' or 'ECSA-alpha'): # Correct Hg offset
                 xdata = list(map(lambda x: x + offset_Hg, xdata)) 
-            if sheet == 'ECSA': # Linear regression for ECSA & RF
+            if sheet == 'ECSA-cap': # Linear regression for ECSA capacitance method & RF
                 #xdata = np.array(xdata)
                 #ydata = np.array(ydata)
                 m, b = np.polyfit(xdata, ydata, 1)
                 plt.scatter(xdata, ydata, marker = 'x')
                 plt.plot(xdata, m*xdata + b)
+            # if sheet == 'ECSA-alpha': # Calculating ECSA and RF by
+            #     xdata = np.array(xdata)
+            #     ydata = np.array(ydata)
+            #     integral = 0
+            #     for i, j in enumerate(xdata):
+            #         if i == len(xdata)-1:
+            #             break
+            #         temp_sum = (ydata[j+1]+ydata[j]) * (xdata[j+1]-xdata[j])
+            #         integral += temp_sum
             elif len(columns) == 3: # Disable legend
                 plt.plot(xdata, ydata)
             else: # Enable legend
