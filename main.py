@@ -7,15 +7,10 @@ import os
 
 ### Declare variables ###
 username = os.getlogin()
-process = 'CV_Ni'
-offset_Hg = 0.9
+excelfile = 'CV_Ni_RDE.xlsx'
+offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
 
 ### Functions ###
-def get_excelfile(process):
-    if process == 'CV_Ni':
-        excelfile = 'CV_Ni_RDE.xlsx'
-    return excelfile
-
 def get_dataframe(excelfile):
     ''' Create pandas dataframe from excel data
     Args:
@@ -27,7 +22,7 @@ def get_dataframe(excelfile):
     df = pd.read_excel(filepath, sheet_name = None) # None can be list of sheet names in string
     return df
 
-def set_graph(df):
+def set_graph(df, excelfile):
     ''' Iterate over excel workbook sheets to find graph data and save picture
     Args:
         - df: Pandas DataFrame of excel workbook
@@ -37,7 +32,7 @@ def set_graph(df):
         for i in range(1, len(columns), 3): # Iterate data columns
             xdata = df[sheet][columns[i]].tolist()
             ydata = df[sheet][columns[i+1]].tolist()
-            if process == 'CV_Ni' and sheet != 'ECSA': # Correct Hg offset 0.9 V
+            if excelfile == 'CV_Ni_RDE.xlsx' and sheet != 'ECSA': # Correct Hg offset 0.9 V
                 xdata = list(map(lambda x: x + offset_Hg, xdata)) 
             if sheet == 'ECSA': # Linear regression for ECSA & RF
                 xdata = np.array(xdata)
@@ -59,8 +54,7 @@ def set_graph(df):
         plt.clf()
     print('Graphs saved! Have a great day', username + '.')
 
-excelfile = get_excelfile(process)
 df = get_dataframe(excelfile)
-set_graph(df)
+set_graph(df, excelfile)
 
 
