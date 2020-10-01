@@ -31,13 +31,13 @@ def set_graph(df, excelfile):
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
         for i in range(1, len(columns), 3): # Iterate data columns
-            xdata = df[sheet][columns[i]].tolist()
-            ydata = df[sheet][columns[i+1]].tolist()
+            xdata = np.array(df[sheet][columns[i]].tolist())
+            ydata = np.array(df[sheet][columns[i+1]].tolist())
             if excelfile == 'CV_Ni_RDE.xlsx' and sheet != 'ECSA': # Correct Hg offset
                 xdata = list(map(lambda x: x + offset_Hg, xdata)) 
             if sheet == 'ECSA': # Linear regression for ECSA & RF
-                xdata = np.array(xdata)
-                ydata = np.array(ydata)
+                #xdata = np.array(xdata)
+                #ydata = np.array(ydata)
                 m, b = np.polyfit(xdata, ydata, 1)
                 plt.scatter(xdata, ydata, marker = 'x')
                 plt.plot(xdata, m*xdata + b)
