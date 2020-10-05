@@ -9,6 +9,7 @@ import os
 username = os.getlogin()
 excelfile = 'CV_Ni_RDE.xlsx'
 offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
+A_sample = 6.25 # cm^2
 
 ### Functions ###
 def get_dataframe(excelfile):
@@ -42,14 +43,12 @@ def get_CV(df, excelfile, save_graphs=True, save_data=True):
             if excelfile == 'CV_Ni_RDE.xlsx' and sheet != ('ECSA-cap' or 'ECSA-alpha'): # Correct Hg offset
                 xdata = list(map(lambda x: x + offset_Hg, xdata)) 
             if sheet == 'ECSA-alpha': # Calculating ECSA and RF by Alpha method
-                    xdata = np.array(xdata)
-                    ydata = np.array(ydata)
                     integral = 0
                     for i in range(0, len(xdata)-1):
                         temp = (ydata[i+1] + ydata[i]) * (xdata[i+1] + xdata[i] - offset_Hg*2)
                         integral += temp
                     charge = -1000 * (integral/100)              
-                    alpha_data = {'Charge, Q [µF]':[charge], 'ECSA [cm2]':[charge/514], 'RF':[charge/(514*6.25)]}
+                    alpha_data = {'Charge, Q [µF]':[charge], 'ECSA [cm2]':[charge/514], 'RF':[charge/(514*A_sample)]}
                     ECSA_alpha_df = pd.DataFrame(alpha_data, columns = ['Charge, Q [µF]', 'ECSA [cm2]', 'RF'])
                     ECSA_alpha_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-alpha')
             if sheet == 'ECSA-cap': # Linear regression for ECSA capacitance method & RF
@@ -59,7 +58,7 @@ def get_CV(df, excelfile, save_graphs=True, save_data=True):
                     plt.plot(xdata, m*xdata + b)
                 if save_data == True:
                     m, b = np.polyfit(xdata/1000, ydata, 1)
-                    capacitane_data = {'Double layer capacitance [µF]':[m], 'ECSA [cm2]':[m/40], 'RF':[m/(40*6.25)]}
+                    capacitane_data = {'Double layer capacitance [µF]':[m], 'ECSA [cm2]':[m/40], 'RF':[m/(40*A_sample)]}
                     ECSA_cap_df = pd.DataFrame(capacitane_data, columns = ['Double layer capacitance [µF]', 'ECSA [cm2]', 'RF'])
                     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
             elif len(columns) == 3 and save_graphs == True: # Disable legend
