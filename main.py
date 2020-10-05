@@ -41,15 +41,6 @@ def set_graph(df, excelfile):
                 m, b = np.polyfit(xdata, ydata, 1)
                 plt.scatter(xdata, ydata, marker = 'x')
                 plt.plot(xdata, m*xdata + b)
-            # if sheet == 'ECSA-alpha': # Calculating ECSA and RF by
-            #     xdata = np.array(xdata)
-            #     ydata = np.array(ydata)
-            #     integral = 0
-            #     for i, j in enumerate(xdata):
-            #         if i == len(xdata)-1:
-            #             break
-            #         temp_sum = (ydata[j+1]+ydata[j]) * (xdata[j+1]-xdata[j])
-            #         integral += temp_sum
             elif len(columns) == 3: # Disable legend
                 plt.plot(xdata, ydata)
             else: # Enable legend
@@ -64,7 +55,42 @@ def set_graph(df, excelfile):
         plt.clf()
     print('Graphs saved! Have a great day', username + '.')
 
+def save_data(df, excelfile):
+    ''' Saves relevant data from raw excel file to a new tidy excel file
+    Args:
+         df: Pandas DataFrame of excel workbook
+         excelfile: Path to excelfile for given process in variables
+    '''
+    graph_filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, r'CV_data.xlsx') # for data in onedrive
+    for sheet in df: # Iterate sheet name as key in df dictionary
+        columns = list(df[sheet].columns)
+        for i in range(1, len(columns), 3): # Iterate data columns
+            xdata = np.array(df[sheet][columns[i]].tolist())
+            ydata = np.array(df[sheet][columns[i+1]].tolist())
+            if excelfile == 'CV_Ni_RDE.xlsx' and sheet != ('ECSA-cap' or 'ECSA-alpha'): # Correct Hg offset
+                xdata = list(map(lambda x: x + offset_Hg, xdata)) 
+            if sheet == 'ECSA-cap': # Calculating ECSA and RF by Capacitance method
+                #xdata = np.array(xdata)
+                #ydata = np.array(ydata)
+                m, b = np.polyfit(xdata/1000, ydata, 1)
+                capacitane_data = {'Double layer capacitance [µF]':[m], 'ECSA [cm2]':[m/40], 'RF':[m/(40*6.25)]}
+                ECSA_cap_df = pd.DataFrame(capacitane_data, columns = ['Double layer capacitance [µF]', 'ECSA [cm2]', 'RF'])
+                #ECSA_cap_df.to_excel(graph_filepath, index = False, header=True, sheet_name='ECSA-cap')
+            if sheet == 'ECSA-alpha': # Calculating ECSA and RF by Alpha method
+                xdata = np.array(xdata)
+                ydata = np.array(ydata)
+                integral = 0
+               """  for i in range(0, len(xdata)-1):
+                    temp = (ydata[i]+ydata[i+1]) * (xdata[i]+xdata[i+1])
+                    integral += temp
+                    print(xdata[i]-offset_Hg, ydata[i], temp) """
+                charge = 1000 * (integral/100)
+                print(integral, charge)                
+                alpha_data = {'Charge, Q [µF]':[charge], 'ECSA [cm2]':[integral/514], 'RF':[integral/(514*6.25)]}
+                ECSA_alpha_df = pd.DataFrame(alpha_data, columns = ['Charge, Q [µF]', 'ECSA [cm2]', 'RF'])
+                #ECSA_alpha_df.to_excel(graph_filepath, index = False, header=True, sheet_name='ECSA-alpha')
+    print('Data is saved! Have a great day', username + '.')
+
 df = get_dataframe(excelfile)
-set_graph(df, excelfile)
-
-
+#set_graph(df, excelfile)
+save_data(df, excelfile)
