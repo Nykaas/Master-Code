@@ -13,10 +13,14 @@ start = timer()
 username = os.getlogin()
 
 ### Variables ###
+excelfiles = [
+    'CV_Ni_RDE_2909.xlsx',
+    'ED_NiFe_0910.xlsx',
+    'CV_NiF_NiFe_1310.xlsx'
+]
+excelfile = excelfiles[2]
 A_sample = 6.25 # cm^2
 offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
-excelfile = 'CV_Ni_RDE.xlsx'
-#excelfile = 'ED_NiFe_1.xlsx'
 
 ### Functions ###
 def get_dataframe(excelfile):
@@ -34,4 +38,4 @@ def plot(df, excelfile):
 
 df = get_dataframe(excelfile)
 plot(df, excelfile)
-print(f'Data and graphs saved in {(timer()-start):.2f}s! Have a great day {username}.')
+print(f'Plots/Data from {excelfile} saved in {(timer()-start):.2f}s! Have a great day {username}.')
