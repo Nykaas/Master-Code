@@ -23,7 +23,7 @@ def set_cv_plot(df, writer, A_sample, offset_Hg):
                 plt.plot(xdata, ydata)
             else: # Enable legend
                 xdata = list(map(lambda x: x + offset_Hg, xdata))
-                plt.plot(xdata, ydata, label = columns[i+2])
+                plt.plot(xdata, ydata/A_sample, label = columns[i+2])
                 plt.legend()
         labels = df[sheet][columns[0]].tolist()
         plot_settings(labels, sheet)

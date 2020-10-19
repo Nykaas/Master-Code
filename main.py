@@ -15,7 +15,7 @@ username = os.getlogin()
 ### Variables ###
 A_sample = 6.25 # cm^2
 offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
-excelfile = 'CV_Ni_RDE.xlsx'
+excelfile = 'CV_Ni_RDE_2909.xlsx'
 #excelfile = 'ED_NiFe_1.xlsx'
 
 ### Functions ###
