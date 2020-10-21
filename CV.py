@@ -19,11 +19,11 @@ def set_cv_plot(df, writer, A_sample, offset_Hg):
                 plt.plot(xdata, m*xdata + b)
                 save_cap_data(xdata, ydata, A_sample, writer)
             elif len(columns) == 3: # Disable legend
-                xdata = list(map(lambda x: x + offset_Hg, xdata))
-                plt.plot(xdata, ydata)
+                plt.plot(xdata + offset_Hg, ydata)
             else: # Enable legend
-                xdata = list(map(lambda x: x + offset_Hg, xdata))
-                plt.plot(xdata, ydata/A_sample, label = columns[i+2])
+                if 'cm-2' in df[sheet][columns[0]].tolist()[2]: # Correct for sample area
+                    ydata = list(map(lambda y: y / A_sample, ydata))
+                plt.plot(xdata + offset_Hg, ydata, label = columns[i+2])
                 plt.legend()
         labels = df[sheet][columns[0]].tolist()
         plot_settings(labels, sheet)
