@@ -5,28 +5,26 @@ import os
 
 from plot import plot_settings
 
-def set_cv_plot(df, writer, A_sample, offset_Hg):
+def set_cv_plot(df, writer, A_sample, offset_Hg, excelfile):
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
         for i in range(1, len(columns), 3): # Iterate data columns
             xdata = np.array(df[sheet][columns[i]].tolist())
             ydata = np.array(df[sheet][columns[i+1]].tolist())
+            if 'cm-2' in df[sheet]['Graph_settings'][2]: # Correct for sample area
+                ydata = list(map(lambda y: y / A_sample, ydata))
+                print(f'Current corrected sheet {sheet} A={A_sample}')
             if sheet == 'ECSA-alpha': # Calculating ECSA and RF by Alpha method
                 save_alpha_data(xdata, ydata, A_sample, writer, offset_Hg)
             if sheet == 'ECSA-cap': # Linear regression for ECSA capacitance method & RF
-                m, b = np.polyfit(xdata, ydata, 1)
-                plt.scatter(xdata, ydata, marker = 'o')
-                plt.plot(xdata, m*xdata + b)
                 save_cap_data(xdata, ydata, A_sample, writer)
             elif len(columns) == 3: # Disable legend
                 plt.plot(xdata + offset_Hg, ydata)
             else: # Enable legend
-                if 'cm-2' in df[sheet][columns[0]].tolist()[2]: # Correct for sample area
-                    ydata = list(map(lambda y: y / A_sample, ydata))
                 plt.plot(xdata + offset_Hg, ydata, label = columns[i+2])
                 plt.legend()
         labels = df[sheet][columns[0]].tolist()
-        plot_settings(labels, sheet)
+        plot_settings(labels, sheet, excelfile)
 
 def save_alpha_data(xdata, ydata, A_sample, writer, offset_Hg):
     integral = 0
@@ -40,6 +38,9 @@ def save_alpha_data(xdata, ydata, A_sample, writer, offset_Hg):
     writer.save()
 
 def save_cap_data(xdata, ydata, A_sample, writer):
+    m, b = np.polyfit(xdata, ydata, 1)
+    plt.scatter(xdata, ydata, marker = 'o')
+    plt.plot(xdata, m*xdata + b)
     m, b = np.polyfit(xdata/1000, ydata, 1)
     capacitance_data = {'Double layer capacitance [µF]':[m], 'ECSA [cm2]':[m/40], 'RF':[m/(40*A_sample)]}
     ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Double layer capacitance [µF]', 'ECSA [cm2]', 'RF'])
