@@ -19,9 +19,9 @@ excelfiles = [
     'CV_Comparison.xlsx'
 ]
 excelfile = excelfiles[1]
-A_sample = 12.5 # cm^2
+A_sample = 15 # cm^2
 offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
-excelfile = 'CV_Ni_RDE_2909.xlsx'
+excelfile = 'CV_NiF_NiFe_5min_3010.xlsx'
 #excelfile = 'ED_NiFe_1.xlsx'
 
 ### Functions ###

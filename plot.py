@@ -7,5 +7,5 @@ def plot_settings(labels, sheet, excelfile):
     plt.ylabel(labels[2])
     username = os.getlogin()
     filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, excelfile[:-5], sheet) # for data in onedrive
-    plt.savefig(filepath, dpi = 300)
+    plt.savefig(filepath, dpi = 300, bbox_inches='tight')
     plt.clf()
