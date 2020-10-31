@@ -42,7 +42,6 @@ def save_cap_data(xdata, ydata, A_sample, writer, columns, i):
     c = 40 # uF/cm^2
     if 'mA' in columns[i+1]:
         ydata = list(map(lambda y: y*1000, ydata)) # mA to uA
-        print(ydata)
     cdl, b = np.polyfit(xdata, ydata, 1)
     if len(columns) == 3:
         plt.plot(xdata, cdl*xdata + b)
