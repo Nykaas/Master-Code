@@ -18,6 +18,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 save_alpha_data(xdata, ydata, A_sample, writer, offset_Hg)
             if sheet == 'ECSA-cap': # Linear regression for ECSA capacitance method & RF
                 save_cap_data(xdata, ydata, A_sample, writer, columns, i)
+            #if sheet == 'LSV':
+             #   plt.plot(xdata + offset_Hg - 1.23, np.log(ydata))
             elif len(columns) == 3:
                 plt.plot(xdata + offset_Hg, ydata)
             else:
