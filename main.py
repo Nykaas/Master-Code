@@ -22,7 +22,6 @@ excelfiles = [
 ]
 excelfile = excelfiles[0]
 offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
-excelfile = 'CV_NiF_NiFe_5min_3010.xlsx'
 #excelfile = 'ED_NiFe_1.xlsx'
 
 ### Functions ###
@@ -60,4 +59,4 @@ def plot(df, excelfile):
 makedir()
 df = get_dataframe()
 plot(df, excelfile)
-print(f'Plots/Data from {excelfile} saved in {(timer()-start):.2f}s! Have a great day {username}.')
+print(f'Plots/Data from {excelfile} saved in {(timer()-start):.2f}s! Have a great day {username.capitalize()}.')

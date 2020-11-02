@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 
 def plot_settings(labels, sheet, excelfile):
-    plt.title(labels[0])
+    #plt.title(labels[0])
     plt.xlabel(labels[1])
     plt.ylabel(labels[2])
     username = os.getlogin()

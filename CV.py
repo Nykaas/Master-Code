@@ -18,12 +18,14 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 save_alpha_data(xdata, ydata, A_sample, writer, offset_Hg)
             if sheet == 'ECSA-cap': # Linear regression for ECSA capacitance method & RF
                 save_cap_data(xdata, ydata, A_sample, writer, columns, i)
-            #if sheet == 'LSV':
-             #   plt.plot(xdata + offset_Hg - 1.23, np.log(ydata))
             elif len(columns) == 3:
                 plt.plot(xdata + offset_Hg, ydata)
             else:
-                plt.plot(xdata + offset_Hg, ydata, label = columns[i+2])
+                if sheet == 'Tafel':
+                    plt.plot(xdata + offset_Hg - 1.23, np.log10(ydata), label = columns[i+2])
+                    save_overpotential(xdata, ydata, writer, offset_Hg)
+                else:
+                    plt.plot(xdata + offset_Hg, ydata, label = columns[i+2])
         if len(columns) > 3:
             plt.legend()
         labels = df[sheet][columns[0]].tolist()
@@ -54,4 +56,14 @@ def save_cap_data(xdata, ydata, A_sample, writer, columns, i):
     capacitance_data = {'Double layer capacitance [µF]':[cdl], 'ECSA [cm2]':[cdl/c], 'RF':[cdl/(c*A_sample)]}
     ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Double layer capacitance [µF]', 'ECSA [cm2]', 'RF'])
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
+    writer.save()
+
+
+def save_overpotential(xdata, ydata, writer, offset_Hg):
+    for i,j in enumerate(ydata):
+        if round(j, 1) == 10:
+            break       
+    eta_data = {'Current density [mA cm-2]':[ydata[i]], 'Overpotential [mV]':[(xdata[i] + offset_Hg - 1.23)*1000]}
+    eta_df = pd.DataFrame(eta_data, columns = ['Current density [mA cm-2]', 'Overpotential [mV]'])
+    eta_df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
     writer.save()
