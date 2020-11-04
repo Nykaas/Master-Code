@@ -21,7 +21,8 @@ excelfiles = [
     '3010_Ex_NiFe_10min.xlsx'
 ]
 excelfile = excelfiles[0]
-offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
+#offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
+offset_Hg = 0.9254 # V at 14 pH 1.0 M KOH
 #excelfile = 'ED_NiFe_1.xlsx'
 
 ### Functions ###

@@ -59,9 +59,9 @@ def save_cap_data(xdata, ydata, A_sample, writer, columns, i, capacitance_data):
         plt.plot(xdata, cdl*xdata + b,  label = columns[i+2])
     plt.scatter(xdata, ydata, marker = 'x')
     cdl, b = np.polyfit(xdata/1000, ydata, 1)
-    capacitance_temp = {'Sample': columns[i+2], 'Double layer capacitance [µF]':round(cdl,2), 'ECSA [cm2]':round(cdl/c,2), 'RF':round(cdl/(c*A_sample),2)}
+    capacitance_temp = {'Sample': columns[i+2], 'Double layer capacitance [µF]':round(cdl,2), 'ECSA [cm2]':round(cdl/c,2), 'ECSA [m2]':round(cdl/c,2)/(100**2), 'RF':round(cdl/(c*A_sample),2)}
     capacitance_data.append(capacitance_temp)
-    ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Double layer capacitance [µF]', 'ECSA [cm2]', 'RF'])
+    ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Double layer capacitance [µF]', 'ECSA [cm2]', 'ECSA [m2]', 'RF'])
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
     writer.save()
 
