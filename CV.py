@@ -26,7 +26,9 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 plt.plot(xdata + offset_Hg, ydata)
             else:
                 if sheet == 'Tafel':
-                    plt.plot(xdata + offset_Hg - 1.23, np.log10(ydata), label = columns[i+2])
+                    ydata /= A_sample
+                    print(f'Current corrected: {sheet} {columns[i+2]} (A={A_sample})')
+                    plt.plot(np.log10(ydata), xdata + offset_Hg - 1.23, label = columns[i+2])
                     name = columns[i+2]
                     save_overpotential(xdata, ydata, writer, offset_Hg, eta_data, name)
                 else:
