@@ -22,17 +22,16 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 save_alpha_data(xdata, ydata, A_sample, writer, offset_Hg, name)
             if sheet == 'ECSA-cap': # Linear regression for ECSA capacitance method & RF
                 save_cap_data(xdata, ydata, A_sample, writer, columns, i, capacitance_data)
+            if sheet == 'Tafel':
+                ydata /= A_sample
+                print(f'Current corrected: {sheet} {columns[i+2]} (A={A_sample})')
+                plt.plot(np.log10(ydata), xdata + offset_Hg - 1.23, label = columns[i+2])
+                name = columns[i+2]
+                save_overpotential(xdata, ydata, writer, offset_Hg, eta_data, name)
             elif len(columns) == 3:
                 plt.plot(xdata + offset_Hg, ydata)
             else:
-                if sheet == 'Tafel':
-                    ydata /= A_sample
-                    print(f'Current corrected: {sheet} {columns[i+2]} (A={A_sample})')
-                    plt.plot(np.log10(ydata), xdata + offset_Hg - 1.23, label = columns[i+2])
-                    name = columns[i+2]
-                    save_overpotential(xdata, ydata, writer, offset_Hg, eta_data, name)
-                else:
-                    plt.plot(xdata + offset_Hg, ydata, label = columns[i+2])
+                plt.plot(xdata + offset_Hg, ydata, label = columns[i+2])
         if len(columns) > 3:
             plt.legend()
         labels = df[sheet][columns[0]].tolist()
