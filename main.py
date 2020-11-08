@@ -17,13 +17,10 @@ excelfiles = [
     '0000_Ex_Comparison.xlsx',
     '2909_Ex_Ni_RDE.xlsx',
     '2910_Ex_NiF.xlsx',
-    '3010_Ex_NiFe_5min.xlsx',
-    '3010_Ex_NiFe_10min.xlsx'
 ]
 excelfile = excelfiles[0]
 #offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
 offset_Hg = 0.9254 # V at 14 pH 1.0 M KOH
-#excelfile = 'ED_NiFe_1.xlsx'
 
 ### Functions ###
 def get_dataframe():
@@ -54,7 +51,7 @@ def plot(df, excelfile):
         ex_situ_plot(df, writer(), get_area(), offset_Hg, excelfile)
     elif 'In' in excelfile:
         return None
-    if 'ED' in excelfile:
+    elif 'ED' in excelfile:
         ED_plot(df)
 
 makedir()
