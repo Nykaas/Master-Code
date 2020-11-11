@@ -5,8 +5,9 @@ import pandas as pd
 from pathlib import Path
 from timeit import default_timer as timer
 
-from CV import ex_situ_plot, save_alpha_data, save_cap_data
+from CV import ex_situ_plot
 from ED import ED_plot
+from insitu import in_situ_plot
 
 ### Constants ###
 start = timer()
@@ -14,11 +15,10 @@ username = os.getlogin()
 
 ### Variables ###
 excelfiles = [
-    '0000_Ex_Comparison.xlsx',
-    '2909_Ex_Ni_RDE.xlsx',
-    '2910_Ex_NiF.xlsx',
+    'Ex_Comparison.xlsx',
+    'In_Comparison.xlsx'
 ]
-excelfile = excelfiles[0]
+excelfile = excelfiles[1]
 #offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
 offset_Hg = 0.9254 # V at 14 pH 1.0 M KOH
 
@@ -44,13 +44,13 @@ def get_area(): # cm^2
     elif 'Ex' in excelfile:
         return 15
     elif 'In' in excelfile:
-        return 12.5 # might not be correct, revise
+        return 6.25 # might not be correct, revise
     
 def plot(df, excelfile):
     if 'Ex' in excelfile:
         ex_situ_plot(df, writer(), get_area(), offset_Hg, excelfile)
     elif 'In' in excelfile:
-        return None
+        in_situ_plot(df, excelfile)
     elif 'ED' in excelfile:
         ED_plot(df)
 

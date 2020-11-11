@@ -26,7 +26,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 plt.plot(xdata + offset_Hg, ydata, label = name)
             elif sheet == 'ECSA-alpha': # ECSA & RF alpha method
                 plt.plot(xdata, ydata, label = name)
-                save_alpha_data(xdata, ydata, A_sample, writer, offset_Hg, name)
+                save_alpha_data(xdata, ydata, A_sample, writer, offset_Hg, alpha_data, name)
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
                 ydata, xdata, cdl, b = save_cap_data(xdata, ydata, A_sample, writer, columns, i, capacitance_data, name)
                 plt.plot(xdata, cdl*xdata + b,  label = name)
