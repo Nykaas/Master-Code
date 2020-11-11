@@ -27,6 +27,8 @@ def in_situ_plot(df, excelfile):
                     plt.plot(xdata, ydata, linestyle = '--', color = colors[color_index], label = name)
                     switch = True
                     color_index += 1
+            elif sheet == 'Durability':
+                plt.plot(xdata/3600, ydata, label = name)
             else:
                 plt.plot(xdata, ydata, label = name)
         plot_settings(xlabel, ylabel, columns, sheet, excelfile)
