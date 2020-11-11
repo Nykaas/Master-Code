@@ -50,7 +50,7 @@ def plot(df, excelfile):
     if 'Ex' in excelfile:
         ex_situ_plot(df, writer(), get_area(), offset_Hg, excelfile)
     elif 'In' in excelfile:
-        in_situ_plot(df, excelfile)
+        in_situ_plot(df, excelfile, get_area())
     elif 'ED' in excelfile:
         ED_plot(df)
 

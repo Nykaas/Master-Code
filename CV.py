@@ -17,7 +17,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             name = columns[i+2]
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
-            if 'cm-2' in xlabel or 'cm-2' in ylabel: # Correct for sample area
+            if 'cm2' in xlabel or 'cm2' in ylabel: # Correct for sample area
                 ydata = list(map(lambda y: y / A_sample, ydata))
                 print(f'Current corrected: {sheet} {name} (A={A_sample})')
             
