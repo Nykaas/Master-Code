@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
-from scipy.signal import savgol_filter
+from scipy import signal
 
 from plot import plot_settings
 
@@ -19,45 +19,44 @@ def in_situ_plot(df, excelfile, A_sample):
             title = xlabel = df[sheet]['Graph_settings'][0]
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
-            #if 'cm2' in xlabel: # Correct for sample area
-            #    xdata = list(map(lambda x: x / A_sample, xdata))
-                #print(f'Current corrected: {sheet}, {name}, (A = {A_sample})')
-            #Add for ylabel
+            if 'cm2' in xlabel: # Correct for sample area
+                xdata /= A_sample
+                print(f'X normalized: {sheet}, {name}, (A = {A_sample})')
+            if 'cm2' in ylabel: # Correct for sample area
+                ydata /= A_sample
+                print(f'Y normalized: {sheet}, {name}, (A = {A_sample})')
             
             ### Sheet plotting ###
+            
             if sheet == 'Polarization':
+                x_smooth, y_smooth = smooth(xdata, ydata)
                 if switch:
-                    plt.plot(xdata, y_smooth, linestyle = '-', color = colors[color_index], label = name)
+                    plt.plot(x_smooth, y_smooth, color = colors[color_index], label = name)
                     switch = False
-                    color_index += 1
                 else:
-                    plt.plot(xdata, y_smooth, linestyle = '--', color = colors[color_index], label = name)
+                    plt.plot(x_smooth, y_smooth, linestyle = ':', color = colors[color_index], label = name)
                     switch = True
                     color_index += 1
-            elif sheet == 'Polarization_1h' or sheet == 'Sheet1':
-                if len(xdata) % 2 == 0:
-                    x_smooth, y_smooth = smooth(xdata, ydata)
-                    #x_smooth = savgol_filter(xdata, len(xdata)-1, 3)
-                    #y_smooth = savgol_filter(ydata, len(ydata)-1, 3)
-                else:
-                    x_smooth = savgol_filter(xdata, len(xdata)-1, 3)
-                    y_smooth = savgol_filter(ydata, len(ydata)-1, 3)
-                print(sheet, name)
-                print(xdata[0:10])
-                print(x_smooth[0:10])
-                plt.plot(xdata, ydata, label = name)
-                plt.plot(x_smooth, y_smooth, '-.', label = name)
+            
+            elif sheet == 'Polarization_1h' or sheet == 'Polarization_end':
+                x_smooth, y_smooth = smooth(xdata, ydata)
+                plt.plot(xdata, ydata)
+                plt.plot(x_smooth, y_smooth, label = name)
+            
             elif sheet == 'Durability':
-                plt.plot(xdata/3600, ydata, label = name)
+                x_smooth, y_smooth = smooth(xdata, ydata)
+                plt.plot(xdata/3600, ydata) # s to h
+                plt.plot(x_smooth/3600, y_smooth, label = name)
+            
             else:
                 plt.plot(xdata, ydata, label = name)
+        
         plot_settings(xlabel, ylabel, title, columns, sheet, excelfile)
 
 def smooth(xdata, ydata):
-    if len(xdata) % 2 == 0:
-        x_smooth = savgol_filter(xdata, len(xdata)-1, 3)
-        y_smooth = savgol_filter(ydata, len(ydata)-1, 3)
-    else:
-        x_smooth = savgol_filter(xdata, len(xdata)-1, 3)
-        y_smooth = savgol_filter(ydata, len(ydata)-1, 3)
+    xdata = xdata[~np.isnan(xdata)]
+    ydata = ydata[~np.isnan(ydata)]
+    b, a = signal.butter(2, 0.01, analog=False)
+    x_smooth = signal.filtfilt(b, a, xdata)
+    y_smooth = signal.filtfilt(b, a, ydata)
     return x_smooth, y_smooth

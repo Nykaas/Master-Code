@@ -1,13 +1,10 @@
 
-new_file = open(r'C:\Users\Ruben\Documents\In_situ\Pt-Ir\Durability_trimmed.txt', 'w')
+new_file = open(r'C:\Users\Ruben\Documents\In_situ\Pt-NiF\Durability_trimmed_2.txt', 'w')
 
-with open(r'C:\Users\Ruben\Documents\In_situ\Pt-Ir\Durability.txt') as f:
+with open(r'C:\Users\Ruben\Documents\In_situ\Pt-NiF\Durability_trimmed.txt') as f:
     for i, line in enumerate(f):
-        if i % 5000 == 0:
+        if i % 5 == 0:
             new_file.write(line)
             print(i)
-
-new_file.close()
-f.close()
 
 
