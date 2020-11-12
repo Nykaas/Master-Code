@@ -16,9 +16,10 @@ username = os.getlogin()
 ### Variables ###
 excelfiles = [
     'Ex_Comparison.xlsx',
-    'In_Comparison.xlsx'
+    'In_Comparison.xlsx',
+    'In_Comparison_smooth.xlsx',
 ]
-excelfile = excelfiles[1]
+excelfile = excelfiles[2]
 #offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
 offset_Hg = 0.9254 # V at 14 pH 1.0 M KOH
 
