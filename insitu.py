@@ -16,17 +16,31 @@ def in_situ_plot(df, excelfile, A_sample):
             xdata = np.array(df[sheet][columns[i]].tolist())
             ydata = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
-            title = xlabel = df[sheet]['Graph_settings'][0]
+            title = df[sheet]['Graph_settings'][0]
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
             if 'cm2' in xlabel: # Correct for sample area
-                xdata /= A_sample
+                if 'EIS' in sheet:
+                    xdata *= A_sample
+                else:
+                    xdata /= A_sample
                 print(f'X normalized: {sheet}, {name}, (A = {A_sample})')
             if 'cm2' in ylabel: # Correct for sample area
-                ydata /= A_sample
+                if 'EIS' in sheet:
+                    ydata *= A_sample
+                else:
+                    ydata /= A_sample
                 print(f'Y normalized: {sheet}, {name}, (A = {A_sample})')
             
             ### Sheet plotting ###
+            
+            if "Pol" in sheet:
+                xlabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                ylabel = 'Cell voltage [V]'
+            elif "EIS" in sheet:
+                xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
+                ylabel = r'$\mathdefault{Z_{imaginary}\ [Ω \ cm^2]}$'
+
             if sheet == 'Polarization':
                 x_smooth, y_smooth = smooth(xdata, ydata)
                 if switch:
@@ -42,6 +56,10 @@ def in_situ_plot(df, excelfile, A_sample):
                 plt.plot(x_smooth, y_smooth, label = name)
             
             elif sheet == 'Durability':
+                if 'Iridium' in name:
+                    name = r'Iridium (1 A $\mathdefault{cm^{-2}}$)'
+                else:
+                    name = r'Bare nickel felt (0.5 A $\mathdefault{cm^{-2}}$)'
                 x_smooth, y_smooth = smooth(xdata, ydata)
                 plt.plot(x_smooth/3600, y_smooth, label = name)
             
