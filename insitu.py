@@ -27,7 +27,6 @@ def in_situ_plot(df, excelfile, A_sample):
                 print(f'Y normalized: {sheet}, {name}, (A = {A_sample})')
             
             ### Sheet plotting ###
-            
             if sheet == 'Polarization':
                 x_smooth, y_smooth = smooth(xdata, ydata)
                 if switch:
@@ -40,14 +39,20 @@ def in_situ_plot(df, excelfile, A_sample):
             
             elif sheet == 'Polarization_1h' or sheet == 'Polarization_end':
                 x_smooth, y_smooth = smooth(xdata, ydata)
-                plt.plot(xdata, ydata)
                 plt.plot(x_smooth, y_smooth, label = name)
             
             elif sheet == 'Durability':
                 x_smooth, y_smooth = smooth(xdata, ydata)
-                plt.plot(xdata/3600, ydata) # s to h
                 plt.plot(x_smooth/3600, y_smooth, label = name)
             
+            elif sheet == 'EIS':
+                if switch:
+                    plt.plot(xdata, ydata, color = colors[color_index], label = name)
+                    switch = False
+                else:
+                    plt.plot(xdata, ydata, linestyle = ':', color = colors[color_index], label = name)
+                    switch = True
+                    color_index += 1     
             else:
                 plt.plot(xdata, ydata, label = name)
         

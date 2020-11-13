@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 def plot_settings(xlabel, ylabel, title, columns, sheet, excelfile):
     if len(columns) > 3:
         plt.legend()
-    plt.title(title)
+    #plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     username = os.getlogin()
