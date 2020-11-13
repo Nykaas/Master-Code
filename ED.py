@@ -3,7 +3,7 @@ import numpy as np
 
 from plot import plot_settings
 
-def ED_plot(df):
+def ED_plot(df, offset_Ag):
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
         for i in range(1, len(columns), 3): # Iterate data columns

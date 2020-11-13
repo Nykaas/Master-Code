@@ -19,8 +19,8 @@ excelfiles = [
     'In_Comparison.xlsx'
 ]
 excelfile = excelfiles[1]
-#offset_Hg = 0.9063 # V at 13.7 pH 0.5 M KOH
 offset_Hg = 0.9254 # V at 14 pH 1.0 M KOH
+offset_Ag = 1.0244 # V at 14 pH 1.0 M KOH
 
 ### Functions ###
 def get_dataframe():
@@ -52,7 +52,7 @@ def plot(df, excelfile):
     elif 'In' in excelfile:
         in_situ_plot(df, excelfile, get_area())
     elif 'ED' in excelfile:
-        ED_plot(df)
+        ED_plot(df, offset_Ag)
 
 makedir()
 df = get_dataframe()
