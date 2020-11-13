@@ -7,29 +7,29 @@ from scipy import signal
 from plot import plot_settings
 
 def in_situ_plot(df, excelfile, A_sample):
-    colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown', 'pink']
+    colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6']
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
         switch = True
         color_index = 0
         for i in range(1, len(columns), 3): # Iterate data columns
-            xdata = np.array(df[sheet][columns[i]].tolist())
-            ydata = np.array(df[sheet][columns[i+1]].tolist())
+            x = np.array(df[sheet][columns[i]].tolist())
+            y = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
             title = df[sheet]['Graph_settings'][0]
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
             if 'cm2' in xlabel: # Correct for sample area
                 if 'EIS' in sheet:
-                    xdata *= A_sample
+                    x *= A_sample
                 else:
-                    xdata /= A_sample
+                    x /= A_sample
                 print(f'X normalized: {sheet}, {name}, (A = {A_sample})')
             if 'cm2' in ylabel: # Correct for sample area
                 if 'EIS' in sheet:
-                    ydata *= A_sample
+                    y *= A_sample
                 else:
-                    ydata /= A_sample
+                    y /= A_sample
                 print(f'Y normalized: {sheet}, {name}, (A = {A_sample})')
             
             ### Sheet plotting ###
@@ -42,44 +42,44 @@ def in_situ_plot(df, excelfile, A_sample):
                 ylabel = r'$\mathdefault{Z_{imaginary}\ [Ω \ cm^2]}$'
 
             if sheet == 'Polarization':
-                x_smooth, y_smooth = smooth(xdata, ydata)
+                xs, ys = smooth(x, y)
                 if switch:
-                    plt.plot(x_smooth, y_smooth, color = colors[color_index], label = name)
+                    plt.plot(xs, ys, color = colors[color_index], label = name)
                     switch = False
                 else:
-                    plt.plot(x_smooth, y_smooth, linestyle = ':', color = colors[color_index], label = name)
+                    plt.plot(xs, ys, linestyle = ':', color = colors[color_index], label = name)
                     switch = True
                     color_index += 1
             
             elif sheet == 'Polarization_1h' or sheet == 'Polarization_end':
-                x_smooth, y_smooth = smooth(xdata, ydata)
-                plt.plot(x_smooth, y_smooth, label = name)
+                xs, ys = smooth(x, y)
+                plt.plot(xs, ys, label = name)
             
             elif sheet == 'Durability':
                 if 'Iridium' in name:
                     name = r'Iridium (1 A $\mathdefault{cm^{-2}}$)'
                 else:
                     name = r'Bare nickel felt (0.5 A $\mathdefault{cm^{-2}}$)'
-                x_smooth, y_smooth = smooth(xdata, ydata)
-                plt.plot(x_smooth/3600, y_smooth, label = name)
+                xs, ys = smooth(x, y)
+                plt.plot(xs/3600, ys, label = name)
             
             elif sheet == 'EIS':
                 if switch:
-                    plt.plot(xdata, ydata, color = colors[color_index], label = name)
+                    plt.plot(x, y, color = colors[color_index], label = name)
                     switch = False
                 else:
-                    plt.plot(xdata, ydata, linestyle = ':', color = colors[color_index], label = name)
+                    plt.plot(x, y, linestyle = ':', color = colors[color_index], label = name)
                     switch = True
                     color_index += 1     
             else:
-                plt.plot(xdata, ydata, label = name)
+                plt.plot(x, y, label = name)
         
         plot_settings(xlabel, ylabel, title, columns, sheet, excelfile)
 
-def smooth(xdata, ydata):
-    xdata = xdata[~np.isnan(xdata)]
-    ydata = ydata[~np.isnan(ydata)]
+def smooth(x, y):
+    x = x[~np.isnan(x)]
+    y = y[~np.isnan(y)]
     b, a = signal.butter(2, 0.01, analog=False)
-    x_smooth = signal.filtfilt(b, a, xdata)
-    y_smooth = signal.filtfilt(b, a, ydata)
-    return x_smooth, y_smooth
+    xs = signal.filtfilt(b, a, x)
+    ys = signal.filtfilt(b, a, y)
+    return xs, ys

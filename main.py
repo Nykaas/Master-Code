@@ -16,9 +16,10 @@ username = os.getlogin()
 ### Variables ###
 excelfiles = [
     'Ex_Comparison.xlsx',
-    'In_Comparison.xlsx'
+    'In_Comparison.xlsx',
+    'ED.xlsx',
 ]
-excelfile = excelfiles[1]
+excelfile = excelfiles[0]
 offset_Hg = 0.9254 # V at 14 pH 1.0 M KOH
 offset_Ag = 1.0244 # V at 14 pH 1.0 M KOH
 
@@ -34,17 +35,17 @@ def makedir():
         os.makedirs(filepath)
 
 def writer():
-    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, excelfile[:-5], r'CV_data.xlsx') # for data in onedrive
+    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, excelfile[:-5], r'Data.xlsx') # for data in onedrive
     writer = pd.ExcelWriter(filepath)
     return writer
 
 def get_area(): # cm^2
     if 'RDE' in excelfile:
-        return 0.196 # might not be correct, revise
-    elif 'Ex' in excelfile:
+        return 0.196
+    elif 'Ex' in excelfile or 'ED' in excelfile:
         return 15
     elif 'In' in excelfile:
-        return 6.25 # might not be correct, revise
+        return 6.25
     
 def plot(df, excelfile):
     if 'Ex' in excelfile:
@@ -52,7 +53,7 @@ def plot(df, excelfile):
     elif 'In' in excelfile:
         in_situ_plot(df, excelfile, get_area())
     elif 'ED' in excelfile:
-        ED_plot(df, offset_Ag)
+        ED_plot(df, excelfile, get_area(), offset_Ag, writer())
 
 makedir()
 df = get_dataframe()
