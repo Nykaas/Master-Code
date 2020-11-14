@@ -1,0 +1,15 @@
+elif sheet == 'ECSA-alpha': # ECSA & RF alpha method
+    plt.plot(x, y, label = name)
+    save_alpha_data(x, y, A_sample, writer, offset_Hg, alpha_data, name)
+
+def save_alpha_data(x, y, A_sample, writer, offset_Hg, alpha_data, name):
+    integral = 0
+    for i in range(0, len(x)-1):
+        temp = (y[i+1] + y[i]) * (x[i+1] + x[i] - offset_Hg*2)
+        integral += temp
+    charge = -1000 * (integral/100)              
+    alpha_temp = {'Sample': name, 'Charge, Q [µF]':round(charge,2), 'ECSA [cm2]':round(charge/514,2), 'RF':round(charge/(514*A_sample),2)}
+    alpha_data.append(alpha_temp)
+    ECSA_alpha_df = pd.DataFrame(alpha_data, columns = ['Sample', 'Charge, Q [µF]', 'ECSA [cm2]', 'RF'])
+    ECSA_alpha_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-alpha')
+    writer.save()

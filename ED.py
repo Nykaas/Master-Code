@@ -28,7 +28,7 @@ def ED_plot(df, excelfile, A_sample, offset_Ag, writer):
             #plt.plot(x, y + offset_Ag, '--', label = columns[i+2]) # To check if smoothnes align
             plt.plot(xs, ys + offset_Ag, label = name)
 
-        plot_settings(xlabel, ylabel, title, columns, sheet, excelfile)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile)
 
 def smooth(x, y):
     x = x[~np.isnan(x)]

@@ -21,7 +21,7 @@ excelfiles = [
     'Ex_CE_Comparison.xlsx'
 ]
 
-excelfile = excelfiles[2]
+excelfile = excelfiles[3]
 offset_Hg = 0.9254 # V at 14 pH 1.0 M KOH
 offset_Ag = 1.0244 # V
 

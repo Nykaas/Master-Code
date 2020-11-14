@@ -74,7 +74,7 @@ def in_situ_plot(df, excelfile, A_sample):
             else:
                 plt.plot(x, y, label = name)
         
-        plot_settings(xlabel, ylabel, title, columns, sheet, excelfile)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile)
 
 def smooth(x, y):
     x = x[~np.isnan(x)]

@@ -15,52 +15,53 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
+            name_print = name
             title = df[sheet]['Graph_settings'][0]
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
-            if 'cm2' in xlabel or 'cm2' in ylabel: # Correct for sample area
+            
+            if 'cm2' in xlabel or 'cm2' in ylabel and sheet != 'ECSA-cap': # Correct for sample area
                 y /= A_sample
-                print(f'Current corrected: {sheet} {name} (A={A_sample})')
+                print(f'{sheet} | {name_print} | I/Area A={A_sample}')
             
-            #if 'A' in name: # Change to current density in label, not working at the moment
-            #    idx = name.find('A')
-            #    print(name, idx)
-            #    name = name[0:idx-4] + str(round(idx/A_sample, 2)) + r' A$\mathdefault{cm^{-2}}$' + name[idx+1:]
-                
-            
+            if 'A' in name: # Change to current density in label
+                idx = name.find('-')
+                current_density = float(name[idx+1:idx+4])/A_sample
+                name = name.replace(name[idx+1:idx+4],  f'{current_density:.2f}')
+                name = name.replace('A', r'A$\mathdefault{cm^{-2}}$')
+
             ### Sheet plotting ###
-            if sheet == 'FullRange' or sheet == 'LSV': # Plot without further calculation
+            if sheet == 'FullRange':
+                xlabel = r'Potential [V, RHE]'
+                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 plt.plot(x + offset_Hg, y, label = name)
-            elif sheet == 'ECSA-alpha': # ECSA & RF alpha method
-                plt.plot(x, y, label = name)
-                save_alpha_data(x, y, A_sample, writer, offset_Hg, alpha_data, name)
+            
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
-                y, x, cdl, b = save_cap_data(x, y, A_sample, writer, columns, i, capacitance_data, name)
-                plt.plot(x, cdl*x + b,  label = name)
-                plt.scatter(x, y, marker = 'x')
-            elif sheet == 'Tafel': # Plot tafel
+                if 'mA' in columns[i+1]:
+                    y *= 1000
+                    print(f'{sheet} | {name_print} | mA to uA')
+                xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
+                ylabel = r'Charging current [μA $\mathdefault{cm^{-2}}$]'
+                cdl, b = get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample)
+                plt.plot(x, (cdl*x + b) / A_sample, label = name)
+                plt.scatter(x, y / A_sample, marker = 'x')
+            
+            elif sheet == 'LSV':
+                xlabel = r'Potential [V, RHE]'
+                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                plt.plot(x + offset_Hg, y, label = name)
+
+            elif sheet == 'Tafel':
+                xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
+                ylabel = r'Overpotential [V, RHE]'
                 plt.plot(np.log10(y), x + offset_Hg - 1.23, label = name)
                 save_overpotential(x, y, writer, offset_Hg, eta_data, name)
 
-        plot_settings(xlabel, ylabel, title, columns, sheet, excelfile)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile)
 
-def save_alpha_data(x, y, A_sample, writer, offset_Hg, alpha_data, name):
-    integral = 0
-    for i in range(0, len(x)-1):
-        temp = (y[i+1] + y[i]) * (x[i+1] + x[i] - offset_Hg*2)
-        integral += temp
-    charge = -1000 * (integral/100)              
-    alpha_temp = {'Sample': name, 'Charge, Q [µF]':round(charge,2), 'ECSA [cm2]':round(charge/514,2), 'RF':round(charge/(514*A_sample),2)}
-    alpha_data.append(alpha_temp)
-    ECSA_alpha_df = pd.DataFrame(alpha_data, columns = ['Sample', 'Charge, Q [µF]', 'ECSA [cm2]', 'RF'])
-    ECSA_alpha_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-alpha')
-    writer.save()
-
-def save_cap_data(x, y, A_sample, writer, columns, i, capacitance_data, name):
+### Functions ###
+def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample):
     c = 40 # uF/cm^2
-    if 'mA' in columns[i+1]:
-        y *= 1000 # mA to uA
-        print(f'mA to uA for {name}')
     cdl, b = np.polyfit(x/1000, y, 1)
     capacitance_temp = {'Sample': name, 'Double layer capacitance [µF]':round(cdl,2), 'ECSA [cm2]':round(cdl/c,2), 'ECSA [m2]':round(cdl/c,2)/(100**2), 'RF':round(cdl/(c*A_sample),2)}
     capacitance_data.append(capacitance_temp)
@@ -68,8 +69,7 @@ def save_cap_data(x, y, A_sample, writer, columns, i, capacitance_data, name):
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
     writer.save()
     cdl, b = np.polyfit(x, y, 1)
-    return y, x, cdl, b
-
+    return cdl, b
 
 def save_overpotential(x, y, writer, offset_Hg, eta_data, name):
     for i, j in enumerate(y):
