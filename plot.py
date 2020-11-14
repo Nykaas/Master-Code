@@ -1,10 +1,9 @@
 import os
 import matplotlib.pyplot as plt
 
-def plot_settings(xlabel, ylabel, title, columns, sheet, excelfile):
+def plot_settings(xlabel, ylabel, columns, sheet, excelfile):
     if len(columns) > 3:
         plt.legend()
-    #plt.title(title)
     plt.xlabel(xlabel) # Include fontweight='bold' to bold the label
     plt.ylabel(ylabel) # Include fontweight='bold' to bold the label
     username = os.getlogin()
