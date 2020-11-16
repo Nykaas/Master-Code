@@ -16,7 +16,6 @@ def in_situ_plot(df, excelfile, A_sample):
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
-            title = df[sheet]['Graph_settings'][0]
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
             if 'cm2' in xlabel: # Correct for sample area

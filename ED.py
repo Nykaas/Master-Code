@@ -15,7 +15,7 @@ def ED_plot(df, excelfile, A_sample, offset_Ag, writer):
             xs, ys = smooth(x, y)
             name = columns[i+2]
             current = df[sheet][name][0]
-            title = xlabel = df[sheet]['Graph_settings'][0]
+            #title = xlabel = df[sheet]['Graph_settings'][0]
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
             save_ED(current, A_sample, data, name, writer)

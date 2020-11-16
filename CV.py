@@ -7,7 +7,6 @@ from plot import plot_settings
 
 def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
     capacitance_data = []
-    alpha_data = []
     eta_data = []
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
@@ -16,7 +15,6 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             y = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
             name_print = name
-            title = df[sheet]['Graph_settings'][0]
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
             
@@ -28,7 +26,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 idx = name.find('-')
                 current_density = float(name[idx+1:idx+4])/A_sample
                 name = name.replace(name[idx+1:idx+4],  f'{current_density:.2f}')
-                name = name.replace('A', r'A$\mathdefault{cm^{-2}}$')
+                name = name.replace('A', r'A $\mathdefault{cm^{-2}}$')
 
             ### Sheet plotting ###
             if sheet == 'FullRange':
@@ -63,7 +61,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
 def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample):
     c = 40 # uF/cm^2
     cdl, b = np.polyfit(x/1000, y, 1)
-    capacitance_temp = {'Sample': name, 'Double layer capacitance [µF]':round(cdl,2), 'ECSA [cm2]':round(cdl/c,2), 'ECSA [m2]':round(cdl/c,2)/(100**2), 'RF':round(cdl/(c*A_sample),2)}
+    capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Double layer capacitance [µF]':round(cdl,2), 'ECSA [cm2]':round(cdl/c,2), 'ECSA [m2]':round(cdl/c,2)/(100**2), 'RF':round(cdl/(c*A_sample),2)}
     capacitance_data.append(capacitance_temp)
     ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Double layer capacitance [µF]', 'ECSA [cm2]', 'ECSA [m2]', 'RF'])
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
@@ -75,7 +73,7 @@ def save_overpotential(x, y, writer, offset_Hg, eta_data, name):
     for i, j in enumerate(y):
         if round(j, 1) == 10:
             break
-    eta_temp = {'Sample': name,'Current density [mA cm-2]':y[i], 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2)}
+    eta_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'),'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2)}
     eta_data.append(eta_temp)
     eta_df = pd.DataFrame(eta_data, columns = ['Sample', 'Current density [mA cm-2]', 'Overpotential [mV]'])
     eta_df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
