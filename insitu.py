@@ -71,7 +71,7 @@ def in_situ_plot(df, excelfile, A_sample):
                     switch = True
                     color_index += 1     
             else:
-                plt.plot(x, y, label = name)
+                plt.plot(x, y, linewidth = 0.2, markersize = 4, marker = 'o', label = name)
         
         plot_settings(xlabel, ylabel, columns, sheet, excelfile)
 

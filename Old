@@ -1,3 +1,5 @@
+alpha_data = []
+
 elif sheet == 'ECSA-alpha': # ECSA & RF alpha method
     plt.plot(x, y, label = name)
     save_alpha_data(x, y, A_sample, writer, offset_Hg, alpha_data, name)
