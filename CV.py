@@ -24,9 +24,9 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             
             if 'A' in name: # Change to current density in label
                 idx = name.find('-')
-                current_density = float(name[idx+1:idx+4])/A_sample
-                name = name.replace(name[idx+1:idx+4],  f'{current_density:.2f}')
-                name = name.replace('A', r'A $\mathdefault{cm^{-2}}$')
+                current_density = (float(name[idx+1:idx+4])/A_sample) * 1000 # A to mA
+                name = name.replace(name[idx+1:idx+4],  f'{current_density:.0f}')
+                name = name.replace('A', r'mA $\mathdefault{cm^{-2}}$')
 
             ### Sheet plotting ###
             if sheet == 'FullRange':
