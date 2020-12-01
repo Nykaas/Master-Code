@@ -18,7 +18,6 @@ excelfiles = [
     'Ex_Comparison.xlsx',
     'In_Comparison.xlsx',
     'ED.xlsx',
-    'Ex_Comparison_SH.xlsx'
 ]
 
 excelfile = excelfiles[1]

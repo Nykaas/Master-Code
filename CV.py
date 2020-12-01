@@ -33,6 +33,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 plt.plot(x + offset_Hg, y, label = name)
+                set_annotations(x, y, offset_Hg)
             
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
                 if 'mA' in columns[i+1]:
@@ -42,6 +43,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 ylabel = r'Charging current [μA $\mathdefault{cm^{-2}}$]'
                 cdl, b = get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print)
                 plt.plot(x, (cdl*x + b) / A_sample, label = name)
+                print(f'{sheet} | {name_print} | I/Area A={A_sample}')
                 plt.scatter(x, y / A_sample, marker = 'x')
             
             elif sheet == 'LSV':
@@ -78,3 +80,23 @@ def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
     eta_df = pd.DataFrame(eta_data, columns = ['Sample', 'Samplee' ,'Current density [mA cm-2]', 'Overpotential [mV]'])
     eta_df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
     writer.save()
+
+def set_annotations(x, y, offset_Hg):
+    idx = np.argmax(y)
+    text = f'{y[idx]:.1f}'
+    plt.annotate(
+        text,
+        xy=(x[idx] + offset_Hg, y[idx]),
+        xytext=(1.2, y[idx]),
+        arrowprops=dict(facecolor='black', arrowstyle='simple'),
+    )
+    idx = np.argmin(y[50:-50])
+    x_ = x[50:-50]
+    y_ = y[50:-50]
+    text = f'{y_[idx]:.1f}'
+    plt.annotate(
+        text,
+        xy=(x_[idx] + offset_Hg, y_[idx]),
+        xytext=(1.4, y_[idx]),
+        arrowprops=dict(facecolor='black', arrowstyle='simple')
+    )
