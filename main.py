@@ -20,7 +20,7 @@ excelfiles = [
     'ED.xlsx',
 ]
 
-excelfile = excelfiles[1]
+excelfile = excelfiles[0]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 offset_Ag = 0.322 # V at 2.12 pH
 
