@@ -55,10 +55,12 @@ def in_situ_plot(df, excelfile, A_sample):
                 plt.plot(xs, ys, label = name)
             
             elif sheet == 'Durability':
-                if 'Iridium' in name:
-                    name = r'Iridium (1 A $\mathdefault{cm^{-2}}$)'
+                if 'iridium' in name:
+                    name = r'NF iridium (1 A $\mathdefault{cm^{-2}}$)'
+                elif 'iron' in name:
+                    name = r'NF nickel iron (0.5 A $\mathdefault{cm^{-2}}$)(temp)'
                 else:
-                    name = r'Bare nickel felt (0.5 A $\mathdefault{cm^{-2}}$)'
+                    name = r'NF (0.5 A $\mathdefault{cm^{-2}}$)'
                 xs, ys = smooth(x, y)
                 plt.plot(xs/3600, ys, label = name)
             

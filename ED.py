@@ -18,21 +18,23 @@ def ED_plot(df, excelfile, A_sample, offset_Ag, writer):
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
             save_ED(current, A_sample, data, name, writer)
-            if i == 1:
-                name = f'Nickel iron {round(current/A_sample, 2)}' + r' A $\mathdefault{cm^{-2}}$'
-            else:
-                name = 'undefined'
+            
+            if 'A' in name: # Change to current density in label
+                idx = name.find('-')
+                current_density = (float(name[idx+1:idx+5])/A_sample) * 1000 # A to mA
+                name = name.replace(name[idx+1:idx+5],  f'{current_density:.0f}')
+                name = name.replace('A', r'mA $\mathdefault{cm^{-2}}$')
 
             ### Plot ###
             #plt.plot(x, y + offset_Ag, '--', label = columns[i+2]) # To check if smoothnes align
-            plt.plot(xs, ys + offset_Ag, label = name)
+            plt.plot(xs, ys + offset_Ag, color = 'C1', label = name)
 
         plot_settings(xlabel, ylabel, columns, sheet, excelfile)
 
 def smooth(x, y):
     x = x[~np.isnan(x)]
     y = y[~np.isnan(y)]
-    b, a = signal.butter(4, 0.001, analog=False)
+    b, a = signal.butter(4, 0.01, analog=False)
     xs = signal.filtfilt(b, a, x)
     ys = signal.filtfilt(b, a, y)
     return xs, ys
