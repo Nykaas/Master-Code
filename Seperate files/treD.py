@@ -25,12 +25,7 @@ def treD_plot(df, excelfile, A_sample):
                 print(f'{sheet} | I/Area A={A_sample}')
 
             ### Plot ###
-            if i == 25:
-                x = 1
-                y = 2
-                z = 3
-                print(x,y,z)
-                ax.scatter(x, y, z)
+            ax.scatter(x, y, z)
         plt.grid()
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
