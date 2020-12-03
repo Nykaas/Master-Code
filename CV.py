@@ -22,12 +22,13 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 y /= A_sample
                 print(f'{sheet} | {name_print} | I/Area A={A_sample}')
             
-            if 'A' in name: # Change to current density in label
+            if 'A' in str(name): # Change to current density in label
                 idx = name.find('-')
-                current_density = (float(name[idx+1:idx+4])/A_sample) * 1000 # A to mA
-                name = name.replace(name[idx+1:idx+4],  f'{current_density:.0f}')
+                current_density = (float(name[idx+1:idx+5])/A_sample) * 1000 # A to mA
+                name = name.replace(name[idx+1:idx+5],  f'{current_density:.0f}')
                 name = name.replace('A', r'mA $\mathdefault{cm^{-2}}$')
-
+                print(f'{sheet} | {name_print} | A to mA legend')
+            
             ### Sheet plotting ###
             if sheet == 'FullRange':
                 xlabel = r'Potential [V, RHE]'
@@ -56,6 +57,11 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 ylabel = r'Overpotential [V, RHE]'
                 plt.plot(np.log10(y), x + offset_Hg - 1.23, label = name)
                 save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print)
+
+            elif sheet == 'OptimalParameters':
+                xlabel = r'time [min]'
+                ylabel = r'Overpotential [mV]'
+                plt.scatter(x, y, label = name)
 
         plot_settings(xlabel, ylabel, columns, sheet, excelfile)
 
