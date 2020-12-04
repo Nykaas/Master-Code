@@ -2,12 +2,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
+import math
 
 from plot import plot_settings
+from CE import get_current_efficiency
 
 def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
     capacitance_data = []
     eta_data = []
+    CE_data = []
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
         for i in range(1, len(columns), 3): # Iterate data columns
@@ -35,6 +38,13 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 plt.plot(x + offset_Hg, y, label = name)
                 set_annotations(x, y, offset_Hg)
+                m_1 = (df[sheet][name][0])
+                m_2 = (df[sheet][name][1])
+                I = (df[sheet][name][2])
+                t = (df[sheet][name][3])
+                if math.isnan(m_1) == False:
+                    m_t, m_a, CE, loading = get_current_efficiency(m_1, m_2, I, t)
+                    save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, name_print)
             
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
                 if 'mA' in columns[i+1]:
@@ -63,9 +73,19 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 ylabel = r'Overpotential [mV]'
                 plt.scatter(x, y, label = name)
 
+            else:
+                plt.plot(x, y, label = name)
+
         plot_settings(xlabel, ylabel, columns, sheet, excelfile)
 
 ### Functions ###
+def save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, name_print):
+    CE_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Samplee': name_print,'m_t [g]':round(m_t,2), 'm_a [g]':round(m_a,2), 'CE [%]':round(CE,2), 'Loading [mg/cm2]':round(loading,2)}
+    CE_data.append(CE_temp)
+    ECSA_cap_df = pd.DataFrame(CE_data, columns = ['Sample', 'Samplee', 'm_t [g]', 'm_a [g]', 'CE [%]', 'Loading [mg/cm2]'])
+    ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='CE')
+    writer.save()
+
 def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print):
     c = 40 # uF/cm^2
     cdl, b = np.polyfit(x/1000, y, 1)
