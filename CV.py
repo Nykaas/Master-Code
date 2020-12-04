@@ -68,10 +68,11 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 plt.plot(np.log10(y), x + offset_Hg - 1.23, label = name)
                 save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print)
 
-            elif sheet == 'OptimalParameters':
-                xlabel = r'time [min]'
-                ylabel = r'Overpotential [mV]'
-                plt.scatter(x, y, label = name)
+            elif sheet == '10to100':
+                xlabel = r'E [V, RHE]'
+                ylabel = r'I [mA]'
+                name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
+                plt.plot(x, y, label = name)
 
             else:
                 plt.plot(x, y, label = name)
@@ -110,11 +111,11 @@ def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
 def set_annotations(x, y, offset_Hg):
     # Oxidation
     idx = np.argmax(y)
-    text = f'{y[idx]:.1f}'
+    text = f'{y[idx]:.1f}'+r'mA $\mathdefault{cm^{-2}}$'
     plt.annotate(
         text,
         xy=(x[idx] + offset_Hg, y[idx]),
-        xytext=(1.2, y[idx]),
+        xytext=(1.1, y[idx]),
         arrowprops=dict(facecolor='black', arrowstyle='simple'),
     )
     
@@ -122,10 +123,10 @@ def set_annotations(x, y, offset_Hg):
     idx = np.argmin(y[50:-100])
     x_ = x[50:-50]
     y_ = y[50:-50]
-    text = f'{y_[idx]:.1f}'
+    text = f'{y_[idx]:.1f}'+r'mA $\mathdefault{cm^{-2}}$'
     plt.annotate(
         text,
         xy=(x_[idx] + offset_Hg, y_[idx]),
-        xytext=(1.4, y_[idx]),
+        xytext=(1.3, y_[idx]),
         arrowprops=dict(facecolor='black', arrowstyle='simple')
     )
