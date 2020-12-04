@@ -108,6 +108,7 @@ def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
     writer.save()
 
 def set_annotations(x, y, offset_Hg):
+    # Oxidation
     idx = np.argmax(y)
     text = f'{y[idx]:.1f}'
     plt.annotate(
@@ -116,7 +117,9 @@ def set_annotations(x, y, offset_Hg):
         xytext=(1.2, y[idx]),
         arrowprops=dict(facecolor='black', arrowstyle='simple'),
     )
-    idx = np.argmin(y[50:-50])
+    
+    # Reduction
+    idx = np.argmin(y[50:-100])
     x_ = x[50:-50]
     y_ = y[50:-50]
     text = f'{y_[idx]:.1f}'

@@ -46,7 +46,7 @@ def in_situ_plot(df, excelfile, A_sample):
                     plt.plot(xs, ys, color = colors[color_index], label = name)
                     switch = False
                 else:
-                    plt.plot(xs, ys, linestyle = ':', color = colors[color_index], label = name)
+                    plt.plot(xs, ys, linestyle = '--', color = colors[color_index], label = name)
                     switch = True
                     color_index += 1
             
@@ -55,10 +55,10 @@ def in_situ_plot(df, excelfile, A_sample):
                 plt.plot(xs, ys, label = name)
             
             elif sheet == 'Durability':
-                if 'iridium' in name:
-                    name = r'NF iridium (1 A $\mathdefault{cm^{-2}}$)'
-                elif 'iron' in name:
-                    name = r'NF nickel iron (0.5 A $\mathdefault{cm^{-2}}$)(temp)'
+                if 'Ir' in name:
+                    name = r'Ir/NF (1 A $\mathdefault{cm^{-2}}$)'
+                elif 'Fe' in name:
+                    name = r'NiFe/NF (0.5 A $\mathdefault{cm^{-2}}$)(temp)'
                 else:
                     name = r'NF (0.5 A $\mathdefault{cm^{-2}}$)'
                 xs, ys = smooth(x, y)
