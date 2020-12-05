@@ -69,8 +69,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print)
 
             elif sheet == '10to100':
-                xlabel = r'E [V, RHE]'
-                ylabel = r'I [mA]'
+                xlabel = r'Potential [V, RHE]'
+                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
                 plt.plot(x, y, label = name)
 
