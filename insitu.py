@@ -38,7 +38,7 @@ def in_situ_plot(df, excelfile, A_sample):
                 ylabel = 'Cell voltage [V]'
             elif "EIS" in sheet:
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
-                ylabel = r'$\mathdefault{Z_{imaginary}\ [Ω \ cm^2]}$'
+                ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
 
             if sheet == 'Polarization':
                 xs, ys = smooth(x, y)
