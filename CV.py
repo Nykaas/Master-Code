@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 import math
+from scipy import signal
 
 from plot import plot_settings
 from CE import get_current_efficiency
@@ -36,8 +37,10 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             if sheet == 'FullRange':
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x + offset_Hg, y, label = name)
-                set_annotations(x, y, offset_Hg)
+                #plt.plot(x + offset_Hg, y, label = name) #check alignment
+                xs, ys = smooth(x, y)
+                plt.plot(xs + offset_Hg, ys, label = name)
+                set_annotations(xs, ys, offset_Hg, name)
                 m_1 = (df[sheet][name][0])
                 m_2 = (df[sheet][name][1])
                 I = (df[sheet][name][2])
@@ -108,14 +111,18 @@ def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
     eta_df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
     writer.save()
 
-def set_annotations(x, y, offset_Hg):
+def set_annotations(x, y, offset_Hg, name):
     # Oxidation
     idx = np.argmax(y)
-    text = f'{y[idx]:.1f}'+r'mA $\mathdefault{cm^{-2}}$'
+    text = f'{y[idx]:.1f}' + r' mA $\mathdefault{cm^{-2}}$'
+    if 'NiFe' not in name: # Offset to prevent text collision
+        pos = y[idx]-1
+    else:
+        pos = y[idx]
     plt.annotate(
         text,
         xy=(x[idx] + offset_Hg, y[idx]),
-        xytext=(1.1, y[idx]),
+        xytext=(1.1, pos),
         arrowprops=dict(facecolor='black', arrowstyle='simple'),
     )
     
@@ -123,10 +130,18 @@ def set_annotations(x, y, offset_Hg):
     idx = np.argmin(y[50:-100])
     x_ = x[50:-50]
     y_ = y[50:-50]
-    text = f'{y_[idx]:.1f}'+r'mA $\mathdefault{cm^{-2}}$'
+    text = f'{y_[idx]:.1f}' + r' mA $\mathdefault{cm^{-2}}$'
     plt.annotate(
         text,
         xy=(x_[idx] + offset_Hg, y_[idx]),
-        xytext=(1.3, y_[idx]),
+        xytext=(1.25, y_[idx]),
         arrowprops=dict(facecolor='black', arrowstyle='simple')
     )
+
+def smooth(x, y):
+    x = x[~np.isnan(x)]
+    y = y[~np.isnan(y)]
+    b, a = signal.butter(2, 0.03, analog=False)
+    xs = signal.filtfilt(b, a, x)
+    ys = signal.filtfilt(b, a, y)
+    return xs, ys
