@@ -56,13 +56,16 @@ def in_situ_plot(df, excelfile, A_sample):
             
             elif sheet == 'Durability':
                 if 'Ir' in name:
-                    name = r'Ir/NF (1 A $\mathdefault{cm^{-2}}$)'
+                    color1 = 'C2'
+                    name = r'Ir/NF (1.0 A $\mathdefault{cm^{-2}}$)'
                 elif 'Fe' in name:
+                    color1 = 'C0'
                     name = r'NiFe/NF (0.5 A $\mathdefault{cm^{-2}}$)(temp)'
                 else:
+                    color1 = 'C0'
                     name = r'NF (0.5 A $\mathdefault{cm^{-2}}$)'
                 xs, ys = smooth(x, y)
-                plt.plot(xs/3600, ys, label = name)
+                plt.plot(xs/3600, ys, label = name, color=color1)
             
             elif sheet == 'EIS':
                 if switch:
