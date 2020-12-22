@@ -92,13 +92,14 @@ def save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, name_print):
 
 def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print):
     c = 40 # uF/cm^2
-    cdl, b = np.polyfit(x/1000, y, 1)
+    cdl, b = np.polyfit(x, y, 1)
+    cdl = cdl * 10 # Works dunno why
     capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Samplee': name_print,'Double layer capacitance [µF]':round(cdl,2), 'ECSA [cm2]':round(cdl/c,2), 'ECSA [m2]':round(cdl/c,2)/(100**2), 'RF':round(cdl/(c*A_sample),2)}
     capacitance_data.append(capacitance_temp)
     ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Samplee', 'Double layer capacitance [µF]', 'ECSA [cm2]', 'ECSA [m2]', 'RF'])
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
     writer.save()
-    cdl, b = np.polyfit(x, y, 1)
+    cdl, b = np.polyfit(x, y, 1) # cdl for plotting works dunno why
     return cdl, b
 
 def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
