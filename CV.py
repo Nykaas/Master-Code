@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 import math
+from scipy import signal
 
 from plot import plot_settings
 from CE import get_current_efficiency
@@ -36,8 +37,10 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             if sheet == 'FullRange':
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x + offset_Hg, y, label = name)
-                set_annotations(x, y, offset_Hg)
+                #plt.plot(x + offset_Hg, y, label = name) #check alignment
+                xs, ys = smooth(x, y)
+                plt.plot(xs + offset_Hg, ys, label = name)
+                set_annotations(xs, ys, offset_Hg, name)
                 m_1 = (df[sheet][name][0])
                 m_2 = (df[sheet][name][1])
                 I = (df[sheet][name][2])
@@ -89,13 +92,14 @@ def save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, name_print):
 
 def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print):
     c = 40 # uF/cm^2
-    cdl, b = np.polyfit(x/1000, y, 1)
+    cdl, b = np.polyfit(x, y, 1)
+    cdl = cdl * 10 # Works dunno why
     capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Samplee': name_print,'Double layer capacitance [µF]':round(cdl,2), 'ECSA [cm2]':round(cdl/c,2), 'ECSA [m2]':round(cdl/c,2)/(100**2), 'RF':round(cdl/(c*A_sample),2)}
     capacitance_data.append(capacitance_temp)
     ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Samplee', 'Double layer capacitance [µF]', 'ECSA [cm2]', 'ECSA [m2]', 'RF'])
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
     writer.save()
-    cdl, b = np.polyfit(x, y, 1)
+    cdl, b = np.polyfit(x, y, 1) # cdl for plotting works dunno why
     return cdl, b
 
 def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
@@ -108,14 +112,18 @@ def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
     eta_df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
     writer.save()
 
-def set_annotations(x, y, offset_Hg):
+def set_annotations(x, y, offset_Hg, name):
     # Oxidation
     idx = np.argmax(y)
-    text = f'{y[idx]:.1f}'+r'mA $\mathdefault{cm^{-2}}$'
+    text = f'{y[idx]:.1f}' + r' mA $\mathdefault{cm^{-2}}$'
+    if 'NiFe' not in name: # Offset to prevent text collision
+        pos = y[idx]-1
+    else:
+        pos = y[idx]
     plt.annotate(
         text,
         xy=(x[idx] + offset_Hg, y[idx]),
-        xytext=(1.1, y[idx]),
+        xytext=(1.1, pos),
         arrowprops=dict(facecolor='black', arrowstyle='simple'),
     )
     
@@ -123,10 +131,18 @@ def set_annotations(x, y, offset_Hg):
     idx = np.argmin(y[50:-100])
     x_ = x[50:-50]
     y_ = y[50:-50]
-    text = f'{y_[idx]:.1f}'+r'mA $\mathdefault{cm^{-2}}$'
+    text = f'{y_[idx]:.1f}' + r' mA $\mathdefault{cm^{-2}}$'
     plt.annotate(
         text,
         xy=(x_[idx] + offset_Hg, y_[idx]),
-        xytext=(1.3, y_[idx]),
+        xytext=(1.25, y_[idx]),
         arrowprops=dict(facecolor='black', arrowstyle='simple')
     )
+
+def smooth(x, y):
+    x = x[~np.isnan(x)]
+    y = y[~np.isnan(y)]
+    b, a = signal.butter(2, 0.03, analog=False)
+    xs = signal.filtfilt(b, a, x)
+    ys = signal.filtfilt(b, a, y)
+    return xs, ys

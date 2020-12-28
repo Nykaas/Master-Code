@@ -26,8 +26,8 @@ def ED_plot(df, excelfile, A_sample, offset_Ag, writer):
                 name = name.replace('A', r'mA $\mathdefault{cm^{-2}}$')
 
             ### Plot ###
-            #plt.plot(x, y + offset_Ag, '--', label = columns[i+2]) # To check if smoothnes align
-            plt.plot(xs, ys + offset_Ag, color = 'C1', label = name)
+            #plt.plot(x/60, y + offset_Ag, '--', label = columns[i+2]) # To check if smoothnes align
+            plt.plot(xs/60, ys + offset_Ag, color = 'C1', label = name)
 
         plot_settings(xlabel, ylabel, columns, sheet, excelfile)
 

@@ -3,9 +3,9 @@ def get_current_efficiency(m_1, m_2, I, t):
     m_fe = 4.14
     m_ni = 36.38
     m_nis = 39.43
-    m_water = 300
-    m_absorbic = 0.5284
-    m_tot = m_fe + m_ni + m_nis + m_water + m_absorbic
+    #m_water = 300
+    #m_absorbic = 0.5284
+    m_tot = m_fe + m_ni + m_nis# + m_water + m_absorbic
 
     # Constants
     I = abs(I) # A
