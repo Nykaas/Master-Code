@@ -16,26 +16,27 @@ username = os.getlogin()
 ### Variables ###
 excelfiles = [
     'Ex_Comparison.xlsx',
-    'In_Comparison.xlsx'
+    'In_Comparison.xlsx',
+    'ED.xlsx'
 ]
 
-excelfile = excelfiles[-1]
+excelfile = excelfiles[0]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 offset_Ag = 0.322 # V at 2.12 pH
 
 ### Functions ###
 def get_dataframe():
-    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Data', excelfile) # for data in onedrive
+    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Data', excelfile) # for data in onedrive
     df = pd.read_excel(filepath, sheet_name = None) # None can be list of sheet names in string
     return df
 
 def makedir():
-    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, excelfile[:-5])
+    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5])
     if not os.path.isdir(filepath):
         os.makedirs(filepath)
 
 def writer():
-    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Specialization Project\3_Project plan\Lab\Plots\Draft', username, excelfile[:-5], r'Data.xlsx') # for data in onedrive
+    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], r'Data.xlsx') # for data in onedrive
     writer = pd.ExcelWriter(filepath)
     return writer
 
