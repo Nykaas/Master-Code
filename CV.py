@@ -37,8 +37,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             if sheet == 'FullRange':
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                #plt.plot(x + offset_Hg, y, label = name) #check alignment
                 xs, ys = smooth(x, y)
+                #plt.plot(x + offset_Hg, y, label = name) #check alignment
                 plt.plot(xs + offset_Hg, ys, label = name)
                 set_annotations(xs, ys, offset_Hg, name)
                 m_1 = (df[sheet][name][0])
@@ -50,11 +50,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                     save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, name_print)
             
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
-                if 'mA' in columns[i+1]:
-                    y *= 1000
-                    print(f'{sheet} | {name_print} | mA to uA')
                 xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
-                ylabel = r'Charging current [μA $\mathdefault{cm^{-2}}$]'
+                ylabel = r'Charging current [mA $\mathdefault{cm^{-2}}$]'
                 cdl, b = get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print)
                 plt.plot(x, (cdl*x + b) / A_sample, label = name)
                 print(f'{sheet} | {name_print} | I/Area A={A_sample}')
@@ -84,31 +81,32 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
 
 ### Functions ###
 def save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, name_print):
-    CE_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Samplee': name_print,'m_t [g]':round(m_t,2), 'm_a [g]':round(m_a,2), 'CE [%]':round(CE,2), 'Loading [mg/cm2]':round(loading,2)}
+    CE_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'm_t [g]':round(m_t,2), 'm_a [g]':round(m_a,2), 'CE [%]':round(CE,2), 'Loading [mg/cm2]':round(loading,2)}
     CE_data.append(CE_temp)
-    ECSA_cap_df = pd.DataFrame(CE_data, columns = ['Sample', 'Samplee', 'm_t [g]', 'm_a [g]', 'CE [%]', 'Loading [mg/cm2]'])
+    ECSA_cap_df = pd.DataFrame(CE_data, columns = ['Sample', 'm_t [g]', 'm_a [g]', 'CE [%]', 'Loading [mg/cm2]'])
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='CE')
     writer.save()
 
 def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print):
-    c = 40 # uF/cm^2
-    cdl, b = np.polyfit(x, y, 1)
-    cdl = cdl * 10 # Works dunno why
-    capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Samplee': name_print,'Double layer capacitance [µF]':round(cdl,2), 'ECSA [cm2]':round(cdl/c,2), 'ECSA [m2]':round(cdl/c,2)/(100**2), 'RF':round(cdl/(c*A_sample),2)}
+    # Calculations
+    cdl, b = np.polyfit(x, y, 1) # cdl [F]
+    c = 40e-6 # F/cm^2
+    ecsa = cdl / c # ecsa [cm^2]
+    # Save data
+    capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Cdl [F]':round(cdl,2), 'ECSA [cm2]':round(ecsa,2), 'RF':round(ecsa/A_sample,2)}
     capacitance_data.append(capacitance_temp)
-    ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Samplee', 'Double layer capacitance [µF]', 'ECSA [cm2]', 'ECSA [m2]', 'RF'])
+    ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Cdl [F]', 'ECSA [cm2]', 'RF'])
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
     writer.save()
-    cdl, b = np.polyfit(x, y, 1) # cdl for plotting works dunno why
     return cdl, b
 
 def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
     for i, j in enumerate(y):
         if round(j, 1) == 10:
             break
-    eta_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Samplee': name_print ,'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2)}
+    eta_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2)}
     eta_data.append(eta_temp)
-    eta_df = pd.DataFrame(eta_data, columns = ['Sample', 'Samplee' ,'Current density [mA cm-2]', 'Overpotential [mV]'])
+    eta_df = pd.DataFrame(eta_data, columns = ['Sample','Current density [mA cm-2]', 'Overpotential [mV]'])
     eta_df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
     writer.save()
 
