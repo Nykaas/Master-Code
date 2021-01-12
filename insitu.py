@@ -12,6 +12,11 @@ def in_situ_plot(df, excelfile, A_sample):
         columns = list(df[sheet].columns)
         switch = True
         color_index = 0
+
+        # Efficiency lists
+        eff_before = []
+        eff_after = []
+
         for i in range(1, len(columns), 3): # Iterate data columns
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
@@ -53,7 +58,47 @@ def in_situ_plot(df, excelfile, A_sample):
             elif sheet == 'Polarization_1h' or sheet == 'Polarization_end':
                 xs, ys = smooth(x, y)
                 plt.plot(xs, ys, label = name)
-            
+
+            elif sheet == 'Efficiency':
+                # Data appending
+                labels = ['NF', 'NiFe/NF', 'Ir/NF']                
+                for k,j in enumerate(x):
+                    if j >= 500:
+                        if 'before' in name:
+                            eff_before.append(round(100*(1.48/y[k]), 1))
+                        else:
+                            eff_after.append(round(100*(1.48/y[k]), 1))
+                        break
+                
+                # Plotting
+                if len(eff_after) == len(labels):
+                    w = np.arange(len(labels))
+                    width = 0.35
+
+                    fig, ax = plt.subplots(figsize=(9,7))
+                    rects1 = ax.bar(w - width/2, eff_before, width, label = 'Before', color = 'C7')
+                    rects2 = ax.bar(w + width/2, eff_after, width, label='After', color = 'C3')
+
+                    ylabel = 'Efficiency [%]'
+                    xlabel = ''
+                    plt.xticks(w, labels)
+
+                    def autolabel(rects):
+                        for rect in rects:
+                            height = rect.get_height()
+                            ax.annotate('{}'.format(height),
+                                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                                        xytext=(0, 3),  # 3 points vertical offset
+                                        textcoords="offset points",
+                                        ha='center', va='bottom', fontsize = 20)
+
+
+                    autolabel(rects1)
+                    autolabel(rects2)
+
+                    fig.tight_layout()
+                    plt.ylim(0,99)
+
             elif sheet == 'Durability':
                 if 'Ir' in name:
                     color1 = 'C2'
