@@ -10,6 +10,8 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile):
     if len(columns) > 3:
         if sheet == 'Efficiency':
             plt.legend(fontsize = 12, loc = 'lower right')
+        elif sheet == '10to100':
+            plt.legend(fontsize = 10, loc = 'center', ncol = 5, columnspacing = 1, bbox_to_anchor=(0.5, 1.07))
         else:
             plt.legend(fontsize = 12)
     username = os.getlogin()
