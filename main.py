@@ -44,7 +44,7 @@ def get_area(): # cm^2
     if 'RDE' in excelfile:
         return 0.196
     elif 'Ex' in excelfile or 'ED' in excelfile:
-        return 15
+        return 12.5
     elif 'In' in excelfile:
         return 6.25
     

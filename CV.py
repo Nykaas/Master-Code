@@ -23,8 +23,13 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             ylabel = df[sheet]['Graph_settings'][2]
             
             if 'cm2' in xlabel or 'cm2' in ylabel and sheet != 'ECSA-cap': # Correct for sample area
-                y /= A_sample
-                print(f'{sheet} | {name_print} | I/Area A={A_sample}')
+                if sheet == 'Impedance':
+                    y *= A_sample *-1
+                    x *= A_sample
+                    print(f'{sheet} | {name_print} | I*Area A = {A_sample}')
+                else:
+                    y /= A_sample
+                    print(f'{sheet} | {name_print} | I/Area A = {A_sample}')
             
             if 'A' in str(name): # Change to current density in label
                 idx = name.find('-')
@@ -54,7 +59,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 ylabel = r'Charging current [mA $\mathdefault{cm^{-2}}$]'
                 cdl, b = get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print)
                 plt.plot(x, (cdl*x + b) / A_sample, label = name)
-                print(f'{sheet} | {name_print} | I/Area A={A_sample}')
+                print(f'{sheet} | {name_print} | I/Area A = {A_sample}')
                 plt.scatter(x, y / A_sample, marker = 'x')
             
             elif sheet == 'LSV':
@@ -73,6 +78,17 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
                 plt.plot(x, y, label = name)
+            
+            elif sheet == 'Impedance':
+                xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
+                ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
+                if 'fit' in name:
+                    plt.plot(x, y, linestyle = '--')
+                    #plt.plot(x, y, linestyle = '--', color = colors[color_index])
+                    #color_index += 1
+                else:
+                    plt.scatter(x, y, s = 8, label = name)
+                    # plt.scatter(x, y*-1, s = 8, label = name, color = colors[color_index])
 
             else:
                 plt.plot(x, y, label = name)
