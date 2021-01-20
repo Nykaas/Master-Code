@@ -12,6 +12,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
     capacitance_data = []
     eta_data = []
     CE_data = []
+    CV_data = []
+    EIS_data = []
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
         for i in range(1, len(columns), 3): # Iterate data columns
@@ -45,7 +47,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 xs, ys = smooth(x, y)
                 #plt.plot(x + offset_Hg, y, label = name) #check alignment
                 plt.plot(xs + offset_Hg, ys, label = name)
-                set_annotations(xs, ys, offset_Hg, name)
+                set_annotations(xs, ys, offset_Hg, name, writer, CV_data)
                 m_1 = (df[sheet][name][0])
                 m_2 = (df[sheet][name][1])
                 I = (df[sheet][name][2])
@@ -84,11 +86,9 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
                     plt.plot(x, y, linestyle = '--')
-                    #plt.plot(x, y, linestyle = '--', color = colors[color_index])
-                    #color_index += 1
+                    save_EIS_data(x, EIS_data, writer, name)
                 else:
                     plt.scatter(x, y, s = 8, label = name)
-                    # plt.scatter(x, y*-1, s = 8, label = name, color = colors[color_index])
 
             else:
                 plt.plot(x, y, label = name)
@@ -96,6 +96,13 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
         plot_settings(xlabel, ylabel, columns, sheet, excelfile)
 
 ### Functions ###
+def save_EIS_data(x, EIS_data, writer, name):
+    temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'R, sol [ohm cm2]':round(min(x),2), 'R, pol [ohm cm2]':round(max(x)-min(x) ,2)}
+    EIS_data.append(temp)
+    df = pd.DataFrame(EIS_data, columns = ['Sample', 'R, sol [ohm cm2]', 'R, pol [ohm cm2]'])
+    df.to_excel(writer, index = False, header=True, sheet_name='EIS')
+    writer.save()
+
 def save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, name_print):
     CE_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'm_t [g]':round(m_t,2), 'm_a [g]':round(m_a,2), 'CE [%]':round(CE,2), 'Loading [mg/cm2]':round(loading,2)}
     CE_data.append(CE_temp)
@@ -126,10 +133,12 @@ def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
     eta_df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
     writer.save()
 
-def set_annotations(x, y, offset_Hg, name):
+def set_annotations(x, y, offset_Hg, name, writer, CV_data):
     # Oxidation
     idx = np.argmax(y)
     text = f'{y[idx]:.1f}' + r' mA $\mathdefault{cm^{-2}}$'
+    E_ox = round(x[idx], 2) + offset_Hg
+    i_ox = round(y[idx], 1)
     if 'NiFe' not in name: # Offset to prevent text collision
         pos = y[idx]-1
     else:
@@ -146,12 +155,20 @@ def set_annotations(x, y, offset_Hg, name):
     x_ = x[50:-50]
     y_ = y[50:-50]
     text = f'{y_[idx]:.1f}' + r' mA $\mathdefault{cm^{-2}}$'
+    E_red = round(x_[idx], 2) + offset_Hg
+    i_red = round(y_[idx], 1)
     plt.annotate(
         text,
         xy=(x_[idx] + offset_Hg, y_[idx]),
         xytext=(1.25, y_[idx]),
         arrowprops=dict(facecolor='black', arrowstyle='simple')
     )
+
+    CV_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'E, Ox [V]':E_ox, r'i, Ox [mA cm-2]':i_ox, 'E, Red [V]':E_red, r'i, Red [mA cm-2]':i_red}
+    CV_data.append(CV_temp)
+    CV_df = pd.DataFrame(CV_data, columns = ['Sample', 'E, Ox [V]', r'i, Ox [mA cm-2]', 'E, Red [V]', r'i, Red [mA cm-2]'])
+    CV_df.to_excel(writer, index = False, header=True, sheet_name='CV')
+    writer.save()
 
 def smooth(x, y):
     x = x[~np.isnan(x)]
