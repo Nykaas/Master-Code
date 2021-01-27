@@ -21,6 +21,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             y = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
             name_print = name
+            if name == 'NF' or name == 'NF fit':
+                A_sample = 15
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
             
@@ -125,7 +127,7 @@ def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_
 
 def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
     for i, j in enumerate(y):
-        if round(j, 1) == 10:
+        if 10.1 >= round(j, 1) >= 10.0:
             break
     eta_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2)}
     eta_data.append(eta_temp)
