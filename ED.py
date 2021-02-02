@@ -5,7 +5,7 @@ from scipy import signal
 
 from plot import plot_settings
 
-def ED_plot(df, excelfile, A_sample, offset_Ag, writer):
+def ED_plot(df, excelfile, A_sample, offset_Ag, writer, ECSA_norm):
     data = []
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)
@@ -29,7 +29,7 @@ def ED_plot(df, excelfile, A_sample, offset_Ag, writer):
             #plt.plot(x/60, y + offset_Ag, '--', label = columns[i+2]) # To check if smoothnes align
             plt.plot(xs/60, ys + offset_Ag, color = 'C1', label = name)
 
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm)
 
 def smooth(x, y):
     x = x[~np.isnan(x)]

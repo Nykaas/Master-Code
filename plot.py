@@ -1,7 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 
-def plot_settings(xlabel, ylabel, columns, sheet, excelfile):
+def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
     plt.xlabel(xlabel, fontsize = 12) # Include fontweight='bold' to bold the label
     plt.ylabel(ylabel, fontsize = 12) # Include fontweight='bold' to bold the label
     plt.xticks(fontsize = 12)
@@ -15,6 +15,9 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile):
         else:
             plt.legend(fontsize = 12)
     username = os.getlogin()
-    filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], sheet) # for data in onedrive
+    if ECSA_norm == 'Yes':
+        filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], f'{sheet}_ECSA') # for data in onedrive
+    else:
+        filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], sheet) # for data in onedrive
     plt.savefig(filepath, dpi = 300, bbox_inches='tight')
     plt.clf()

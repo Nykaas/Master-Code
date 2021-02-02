@@ -8,7 +8,7 @@ from scipy import signal
 from plot import plot_settings
 from CE import get_current_efficiency
 
-def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
+def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm):
     capacitance_data = []
     eta_data = []
     CE_data = []
@@ -21,8 +21,6 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             y = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
             name_print = name
-            if name == 'NF' or name == 'NF fit':
-                A_sample = 15
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
             
@@ -30,10 +28,17 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 if sheet == 'Impedance':
                     y *= A_sample *-1
                     x *= A_sample
-                    print(f'{sheet} | {name_print} | I*Area A = {A_sample}')
+                    if ECSA_norm == 'Yes':
+                        print(f'{sheet} | {name_print} | I*ECSA A = {A_sample}')
+                    else:
+                        print(f'{sheet} | {name_print} | I*Area ECSA = {A_sample}')
                 else:
+                    if ECSA_norm == 'Yes':
+                        print(f'{sheet} | {name_print} | I/ECSA ECSA = {A_sample}')
+                    else:
+                        print(f'{sheet} | {name_print} | I/Area A = {A_sample}')
                     y /= A_sample
-                    print(f'{sheet} | {name_print} | I/Area A = {A_sample}')
+                    
             
             if 'A' in str(name): # Change to current density in label
                 idx = name.find('-')
@@ -63,7 +68,6 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
                 ylabel = r'Charging current [mA $\mathdefault{cm^{-2}}$]'
                 cdl, b = get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print)
                 plt.plot(x, (cdl*x + b) / A_sample, label = name)
-                print(f'{sheet} | {name_print} | I/Area A = {A_sample}')
                 plt.scatter(x, y / A_sample, marker = 'x')
             
             elif sheet == 'LSV':
@@ -95,7 +99,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile):
             else:
                 plt.plot(x, y, label = name)
 
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm)
 
 ### Functions ###
 def save_EIS_data(x, EIS_data, writer, name):
@@ -129,9 +133,9 @@ def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
     for i, j in enumerate(y):
         if 10.1 >= round(j, 1) >= 10.0:
             break
-    eta_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2)}
+    eta_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2), 'Max current density [mA cm-2]':round(y[-1],2)}
     eta_data.append(eta_temp)
-    eta_df = pd.DataFrame(eta_data, columns = ['Sample','Current density [mA cm-2]', 'Overpotential [mV]'])
+    eta_df = pd.DataFrame(eta_data, columns = ['Sample','Current density [mA cm-2]', 'Overpotential [mV]', 'Max current density [mA cm-2]'])
     eta_df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
     writer.save()
 

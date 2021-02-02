@@ -127,7 +127,7 @@ def in_situ_plot(df, excelfile, A_sample):
                 else:
                     plt.scatter(x, y, s = 8, label = name, color = colors[color_index])
         
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm)
 
 def smooth(x, y):
     x = x[~np.isnan(x)]
