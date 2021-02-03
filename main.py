@@ -26,9 +26,8 @@ offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 bath_pH = 2.22 # Input bath pH for deposition process
 offset_Ag = 0.197 + (0.0591 * bath_pH) # V
 
-#ECSA_norm = 'Yes' # Normalize currents in plot by ECSA
-#ECSA = 356.82
-ECSA_norm = 'No' # Normalize currents in plot by SA
+ECSA_norm = 'Yes' # Normalize currents in plot by ECSA
+#ECSA_norm = 'No' # Normalize currents in plot by SA
 
 ### Functions ###
 def get_dataframe():
@@ -49,23 +48,21 @@ def writer(ECSA_norm):
     writer = pd.ExcelWriter(filepath)
     return writer
 
-def get_area(ECSA_norm): # cm^2
+def get_area(): # cm^2
     if 'RDE' in excelfile:
         return 0.196
     elif 'Ex' in excelfile or 'ED' in excelfile:
-        if ECSA_norm == 'Yes':
-            return ECSA
         return 12.5
     elif 'In' in excelfile:
         return 6.25
     
 def plot(df, excelfile):
     if 'Ex' in excelfile:
-        ex_situ_plot(df, writer(ECSA_norm), get_area(ECSA_norm), offset_Hg, excelfile, ECSA_norm)
+        ex_situ_plot(df, writer(ECSA_norm), get_area(), offset_Hg, excelfile, ECSA_norm)
     elif 'In' in excelfile:
-        in_situ_plot(df, excelfile, get_area(ECSA_norm))
+        in_situ_plot(df, excelfile, get_area())
     elif 'ED' in excelfile:
-        ED_plot(df, excelfile, get_area(ECSA_norm), offset_Ag, writer(ECSA_norm))
+        ED_plot(df, excelfile, get_area(), offset_Ag, writer(ECSA_norm))
 
 makedir()
 df = get_dataframe()

@@ -20,6 +20,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm):
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
+            if ECSA_norm == 'Yes':
+                A_sample = float(df[sheet][name][0])
             name_print = name
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
