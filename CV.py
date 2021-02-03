@@ -11,7 +11,6 @@ from CE import get_current_efficiency
 def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm):
     capacitance_data = []
     eta_data = []
-    CE_data = []
     CV_data = []
     EIS_data = []
     for sheet in df: # Iterate sheet name as key in df dictionary
@@ -55,13 +54,6 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm):
                 #plt.plot(x + offset_Hg, y, label = name) #check alignment
                 plt.plot(xs + offset_Hg, ys, label = name)
                 set_annotations(xs, ys, offset_Hg, name, writer, CV_data)
-                m_1 = (df[sheet][name][0])
-                m_2 = (df[sheet][name][1])
-                I = (df[sheet][name][2])
-                t = (df[sheet][name][3])
-                if math.isnan(m_1) == False:
-                    m_t, m_a, CE, loading = get_current_efficiency(m_1, m_2, I, t)
-                    save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, name_print)
             
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
                 xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
@@ -107,13 +99,6 @@ def save_EIS_data(x, EIS_data, writer, name):
     EIS_data.append(temp)
     df = pd.DataFrame(EIS_data, columns = ['Sample', 'R, sol [ohm cm2]', 'R, pol [ohm cm2]'])
     df.to_excel(writer, index = False, header=True, sheet_name='EIS')
-    writer.save()
-
-def save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, name_print):
-    CE_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'm_t [g]':round(m_t,2), 'm_a [g]':round(m_a,2), 'CE [%]':round(CE,2), 'Loading [mg/cm2]':round(loading,2)}
-    CE_data.append(CE_temp)
-    ECSA_cap_df = pd.DataFrame(CE_data, columns = ['Sample', 'm_t [g]', 'm_a [g]', 'CE [%]', 'Loading [mg/cm2]'])
-    ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='CE')
     writer.save()
 
 def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print):

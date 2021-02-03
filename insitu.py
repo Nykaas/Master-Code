@@ -6,7 +6,7 @@ from scipy import signal
 
 from plot import plot_settings
 
-def in_situ_plot(df, excelfile, A_sample):
+def in_situ_plot(df, excelfile, A_sample, ECSA_norm):
     colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6']
     for sheet in df: # Iterate sheet name as key in df dictionary
         columns = list(df[sheet].columns)

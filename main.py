@@ -19,13 +19,10 @@ excelfiles = [
     'In_Comparison.xlsx',
     'ED.xlsx'
 ]
-
-excelfile = excelfiles[0]
+excelfile = excelfiles[2]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
-
-bath_pH = 2.22 # Input bath pH for deposition process
+bath_pH = 3.7 # Input bath pH for deposition process
 offset_Ag = 0.197 + (0.0591 * bath_pH) # V
-
 #ECSA_norm = 'Yes' # Normalize currents in plot by ECSA
 #ECSA = 356.82
 ECSA_norm = 'No' # Normalize currents in plot by SA
@@ -63,9 +60,9 @@ def plot(df, excelfile):
     if 'Ex' in excelfile:
         ex_situ_plot(df, writer(ECSA_norm), get_area(ECSA_norm), offset_Hg, excelfile, ECSA_norm)
     elif 'In' in excelfile:
-        in_situ_plot(df, excelfile, get_area(ECSA_norm))
+        in_situ_plot(df, excelfile, get_area(ECSA_norm), ECSA_norm)
     elif 'ED' in excelfile:
-        ED_plot(df, excelfile, get_area(ECSA_norm), offset_Ag, writer(ECSA_norm))
+        ED_plot(df, excelfile, get_area(ECSA_norm), offset_Ag, writer(ECSA_norm), ECSA_norm)
 
 makedir()
 df = get_dataframe()
