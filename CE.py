@@ -1,4 +1,8 @@
-def get_current_efficiency(m_1, m_2, I, t):
+def get_current_efficiency(df, sheet, name):
+    m_1 = (df[sheet][name][0])
+    m_2 = (df[sheet][name][1])
+    I = (df[sheet][name][2])
+    t = (df[sheet][name][3])
     # Variables, BATH, Mass constituents in grams, Watts bath made 01.02.21
     volume = 0.4 # L
     m_fe = 0 * volume # g/L
@@ -33,4 +37,4 @@ def get_current_efficiency(m_1, m_2, I, t):
     loading = (m_a / A_sample) * 1000 # g to mg
     #print(f'Loading = {loading:.2f} mg/cm2')
 
-    return  m_t, m_a, CE, loading
+    return  m_t, m_a, CE, loading, I, t

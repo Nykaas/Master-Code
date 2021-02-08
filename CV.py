@@ -13,32 +13,37 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm):
     eta_data = []
     CV_data = []
     EIS_data = []
+    A_sample_RF = A_sample
+    if ECSA_norm:
+        reference = 'NF'
+        ECSA_samples = get_ECSA(df)
+    
     for sheet in df: # Iterate sheet name as key in df dictionary
+        print(f'--- {sheet} ---')
         columns = list(df[sheet].columns)
+        xlabel = df[sheet]['Graph_settings'][1]
+        ylabel = df[sheet]['Graph_settings'][2]
         for i in range(1, len(columns), 3): # Iterate data columns
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
             name_print = name
-            xlabel = df[sheet]['Graph_settings'][1]
-            ylabel = df[sheet]['Graph_settings'][2]
-            
-            if 'cm2' in xlabel or 'cm2' in ylabel and sheet != 'ECSA-cap': # Correct for sample area
+            if 'cm' in xlabel or 'cm' in ylabel and sheet != 'ECSA-cap': # Correct for sample area
                 if sheet == 'Impedance':
+                    if ECSA_norm:
+                        A_sample = ECSA_samples[reference]
                     y *= A_sample *-1
                     x *= A_sample
-                    if ECSA_norm == 'Yes':
-                        print(f'{sheet} | {name_print} | I*ECSA A = {A_sample}')
-                    else:
-                        print(f'{sheet} | {name_print} | I*Area ECSA = {A_sample}')
+                    print(f'{name_print} | I*{A_sample:.0f}[cm^2]')
                 else:
-                    if ECSA_norm == 'Yes':
-                        print(f'{sheet} | {name_print} | I/ECSA ECSA = {A_sample}')
-                    else:
-                        print(f'{sheet} | {name_print} | I/Area A = {A_sample}')
+                    if ECSA_norm:
+                        if sheet == '10to100':
+                            A_sample = ECSA_samples[reference]
+                        else:
+                            A_sample = ECSA_samples[name]
+                    print(f'{name_print} | I/{A_sample:.0f}[cm^2]')
                     y /= A_sample
                     
-            
             if 'A' in str(name): # Change to current density in label
                 idx = name.find('-')
                 current_density = (float(name[idx+1:idx+5])/A_sample) * 1000 # A to mA
@@ -58,7 +63,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm):
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
                 xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
                 ylabel = r'Charging current [mA $\mathdefault{cm^{-2}}$]'
-                cdl, b = get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print)
+                cdl, b = get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample_RF, name_print)
                 plt.plot(x, (cdl*x + b) / A_sample, label = name)
                 plt.scatter(x, y / A_sample, marker = 'x')
             
@@ -101,18 +106,30 @@ def save_EIS_data(x, EIS_data, writer, name):
     df.to_excel(writer, index = False, header=True, sheet_name='EIS')
     writer.save()
 
-def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample, name_print):
-    # Calculations
+def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample_RF, name_print):
     cdl, b = np.polyfit(x, y, 1) # cdl [F]
     c = 40e-6 # F/cm^2
-    ecsa = cdl / c # ecsa [cm^2]
+    ECSA = cdl / c # ECSA [cm^2]
     # Save data
-    capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Cdl [F]':round(cdl,2), 'ECSA [cm2]':round(ecsa,2), 'RF':round(ecsa/A_sample,2)}
+    capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Cdl [F]':round(cdl,2), 'ECSA [cm2]':round(ECSA,2), 'RF':round(ECSA/A_sample_RF,2)}
     capacitance_data.append(capacitance_temp)
     ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Cdl [F]', 'ECSA [cm2]', 'RF'])
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
     writer.save()
     return cdl, b
+
+def get_ECSA(df):
+    ECSA_samples = {}
+    columns = list(df['ECSA-cap'].columns)
+    for i in range(1, len(columns), 3): # Iterate data columns
+        name = columns[i+2]
+        x = np.array(df['ECSA-cap'][columns[i]].tolist())
+        y = np.array(df['ECSA-cap'][columns[i+1]].tolist())
+        cdl, b = np.polyfit(x, y, 1) # cdl [F]
+        c = 40e-6 # F/cm^2
+        ECSA = cdl / c # ECSA [cm^2]
+        ECSA_samples[name] = ECSA
+    return ECSA_samples
 
 def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
     for i, j in enumerate(y):

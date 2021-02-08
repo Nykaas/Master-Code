@@ -17,15 +17,13 @@ username = os.getlogin()
 excelfiles = [
     'Ex_Comparison.xlsx',
     'In_Comparison.xlsx',
-    'ED.xlsx'
+    'ED.xlsx',
+    'ED_Polarization.xlsx'
 ]
 excelfile = excelfiles[2]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
-bath_pH = 3.7 # Input bath pH for deposition process
-offset_Ag = 0.197 + (0.0591 * bath_pH) # V
-#ECSA_norm = 'Yes' # Normalize currents in plot by ECSA
-#ECSA = 356.82
-ECSA_norm = 'No' # Normalize currents in plot by SA
+bath_pH = 1.1 # Input bath pH for deposition process
+ECSA_norm = True # Normalize currents with ECSA (True) or SA (False)
 
 ### Functions ###
 def get_dataframe():
@@ -39,35 +37,34 @@ def makedir():
         os.makedirs(filepath)
 
 def writer(ECSA_norm):
-    if ECSA_norm == 'Yes':
+    if ECSA_norm:
         filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], r'Data_ECSA.xlsx') # for data in onedrive
     else:
         filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], r'Data.xlsx') # for data in onedrive
     writer = pd.ExcelWriter(filepath)
     return writer
 
-def get_area(ECSA_norm): # cm^2
+def get_area(): # cm^2
     if 'RDE' in excelfile:
         return 0.196
     elif 'Ex' in excelfile or 'ED' in excelfile:
-        if ECSA_norm == 'Yes':
-            return ECSA
         return 12.5
     elif 'In' in excelfile:
         return 6.25
     
-def plot(df, excelfile):
+def plot(df, excelfile):    
+    print(excelfile)
     if 'Ex' in excelfile:
-        ex_situ_plot(df, writer(ECSA_norm), get_area(ECSA_norm), offset_Hg, excelfile, ECSA_norm)
+        ex_situ_plot(df, writer(ECSA_norm), get_area(), offset_Hg, excelfile, ECSA_norm)
     elif 'In' in excelfile:
-        in_situ_plot(df, excelfile, get_area(ECSA_norm), ECSA_norm)
+        in_situ_plot(df, excelfile, get_area(), ECSA_norm)
     elif 'ED' in excelfile:
-        ED_plot(df, excelfile, get_area(ECSA_norm), offset_Ag, writer(ECSA_norm), ECSA_norm)
+        ED_plot(df, excelfile, get_area(), bath_pH, writer(ECSA_norm), ECSA_norm)
 
 makedir()
 df = get_dataframe()
 plot(df, excelfile)
-if ECSA_norm == 'Yes':
+if ECSA_norm:
     print(f'Plots/Data from {excelfile} normalized by ECSA saved in {(timer()-start):.2f}s! Have a great day {username.capitalize()}.')
 else:
     print(f'Plots/Data from {excelfile} normalized by SA saved in {(timer()-start):.2f}s! Have a great day {username.capitalize()}.')
