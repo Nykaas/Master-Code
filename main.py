@@ -20,10 +20,14 @@ excelfiles = [
     'ED.xlsx',
     'ED_Polarization.xlsx'
 ]
-excelfile = excelfiles[2]
+excelfile = excelfiles[3]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
-bath_pH = 1.1 # Input bath pH for deposition process
+bath_pH = 1.1 # ED electrolyte pH
 ECSA_norm = True # Normalize currents with ECSA (True) or SA (False)
+smooth = True # Smooths x and y data
+trim, num_datapoints = True, 30 # Specify number of datapoints
+symbols = ['v', 'o', 's', '*', 'x','1', '2', '3', '4', '8']
+
 
 ### Functions ###
 def get_dataframe():
@@ -53,17 +57,17 @@ def get_area(): # cm^2
         return 6.25
     
 def plot(df, excelfile):    
-    print(excelfile)
     if 'Ex' in excelfile:
-        ex_situ_plot(df, writer(ECSA_norm), get_area(), offset_Hg, excelfile, ECSA_norm)
+        ex_situ_plot(df, writer(ECSA_norm), get_area(), offset_Hg, excelfile, ECSA_norm, smooth, trim, num_datapoints, symbols)
     elif 'In' in excelfile:
-        in_situ_plot(df, excelfile, get_area(), ECSA_norm)
+        in_situ_plot(df, excelfile, get_area(), ECSA_norm, smooth, trim, num_datapoints, symbols)
     elif 'ED' in excelfile:
-        ED_plot(df, excelfile, get_area(), bath_pH, writer(ECSA_norm), ECSA_norm)
+        ED_plot(df, excelfile, get_area(), bath_pH, writer(ECSA_norm), ECSA_norm, smooth, trim, num_datapoints, symbols)
 
 makedir()
 df = get_dataframe()
 plot(df, excelfile)
+
 if ECSA_norm:
     print(f'Plots/Data from {excelfile} normalized by ECSA saved in {(timer()-start):.2f}s! Have a great day {username.capitalize()}.')
 else:

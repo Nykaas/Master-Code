@@ -2,10 +2,13 @@ import os
 import matplotlib.pyplot as plt
 
 def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
-    plt.xlabel(xlabel, fontsize = 12) # Include fontweight='bold' to bold the label
-    plt.ylabel(ylabel, fontsize = 12) # Include fontweight='bold' to bold the label
-    plt.xticks(fontsize = 12)
-    plt.yticks(fontsize = 12)
+    plt.xlabel(xlabel, fontsize = 14) # Include fontweight='bold' to bold the label
+    plt.ylabel(ylabel, fontsize = 14) # Include fontweight='bold' to bold the label
+    plt.xticks(fontsize = 14)
+    plt.yticks(fontsize = 14)
+    plt.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.5)
+    plt.minorticks_on() # Show the minor grid lines with very faint and almost transparent grey lines
+    plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
     #plt.xlim(-5,95)
     if len(columns) > 3:
         if sheet == 'Efficiency':

@@ -15,3 +15,40 @@ def save_alpha_data(x, y, A_sample, writer, offset_Hg, alpha_data, name):
     ECSA_alpha_df = pd.DataFrame(alpha_data, columns = ['Sample', 'Charge, Q [µF]', 'ECSA [cm2]', 'RF'])
     ECSA_alpha_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-alpha')
     writer.save()
+
+def set_annotations(x, y, offset_Hg, name, writer, CV_data):
+    # Oxidation
+    idx = np.argmax(y)
+    text = f'{y[idx]:.1f}' + r' mA $\mathdefault{cm^{-2}}$'
+    E_ox = round(x[idx], 2) + offset_Hg
+    i_ox = round(y[idx], 1)
+    if 'NiFe' not in name: # Offset to prevent text collision
+        pos = y[idx]-1
+    else:
+        pos = y[idx]
+    plt.annotate(
+        text,
+        xy=(x[idx] + offset_Hg, y[idx]),
+        xytext=(1.1, pos),
+        arrowprops=dict(facecolor='black', arrowstyle='simple'),
+    )
+    
+    # Reduction
+    idx = np.argmin(y)
+    x_ = x[50:-50]
+    y_ = y[50:-50]
+    text = f'{y_[idx]:.1f}' + r' mA $\mathdefault{cm^{-2}}$'
+    E_red = round(x_[idx], 2) + offset_Hg
+    i_red = round(y_[idx], 1)
+    plt.annotate(
+        text,
+        xy=(x_[idx] + offset_Hg, y_[idx]),
+        xytext=(1.25, y_[idx]),
+        arrowprops=dict(facecolor='black', arrowstyle='simple')
+    )
+
+    CV_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'E, Ox [V]':E_ox, r'i, Ox [mA cm-2]':i_ox, 'E, Red [V]':E_red, r'i, Red [mA cm-2]':i_red}
+    CV_data.append(CV_temp)
+    CV_df = pd.DataFrame(CV_data, columns = ['Sample', 'E, Ox [V]', r'i, Ox [mA cm-2]', 'E, Red [V]', r'i, Red [mA cm-2]'])
+    CV_df.to_excel(writer, index = False, header=True, sheet_name='CV')
+    writer.save()
