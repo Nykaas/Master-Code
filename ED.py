@@ -57,6 +57,11 @@ def ED_plot(df, excelfile, A_sample, bath_pH, writer, smooth, markers):
                 xlabel = r'Time [s]'
                 ylabel = r'E [V vs. RHE]'
                 plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
+
+            elif 'EI' in sheet: # CV switch axis
+                ylabel = r'E [V vs. RHE]'
+                xlabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                plt.plot(x/A_sample, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
