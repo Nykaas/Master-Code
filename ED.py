@@ -7,7 +7,7 @@ from plot import plot_settings
 from CE import get_current_efficiency
 from xy_smooth import smooth_xy
 
-def ED_plot(df, excelfile, A_sample, bath_pH, writer, smooth, markers, ECSA_norm,):
+def ED_plot(df, excelfile, A_sample, bath_pH, writer, smooth, markers):
     offset_Ag = 0.197 + (0.0591 * bath_pH) # V
     print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
     CE_data = []
@@ -33,28 +33,33 @@ def ED_plot(df, excelfile, A_sample, bath_pH, writer, smooth, markers, ECSA_norm
 
             if 'V' in name: # Correct Ag/Cl offset in label
                 idx = name.find('V')
-                name = name.replace(name[idx-4:idx-1],  f'{round(float(name[idx-4:idx-1])+round(offset_Ag), 2)}')
-                print('Label: AgCl offset')
+                E = round(float(name[idx-4:idx-1]) + offset_Ag, 2)
+                name = name.replace(name[idx-4:idx-1], str(E))
+                name += ' RHE'
+                print(f'Label: AgCl offset {name}')
             
             if CE_toggle == 'CE': # Current efficiency
                 m_t, m_a, CE, loading, I, t = get_current_efficiency(df, sheet, name)
                 save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, I, t)
             
             ### Plot ###
-            if 'CV' in sheet:
-                plt.plot(x + offset_Ag, y, label = name, marker = markers[markers_idx], markevery = 0.1)
+            if 'IE' in sheet: # CV
+                xlabel = r'E [V vs. RHE]'
+                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
 
             elif 'It' in sheet: # Constant potential
                 xlabel = r'Time [s]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                y /= A_sample
-                plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
             
             elif 'Et' in sheet: # Constant current
+                xlabel = r'Time [s]'
+                ylabel = r'E [V vs. RHE]'
                 plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
             
             markers_idx += 1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
 
 def save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, I, t):
     CE_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current [A]': I, 'Time [s]': t, 'm_t [g]':round(m_t,2), 'm_a [g]':round(m_a,2), 'CE [%]':round(CE,2), 'Loading [mg/cm2]':round(loading,2)}

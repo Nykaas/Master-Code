@@ -19,7 +19,7 @@ excelfiles = [
     'In_Comparison.xlsx', # 1
     'ED.xlsx', # 2
 ]
-excelfile = excelfiles[2]
+excelfile = excelfiles[1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 bath_pH = 5.1 # ED electrolyte pH
 ECSA_norm = True # Normalize currents with ECSA for exsitu only
@@ -58,9 +58,9 @@ def plot(df, excelfile):
     if 'Ex' in excelfile:
         ex_situ_plot(df, writer(ECSA_norm), get_area(), offset_Hg, excelfile, ECSA_norm, smooth, markers)
     elif 'In' in excelfile:
-        in_situ_plot(df, excelfile, get_area(), smooth, markers, ECSA_norm=False)
+        in_situ_plot(df, excelfile, get_area(), smooth, markers)
     elif 'ED' in excelfile:
-        ED_plot(df, excelfile, get_area(), bath_pH, writer(ECSA_norm), smooth, markers, ECSA_norm=False)
+        ED_plot(df, excelfile, get_area(), bath_pH, writer(ECSA_norm=False), smooth, markers)
 
 makedir()
 df = get_dataframe()

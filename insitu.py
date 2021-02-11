@@ -6,7 +6,7 @@ from xy_smooth import smooth_xy
 
 from plot import plot_settings
 
-def in_situ_plot(df, excelfile, A_sample, smooth, markers, ECSA_norm):
+def in_situ_plot(df, excelfile, A_sample, smooth, markers):
     colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6']
     for sheet in df: # Iterate sheet name as key in df dictionary
         print(f'--- {sheet} ---')
@@ -121,4 +121,4 @@ def in_situ_plot(df, excelfile, A_sample, smooth, markers, ECSA_norm):
                 else:
                     plt.scatter(x, y, s = 8, label = name, color = colors[color_index], marker = markers[markers_idx])
             markers_idx +=1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
