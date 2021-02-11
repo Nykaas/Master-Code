@@ -3,12 +3,12 @@ import pandas as pd
 import numpy as np
 import os
 import math
-from XY_data import process_xy_data
+from xy_smooth import smooth_xy
 
 from plot import plot_settings
 from CE import get_current_efficiency
 
-def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm, smooth, trim, num_datapoints, symbols):
+def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm, smooth, markers):
     capacitance_data = []
     eta_data = []
     CV_data = []
@@ -47,8 +47,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm, smooth, 
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = process_xy_data(x, y, num_datapoints, smooth, trim)
-                plt.plot(x + offset_Hg, y, label = name, marker = symbols[symbols_count])
+                x, y = smooth_xy(x, y, smooth)
+                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1)
             
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
                 xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
@@ -59,7 +59,7 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm, smooth, 
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 cdl, b = get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample_RF, name_print)
                 plt.plot(x, (cdl*x + b) / A_sample, label = name)
-                plt.scatter(x, y / A_sample, marker = 'x')
+                plt.scatter(x, y / A_sample, marker = markers[symbols_count])
             
             elif sheet == 'LSV':
                 xlabel = r'Potential [V, RHE]'
@@ -68,8 +68,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm, smooth, 
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = process_xy_data(x, y, num_datapoints, smooth, trim)
-                plt.plot(x + offset_Hg, y, label = name, marker = symbols[symbols_count])
+                x, y = smooth_xy(x, y, smooth)
+                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1)
 
             elif sheet == 'Tafel':
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
@@ -78,8 +78,8 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm, smooth, 
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = process_xy_data(x, y, num_datapoints, smooth, trim)
-                plt.plot(np.log10(y), x + offset_Hg - 1.23, label = name, marker = symbols[symbols_count])
+                x, y = smooth_xy(x, y, smooth)
+                plt.plot(np.log10(y), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = 0.1)
                 x = np.array(df[sheet][columns[i]].tolist())
                 y = np.array(df[sheet][columns[i+1]].tolist())
                 y /= A_sample
@@ -92,9 +92,9 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm, smooth, 
                     A_sample = ECSA_samples[reference]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = process_xy_data(x, y, num_datapoints, smooth, trim)
+                x, y = smooth_xy(x, y, smooth)
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
-                plt.plot(x, y, label = name, marker = symbols[symbols_count])
+                plt.plot(x, y, label = name, marker = markers[symbols_count], markevery = 0.1)
             
             elif sheet == 'Impedance':
                 if ECSA_norm:
