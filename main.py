@@ -19,11 +19,11 @@ excelfiles = [
     'In_Comparison.xlsx', # 1
     'ED.xlsx', # 2
 ]
-excelfile = excelfiles[1]
+excelfile = excelfiles[2]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 bath_pH = 4.1 # ED electrolyte pH
 ECSA_norm = True # Normalize currents with ECSA for exsitu only
-smooth = True # Smooths x and y data
+smooth = False # Smooths x and y data
 markers = ['v', 'o', 's', '*', 'x','1', '2', '3', '4', '8']
 
 

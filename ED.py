@@ -13,6 +13,8 @@ def ED_plot(df, excelfile, bath_pH, writer, smooth, markers):
     print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
     CE_data = []
     for sheet in df: # Iterate sheet name as key in df dictionary
+        if sheet == 'ECSA-cap':
+            continue
         print(f'--- {sheet} ---')
         columns = list(df[sheet].columns)
         markers_idx = 0
@@ -53,12 +55,12 @@ def ED_plot(df, excelfile, bath_pH, writer, smooth, markers):
                 print(f'Area GC = {A_sample}')
             
             elif 'NF' in name or 'Nickel felt' in name:
-                A_sample = 334 # cm^2
-                print(f'ECSA NF = {A_sample}')
+                A_sample = get_ECSA(df)
+                print(f'ECSA NF = {A_sample:.2f}')
            
             else:
                 A_sample = 12.5 # cm^2
-                print(f'Area NF = {A_sample}')
+                print(f'Area {name} = {A_sample}')
             
             ### Plot ###
             if 'CV' in sheet: # CV
@@ -85,3 +87,12 @@ def save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, I, t):
     CE_df = pd.DataFrame(CE_data, columns = ['Sample', 'Current [A]', 'Time [s]', 'm_t [g]', 'm_a [g]', 'CE [%]', 'Loading [mg/cm2]'])
     CE_df.to_excel(writer, index = False, header=True, sheet_name='CE')
     writer.save()
+
+def get_ECSA(df):
+    columns = list(df['ECSA-cap'].columns)
+    x = np.array(df['ECSA-cap'][columns[1]].tolist())
+    y = np.array(df['ECSA-cap'][columns[2]].tolist())
+    cdl, b = np.polyfit(x, y, 1) # cdl [F]
+    c = 40e-6 # F/cm^2
+    ECSA = cdl / c # ECSA [cm^2]
+    return ECSA
