@@ -19,9 +19,9 @@ excelfiles = [
     'In_Comparison.xlsx', # 1
     'ED.xlsx', # 2
 ]
-excelfile = excelfiles[2]
+excelfile = excelfiles[1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
-bath_pH = 5.1 # ED electrolyte pH
+bath_pH = 4.1 # ED electrolyte pH
 ECSA_norm = True # Normalize currents with ECSA for exsitu only
 smooth = True # Smooths x and y data
 markers = ['v', 'o', 's', '*', 'x','1', '2', '3', '4', '8']
@@ -45,22 +45,14 @@ def writer(ECSA_norm):
         filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], r'Data.xlsx') # for data in onedrive
     writer = pd.ExcelWriter(filepath)
     return writer
-
-def get_area(): # cm^2
-    if 'RDE' in excelfile:
-        return 0.196
-    elif 'Ex' in excelfile or 'ED' in excelfile:
-        return 12.5
-    elif 'In' in excelfile:
-        return 6.25
     
 def plot(df, excelfile):    
     if 'Ex' in excelfile:
-        ex_situ_plot(df, writer(ECSA_norm), get_area(), offset_Hg, excelfile, ECSA_norm, smooth, markers)
+        ex_situ_plot(df, writer(ECSA_norm), offset_Hg, excelfile, ECSA_norm, smooth, markers)
     elif 'In' in excelfile:
-        in_situ_plot(df, excelfile, get_area(), smooth, markers)
+        in_situ_plot(df, excelfile, smooth, markers)
     elif 'ED' in excelfile:
-        ED_plot(df, excelfile, get_area(), bath_pH, writer(ECSA_norm=False), smooth, markers)
+        ED_plot(df, excelfile, bath_pH, writer(ECSA_norm=False), smooth, markers)
 
 makedir()
 df = get_dataframe()
