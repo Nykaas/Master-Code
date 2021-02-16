@@ -12,6 +12,7 @@ def ED_plot(df, excelfile, bath_pH, writer, smooth, markers):
     offset_Ag = 0.197 + (0.0591 * bath_pH) # V
     print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
     CE_data = []
+    ECSA = get_ECSA(df)
     for sheet in df: # Iterate sheet name as key in df dictionary
         if sheet == 'ECSA-cap':
             continue
@@ -55,7 +56,7 @@ def ED_plot(df, excelfile, bath_pH, writer, smooth, markers):
                 print(f'Area GC = {A_sample}')
             
             elif 'NF' in name or 'Nickel felt' in name:
-                A_sample = get_ECSA(df)
+                A_sample = ECSA
                 print(f'ECSA NF = {A_sample:.2f}')
            
             else:
