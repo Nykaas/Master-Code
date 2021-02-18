@@ -52,3 +52,11 @@ def set_annotations(x, y, offset_Hg, name, writer, CV_data):
     CV_df = pd.DataFrame(CV_data, columns = ['Sample', 'E, Ox [V]', r'i, Ox [mA cm-2]', 'E, Red [V]', r'i, Red [mA cm-2]'])
     CV_df.to_excel(writer, index = False, header=True, sheet_name='CV')
     writer.save()
+
+def get_area(): # cm^2
+    if 'RDE' in excelfile:
+        return 0.196
+    elif 'Ex' in excelfile or 'ED' in excelfile:
+        return 12.5
+    elif 'In' in excelfile:
+        return 6.25

@@ -6,7 +6,8 @@ from xy_smooth import smooth_xy
 
 from plot import plot_settings
 
-def in_situ_plot(df, excelfile, A_sample, smooth, markers):
+def in_situ_plot(df, excelfile, smooth, markers):
+    A_sample = 6.25 # cm^2
     colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6']
     for sheet in df: # Iterate sheet name as key in df dictionary
         print(f'--- {sheet} ---')
@@ -80,7 +81,7 @@ def in_situ_plot(df, excelfile, A_sample, smooth, markers):
                     autolabel(rects1)
                     autolabel(rects2)
                     fig.tight_layout()
-                    plt.ylim(0,99)
+                    plt.ylim(0,100)
 
             elif sheet == 'Durability':
                 x, y = smooth_xy(x, y, smooth)

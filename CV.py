@@ -8,7 +8,8 @@ from xy_smooth import smooth_xy
 from plot import plot_settings
 from CE import get_current_efficiency
 
-def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm, smooth, markers):
+def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
+    A_sample = 12.5 # cm^2
     capacitance_data = []
     eta_data = []
     CV_data = []
@@ -110,7 +111,6 @@ def ex_situ_plot(df, writer, A_sample, offset_Hg, excelfile, ECSA_norm, smooth, 
                 else:
                     plt.scatter(x, y, s = 8, label = name)
 
-            
             symbols_count += 1
 
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm)
