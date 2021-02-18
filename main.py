@@ -19,7 +19,7 @@ excelfiles = [
     'In_Comparison.xlsx', # 1
     'ED.xlsx', # 2
 ]
-excelfile = excelfiles[2]
+excelfile = excelfiles[0]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 bath_pH = 4.1 # ED electrolyte pH
 ECSA_norm = True # Normalize currents with ECSA for exsitu only
@@ -60,4 +60,5 @@ plot(df, excelfile)
 
 if ECSA_norm:
     print(f'Plots/Data from {excelfile} normalized by ECSA saved in {(timer()-start):.2f}s! Have a great day {username.capitalize()}.')
+else:
     print(f'Plots/Data from {excelfile} normalized by SA saved in {(timer()-start):.2f}s! Have a great day {username.capitalize()}.')
