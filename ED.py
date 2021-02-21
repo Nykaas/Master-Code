@@ -7,10 +7,8 @@ from plot import plot_settings
 from CE import get_current_efficiency
 from xy_smooth import smooth_xy
 
-def ED_plot(df, excelfile, bath_pH, writer, smooth, markers):
+def ED_plot(df, excelfile, writer, smooth, markers):
     A_sample = 12.5 # cm^2
-    offset_Ag = 0.197 + (0.0591 * bath_pH) # V
-    print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
     CE_data = []
     ECSA = get_ECSA(df)
     for sheet in df: # Iterate sheet name as key in df dictionary
@@ -28,10 +26,11 @@ def ED_plot(df, excelfile, bath_pH, writer, smooth, markers):
             y = np.array(df[sheet][columns[i+1]].tolist())
             x, y = smooth_xy(x, y, smooth)
             name = columns[i+2]
+            offset_AgCl = get_AgCl_offset(name)
 
             if '-' in name and 'V' in name: # Correct Ag/Cl offset in label
                 idx = name.find('V')
-                E = round(float(name[idx-4:idx-1]) + offset_Ag, 2)
+                E = round(float(name[idx-4:idx-1]) + offset_AgCl, 2)
                 name = name.replace(name[idx-4:idx-1], str(E))
                 name += ' RHE'
                 print(f'Label: AgCl offset {name}')
@@ -45,7 +44,15 @@ def ED_plot(df, excelfile, bath_pH, writer, smooth, markers):
 
             if 'mV/s' in name:
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
-                print('Label: mV/s')
+            
+            if 'NiSO4' in name:
+                name = name.replace('NiSO4', r'$\mathdefault{NiSO_{4}}$')
+
+            if 'NiCl2' in name:
+                name = name.replace('NiCl2', r'$\mathdefault{NiCl_{2}}$')
+
+            if 'H3BO3' in name:
+                name = name.replace('H3BO3', r'$\mathdefault{H_{3}}$$\mathdefault{BO_{3}}$')
             
             if CellA5_CE == 'CE': # Current efficiency
                 m_t, m_a, CE, loading, I, t = get_current_efficiency(df, sheet, name)
@@ -67,7 +74,7 @@ def ED_plot(df, excelfile, bath_pH, writer, smooth, markers):
             if 'CV' in sheet: # CV
                 xlabel = r'E [V vs. RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x + offset_AgCl, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
 
             elif 'CP' in sheet: # Constant potential
                 xlabel = r'Time [s]'
@@ -77,7 +84,7 @@ def ED_plot(df, excelfile, bath_pH, writer, smooth, markers):
             elif 'CI' in sheet: # Constant current
                 xlabel = r'Time [s]'
                 ylabel = r'E [V vs. RHE]'
-                plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x, y + offset_AgCl, label = name, marker = markers[markers_idx], markevery = 0.1)
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
@@ -97,3 +104,16 @@ def get_ECSA(df):
     c = 40e-6 # F/cm^2
     ECSA = cdl / c # ECSA [cm^2]
     return ECSA
+
+def get_AgCl_offset(name):
+    if 'NiSO4' in name:
+        pH = 4.1
+    elif 'NiCl2' in name:
+        pH = 3.9
+    elif 'FeCl2' in name:
+        pH = 0
+    else:
+        pH = 4.1
+    offset_AgCl = 0.197 + (0.0591 * pH) # V
+    print(f'AgCl to RHE offset = {offset_AgCl:.2f} V at pH {pH}')
+    return offset_AgCl
