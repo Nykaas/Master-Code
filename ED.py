@@ -26,7 +26,7 @@ def ED_plot(df, excelfile, writer, smooth, markers):
             y = np.array(df[sheet][columns[i+1]].tolist())
             x, y = smooth_xy(x, y, smooth)
             name = columns[i+2]
-            offset_AgCl = get_AgCl_offset(name)
+            offset_AgCl = get_AgCl_offset(name, sheet)
 
             if '-' in name and 'V' in name: # Correct Ag/Cl offset in label
                 idx = name.find('V')
@@ -62,7 +62,7 @@ def ED_plot(df, excelfile, writer, smooth, markers):
                 A_sample = 0.196 # cm^2
                 print(f'Area GC = {A_sample}')
             
-            elif 'NF' in name or 'Nickel felt' in name:
+            elif 'NF' in name or 'Nickel felt' in name or 'Carbon paper' in name:
                 A_sample = ECSA
                 print(f'ECSA NF = {A_sample:.2f}')
            
@@ -79,7 +79,7 @@ def ED_plot(df, excelfile, writer, smooth, markers):
             elif 'CP' in sheet: # Constant potential
                 xlabel = r'Time [s]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.3)
             
             elif 'CI' in sheet: # Constant current
                 xlabel = r'Time [s]'
@@ -105,13 +105,15 @@ def get_ECSA(df):
     ECSA = cdl / c # ECSA [cm^2]
     return ECSA
 
-def get_AgCl_offset(name):
+def get_AgCl_offset(name, sheet):
     if 'NiSO4' in name:
         pH = 4.1
     elif 'NiCl2' in name:
         pH = 3.9
     elif 'FeCl2' in name:
         pH = 0
+    elif 'Watts' in sheet:
+        pH = 3.64
     else:
         pH = 4.1
     offset_AgCl = 0.197 + (0.0591 * pH) # V
