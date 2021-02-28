@@ -7,7 +7,7 @@ from plot import plot_settings
 from CE import get_current_efficiency
 from xy_smooth import smooth_xy
 
-def ED_plot(df, excelfile, writer, smooth, markers):
+def ED_plot(df, excelfile, writer, smooth, markers, ECSA_norm):
     A_sample = 12.5 # cm^2
     CE_data = []
     ECSA = get_ECSA(df)
@@ -62,7 +62,7 @@ def ED_plot(df, excelfile, writer, smooth, markers):
                 A_sample = 0.196 # cm^2
                 print(f'Area GC = {A_sample}')
             
-            elif 'NF' in name or 'Nickel felt' in name or 'Carbon paper' in name:
+            elif ('NF' in name or 'Nickel felt' in name or 'Carbon paper' in name) and ECSA_norm:
                 A_sample = ECSA
                 print(f'ECSA NF = {A_sample:.2f}')
            
