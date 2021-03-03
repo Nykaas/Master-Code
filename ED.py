@@ -30,8 +30,8 @@ def ED_plot(df, excelfile, writer, smooth, markers, ECSA_norm):
 
             if '-' in name and 'V' in name: # Correct Ag/Cl offset in label
                 idx = name.find('V')
-                E = round(float(name[idx-4:idx-1]) + offset_AgCl, 2)
-                name = name.replace(name[idx-4:idx-1], str(E))
+                E = round(float(name[idx-5:idx-1]) + offset_AgCl, 2)
+                name = name.replace(name[idx-5:idx-1], str(E))
                 name += ' RHE'
                 print(f'Label: AgCl offset {name}')
 
@@ -68,7 +68,7 @@ def ED_plot(df, excelfile, writer, smooth, markers, ECSA_norm):
            
             else:
                 A_sample = 12.5 # cm^2
-                print(f'Area {name} = {A_sample}')
+                print(f'Area "{name}" = {A_sample}')
             
             ### Plot ###
             if 'CV' in sheet: # CV
