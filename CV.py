@@ -12,7 +12,6 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
     A_sample = 12.5 # cm^2
     capacitance_data = []
     eta_data = []
-    CV_data = []
     EIS_data = []
     A_sample_RF = A_sample
     if ECSA_norm:
@@ -128,7 +127,7 @@ def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample_RF, na
     c = 40e-6 # F/cm^2
     ECSA = cdl / c # ECSA [cm^2]
     # Save data
-    capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Cdl [F]':round(cdl,2), 'ECSA [cm2]':round(ECSA,2), 'RF':round(ECSA/A_sample_RF,2)}
+    capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Cdl [F]':cdl, 'ECSA [cm2]':round(ECSA,2), 'RF':round(ECSA/A_sample_RF,2)}
     capacitance_data.append(capacitance_temp)
     ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Cdl [F]', 'ECSA [cm2]', 'RF'])
     ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')

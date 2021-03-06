@@ -16,12 +16,13 @@ username = os.getlogin()
 ### Variables ###
 excelfiles = [
     'Ex_Comparison.xlsx', # 0
-    'In_Comparison.xlsx', # 1
-    'ED.xlsx', # 2
+    'Ex_Reference.xlsx', # 1
+    'In_Comparison.xlsx', # 2
+    'ED.xlsx', # 3
 ]
-excelfile = excelfiles[2]
+excelfile = excelfiles[1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
-ECSA_norm = True # Normalize currents with ECSA for exsitu and ED
+ECSA_norm = False # Normalize currents with ECSA for exsitu and ED
 smooth = False # Smooths x and y data
 markers = ['v', 'o', 's', '*', 'x','1', '2', '3', '4', '8']
 
