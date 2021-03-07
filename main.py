@@ -8,6 +8,7 @@ from timeit import default_timer as timer
 from CV import ex_situ_plot
 from ED import ED_plot
 from insitu import in_situ_plot
+from ELSD import ELSD_plot
 
 ### Constants ###
 start = timer()
@@ -19,10 +20,12 @@ excelfiles = [
     'Ex_Reference.xlsx', # 1
     'In_Comparison.xlsx', # 2
     'ED.xlsx', # 3
+    'ELSD.xlsx' # 4
 ]
 excelfile = excelfiles[1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
-ECSA_norm = False # Normalize currents with ECSA for exsitu and ED
+bath_pH = 5 # ED electrolyte pH
+ECSA_norm = False # Normalize currents with ECSA for exsitu only
 smooth = False # Smooths x and y data
 markers = ['v', 'o', 's', '*', 'x','1', '2', '3', '4', '8']
 
@@ -52,7 +55,9 @@ def plot(df, excelfile):
     elif 'In' in excelfile:
         in_situ_plot(df, excelfile, smooth, markers)
     elif 'ED' in excelfile:
-        ED_plot(df, excelfile, writer(ECSA_norm), smooth, markers, ECSA_norm)
+        ED_plot(df, excelfile, bath_pH, writer(ECSA_norm), smooth, markers)
+    elif 'ELSD' in excelfile:
+        ELSD_plot(df, excelfile, bath_pH, writer(ECSA_norm), smooth, markers)
 
 makedir()
 df = get_dataframe()
