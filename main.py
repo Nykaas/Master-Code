@@ -22,9 +22,8 @@ excelfiles = [
     'ED.xlsx', # 3
     'ELSD.xlsx' # 4
 ]
-excelfile = excelfiles[1]
+excelfile = excelfiles[-1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
-bath_pH = 5 # ED electrolyte pH
 ECSA_norm = False # Normalize currents with ECSA for exsitu only
 smooth = False # Smooths x and y data
 markers = ['v', 'o', 's', '*', 'x','1', '2', '3', '4', '8']
@@ -55,9 +54,9 @@ def plot(df, excelfile):
     elif 'In' in excelfile:
         in_situ_plot(df, excelfile, smooth, markers)
     elif 'ED' in excelfile:
-        ED_plot(df, excelfile, bath_pH, writer(ECSA_norm), smooth, markers)
+        ED_plot(df, excelfile, writer(ECSA_norm), smooth, markers)
     elif 'ELSD' in excelfile:
-        ELSD_plot(df, excelfile, bath_pH, writer(ECSA_norm), smooth, markers)
+        ELSD_plot(df, excelfile, writer(ECSA_norm), smooth, markers)
 
 makedir()
 df = get_dataframe()

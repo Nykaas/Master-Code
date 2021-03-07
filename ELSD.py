@@ -6,7 +6,8 @@ import numpy as np
 from plot import plot_settings
 from xy_smooth import smooth_xy
 
-def ELSD_plot(df, excelfile, bath_pH, writer, smooth, markers):
+def ELSD_plot(df, excelfile, writer, smooth, markers):
+    bath_pH = 5 # ED electrolyte pH, alter syntax if pH experiments are conducted
     offset_Ag = 0.197 + (0.0591 * bath_pH) # V
     print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
     ECSA = get_ECSA(df)
