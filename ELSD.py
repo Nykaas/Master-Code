@@ -44,10 +44,10 @@ def ELSD_plot(df, excelfile, bath_pH, writer, smooth, markers):
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
 
-            elif 'OCV' in sheet: # Immersion potential monitoring
-                xlabel = r'Time [s]'
+            elif 'OCP' in sheet: # Immersion potential monitoring
+                xlabel = r'Time [min]'
                 ylabel = r'E [V vs. RHE]'
-                plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)

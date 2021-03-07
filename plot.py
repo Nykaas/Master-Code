@@ -9,7 +9,8 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
     #plt.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.5)
     plt.minorticks_on() # Show the minor grid lines with very faint and almost transparent grey lines
     #plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
-    #plt.xlim(-5,95)
+    #plt.xlim(x,y)
+    #plt.ylim(x,y)
     if len(columns) > 3:
         if sheet == 'Efficiency':
             plt.legend(fontsize = 14, loc = 'lower right')
