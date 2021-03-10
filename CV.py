@@ -12,7 +12,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
     A_sample = 12.5 # cm^2
     capacitance_data = []
     eta_data = []
-    CV_data = []
+    #CV_data = []
     EIS_data = []
     A_sample_RF = A_sample
     if ECSA_norm:
@@ -107,21 +107,41 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
                     plt.plot(x, y)
-                    save_EIS_data(x, EIS_data, writer, name)
+                    save_EIS_data(x, EIS_data, writer, name, sheet, I_ss)
                 else:
                     plt.scatter(x, y, s = 8, label = name)
+
+            elif sheet == 'Tafel-Impedance':
+                I_ss = float(df[sheet][name][0])
+                if ECSA_norm:
+                    A_sample = ECSA_samples[reference]
+                #y *= A_sample *-1
+                #x *= A_sample
+                #print(f'{name_print} | I*{A_sample:.1f}[cm^2]')
+                xlabel = r'$\mathdefault{U_{real}\ [V]}$'
+                ylabel = r'$\mathdefault{-U_{imaginary}\ [V]}$'
+                R_sol, R_pol = save_EIS_data(x, EIS_data, writer, name, sheet, I_ss)
+                plt.scatter((x-R_sol)*I_ss, y*I_ss*-1, s = 8, label = name)
 
             symbols_count += 1
 
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm)
 
 ### Functions ###
-def save_EIS_data(x, EIS_data, writer, name):
-    temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'R, sol [ohm cm2]':round(min(x),2), 'R, pol [ohm cm2]':round(max(x)-min(x) ,2)}
-    EIS_data.append(temp)
-    df = pd.DataFrame(EIS_data, columns = ['Sample', 'R, sol [ohm cm2]', 'R, pol [ohm cm2]'])
+def save_EIS_data(x, EIS_data, writer, name, sheet, I_ss):
+    R_sol = round(min(x),2)
+    R_pol = round(max(x)-min(x),2)
+    if sheet == 'Impedance':
+        temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'R, sol [ohm cm2]':R_sol, 'R, pol [ohm cm2]':R_pol}
+        EIS_data.append(temp)
+        df = pd.DataFrame(EIS_data, columns = ['Sample', 'R, sol [ohm cm2]', 'R, pol [ohm cm2]'])
+    else:
+        temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current [A]':I_ss, 'R, sol [ohm]':R_sol, 'R, pol [ohm]':R_pol, 'Tafel impedance [mV dec-1]':round(R_pol*I_ss*1000,2)}
+        EIS_data.append(temp)
+        df = pd.DataFrame(EIS_data, columns = ['Sample', 'Current [A]', 'R, sol [ohm]', 'R, pol [ohm]', 'Tafel impedance [mV dec-1]'])
     df.to_excel(writer, index = False, header=True, sheet_name='EIS')
     writer.save()
+    return R_sol, R_pol
 
 def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample_RF, name_print):
     cdl, b = np.polyfit(x, y, 1) # cdl [F]

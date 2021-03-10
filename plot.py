@@ -11,6 +11,8 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
     #plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
     #plt.xlim(x,y)
     #plt.ylim(x,y)
+    if sheet == 'Tafel':
+        plt.xlim(0.5,)
     if len(columns) > 3:
         if sheet == 'Efficiency':
             plt.legend(fontsize = 14, loc = 'lower right')
