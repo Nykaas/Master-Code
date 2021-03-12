@@ -9,10 +9,16 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
     #plt.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.5)
     plt.minorticks_on() # Show the minor grid lines with very faint and almost transparent grey lines
     #plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
-    #plt.xlim(x,y)
-    #plt.ylim(x,y)
-    if sheet == 'Tafel':
-        plt.xlim(0.5,)
+    #plt.xlim(-0.1,0.2)
+    #plt.ylim(-3,3)
+    #if sheet == 'Tafel':
+    #    plt.xlim(0.5,)
+    if sheet == 'Impedance': # Complex plots require equal xticks and yticks
+        plt.xlim(0,22)
+        plt.ylim(0,22)
+    if 'Tafel-Impedance' in sheet: # Complex plots require equal xticks and yticks
+        plt.xlim(0,0.1)
+        plt.ylim(0,0.1)
     if len(columns) > 3:
         if sheet == 'Efficiency':
             plt.legend(fontsize = 14, loc = 'lower right')

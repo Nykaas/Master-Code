@@ -10,10 +10,11 @@ from CE import get_current_efficiency
 
 def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
     A_sample = 12.5 # cm^2
-    capacitance_data = []
-    eta_data = []
+    #capacitance_data = [] # Remove eventually if not needed
+    #eta_data = []
     #CV_data = []
-    EIS_data = []
+    #EIS_data = []
+    #Zt_data = []
     A_sample_RF = A_sample
     if ECSA_norm:
         reference = 'NF'
@@ -25,6 +26,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
         xlabel = df[sheet]['Graph_settings'][1]
         ylabel = df[sheet]['Graph_settings'][2]
         symbols_count = 0
+        data = []
         for i in range(1, len(columns), 3): # Iterate data columns
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
@@ -58,7 +60,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                cdl, b = get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample_RF, name_print)
+                cdl, b = get_ECSA_data(x, y, writer, columns, data, name, A_sample_RF, name_print)
                 plt.plot(x, (cdl*x + b) / A_sample, label = name)
                 plt.scatter(x, y / A_sample, marker = markers[symbols_count])
             
@@ -80,11 +82,11 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth)
-                plt.plot(np.log10(y), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = 0.1)
+                plt.plot(np.log10(abs(y)), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = 0.1)
                 x = np.array(df[sheet][columns[i]].tolist())
                 y = np.array(df[sheet][columns[i+1]].tolist())
                 y /= A_sample
-                save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print)
+                save_overpotential(x, y, writer, offset_Hg, data, name, name_print)
 
             elif sheet == '10to100':
                 xlabel = r'Potential [V, RHE]'
@@ -107,51 +109,55 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
                     plt.plot(x, y)
-                    save_EIS_data(x, EIS_data, writer, name, sheet, I_ss)
+                    save_EIS_data(x, data, writer, name, sheet)
                 else:
                     plt.scatter(x, y, s = 8, label = name)
 
-            elif sheet == 'Tafel-Impedance':
-                I_ss = float(df[sheet][name][0])
-                if ECSA_norm:
-                    A_sample = ECSA_samples[reference]
-                #y *= A_sample *-1
-                #x *= A_sample
-                #print(f'{name_print} | I*{A_sample:.1f}[cm^2]')
-                xlabel = r'$\mathdefault{U_{real}\ [V]}$'
-                ylabel = r'$\mathdefault{-U_{imaginary}\ [V]}$'
-                R_sol, R_pol = save_EIS_data(x, EIS_data, writer, name, sheet, I_ss)
-                plt.scatter((x-R_sol)*I_ss, y*I_ss*-1, s = 8, label = name)
+            elif sheet == 'Tafel-Impedance-1' or sheet == 'Tafel-Impedance-2' or sheet == 'Tafel-Impedance-3':
+                I_ss = float(df[sheet][name][0])/1000
+                xlabel = r'$\mathdefault{Z_{t, real}\ [V]}$'
+                ylabel = r'$\mathdefault{-Z_{t, imaginary}\ [V]}$'
+                R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)
+                if 'fit' in name:
+                    plt.plot((x-R_sol)*I_ss, y*I_ss*-1)
+                else:
+                    plt.scatter((x-R_sol)*I_ss, y*I_ss*-1, s = 8, label = name)
+            else:
+                plt.plot(x,y)
 
             symbols_count += 1
 
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm)
 
 ### Functions ###
-def save_EIS_data(x, EIS_data, writer, name, sheet, I_ss):
+def save_EIS_data(x, data, writer, name, sheet):
     R_sol = round(min(x),2)
     R_pol = round(max(x)-min(x),2)
-    if sheet == 'Impedance':
-        temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'R, sol [ohm cm2]':R_sol, 'R, pol [ohm cm2]':R_pol}
-        EIS_data.append(temp)
-        df = pd.DataFrame(EIS_data, columns = ['Sample', 'R, sol [ohm cm2]', 'R, pol [ohm cm2]'])
-    else:
-        temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current [A]':I_ss, 'R, sol [ohm]':R_sol, 'R, pol [ohm]':R_pol, 'Tafel impedance [mV dec-1]':round(R_pol*I_ss*1000,2)}
-        EIS_data.append(temp)
-        df = pd.DataFrame(EIS_data, columns = ['Sample', 'Current [A]', 'R, sol [ohm]', 'R, pol [ohm]', 'Tafel impedance [mV dec-1]'])
+    temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'R, sol [ohm cm2]':R_sol, 'R, pol [ohm cm2]':R_pol}
+    data.append(temp)
+    df = pd.DataFrame(data, columns = ['Sample', 'R, sol [ohm cm2]', 'R, pol [ohm cm2]'])
     df.to_excel(writer, index = False, header=True, sheet_name='EIS')
-    writer.save()
-    return R_sol, R_pol
+    writer.save()    
 
-def get_ECSA_data(x, y, writer, columns, capacitance_data, name, A_sample_RF, name_print):
+def save_tafel_impedance(x, data, writer, name, sheet, I_ss):
+    R_sol = min(x)
+    R_pol = max(x)-min(x)
+    temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current [mA]':round(I_ss*1000,2), 'Tafel impedance [mV]':round(R_pol*I_ss*1000,2)}
+    data.append(temp)
+    df = pd.DataFrame(data, columns = ['Sample', 'Current [mA]', 'Tafel impedance [mV]'])
+    df.to_excel(writer, index = False, header=True, sheet_name=sheet)
+    writer.save()
+    return R_sol
+
+def get_ECSA_data(x, y, writer, columns, data, name, A_sample_RF, name_print):
     cdl, b = np.polyfit(x, y, 1) # cdl [F]
     c = 40e-6 # F/cm^2
     ECSA = cdl / c # ECSA [cm^2]
     # Save data
-    capacitance_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Cdl [F]':round(cdl,2), 'ECSA [cm2]':round(ECSA,2), 'RF':round(ECSA/A_sample_RF,2)}
-    capacitance_data.append(capacitance_temp)
-    ECSA_cap_df = pd.DataFrame(capacitance_data, columns = ['Sample', 'Cdl [F]', 'ECSA [cm2]', 'RF'])
-    ECSA_cap_df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
+    temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Cdl [mF]':round(cdl*1000,2), 'ECSA [cm2]':round(ECSA,2), 'RF':round(ECSA/A_sample_RF,2)}
+    data.append(temp)
+    df = pd.DataFrame(data, columns = ['Sample', 'Cdl [mF]', 'ECSA [cm2]', 'RF'])
+    df.to_excel(writer, index = False, header=True, sheet_name='ECSA-cap')
     writer.save()
     return cdl, b
 
@@ -168,12 +174,12 @@ def get_ECSA(df):
         ECSA_samples[name] = ECSA
     return ECSA_samples
 
-def save_overpotential(x, y, writer, offset_Hg, eta_data, name, name_print):
+def save_overpotential(x, y, writer, offset_Hg, data, name, name_print):
     for i, j in enumerate(y):
-        if 10.1 >= round(j, 1) >= 10.0:
+        if 11.0 >= round(j, 1) >= 9.8:
             break
-    eta_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2), 'Max current density [mA cm-2]':round(y[-1],2)}
-    eta_data.append(eta_temp)
-    eta_df = pd.DataFrame(eta_data, columns = ['Sample','Current density [mA cm-2]', 'Overpotential [mV]', 'Max current density [mA cm-2]'])
-    eta_df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
+    temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2), 'Max current density [mA cm-2]':round(y[-1],2)}
+    data.append(temp)
+    df = pd.DataFrame(data, columns = ['Sample','Current density [mA cm-2]', 'Overpotential [mV]', 'Max current density [mA cm-2]'])
+    df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
     writer.save()

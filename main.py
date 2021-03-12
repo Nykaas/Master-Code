@@ -16,13 +16,13 @@ username = os.getlogin()
 
 ### Variables ###
 excelfiles = [
-    'Ex_Comparison.xlsx', # 0
-    'In_Comparison.xlsx', # 1
-    'ED.xlsx', # 2
-    'ELSD.xlsx', # 3
-    'Ex_Test.xlsx'
+    'Ex_Reference.xlsx', # 0
+    'Ex_Comparison.xlsx', # 1
+    'In_Comparison.xlsx', # 2
+    'ED.xlsx', # 3
+    'ELSD.xlsx', # 4
 ]
-excelfile = excelfiles[-1]
+excelfile = excelfiles[0]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 bath_pH = 5 # ED electrolyte pH
 ECSA_norm = False # Normalize currents with ECSA for exsitu only
