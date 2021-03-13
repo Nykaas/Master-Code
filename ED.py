@@ -7,7 +7,7 @@ from plot import plot_settings
 from CE import get_current_efficiency
 from xy_smooth import smooth_xy
 
-def ED_plot(df, excelfile, writer, smooth, markers, ECSA_norm):
+def ED_plot(df, excelfile, writer, smooth, markers):
     A_sample = 12.5 # cm^2
     CE_data = []
     ECSA = get_ECSA(df)
