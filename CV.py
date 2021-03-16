@@ -21,6 +21,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
         ECSA_samples = get_ECSA(df)
     
     for sheet in df: # Iterate sheet name as key in df dictionary
+        plt.figure(figsize=(6.4, 4.8)) # Standardizing a figure size
         print(f'--- {sheet} ---')
         columns = list(df[sheet].columns)
         xlabel = df[sheet]['Graph_settings'][1]
@@ -114,10 +115,10 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 ylabel = r'$\mathdefault{-Z_{t, imaginary}\ [V]}$'
                 if 'fit' in name:
                     print(f'{name_print} | No normalizing')
-                    plt.plot((x-R_sol)*I_ss, y*I_ss*-1)
                     R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)
+                    plt.plot((x-R_sol)*I_ss, y*I_ss*-1)
                 else:
-                    plt.scatter((x-R_sol)*I_ss, y*I_ss*-1, s = 8, label = name)
+                    plt.scatter((x-min(x))*I_ss, y*I_ss*-1, s = 8, label = name)
             else:
                 plt.plot(x,y)
 
