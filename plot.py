@@ -14,11 +14,11 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
     #if sheet == 'Tafel':
     #    plt.xlim(0.5,)
     if sheet == 'Impedance': # Complex plots require equal xticks and yticks
-        plt.xlim(0,22)
-        plt.ylim(0,22)
+        plt.xlim(0,15)
+        plt.ylim(0,15)
     if 'Tafel-Impedance' in sheet: # Complex plots require equal xticks and yticks
-        plt.xlim(0,0.1)
-        plt.ylim(0,0.1)
+        plt.xlim(0,0.03)
+        plt.ylim(0,0.03)
     if len(columns) > 3:
         if sheet == 'Efficiency':
             plt.legend(fontsize = 14, loc = 'lower right')
