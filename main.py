@@ -22,7 +22,7 @@ excelfiles = [
     'ED.xlsx', # 3
     'ELSD.xlsx', # 4
 ]
-excelfile = excelfiles[0]
+excelfile = excelfiles[1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 bath_pH = 5 # ED electrolyte pH
 ECSA_norm = False # Normalize currents with ECSA for exsitu only

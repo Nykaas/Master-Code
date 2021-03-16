@@ -31,8 +31,6 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
             name = columns[i+2]
-            if ECSA_norm == 'Yes':
-                A_sample = float(df[sheet][name][0])
             name_print = name
                     
             if 'A' in str(name): # Change to current density in label
@@ -55,14 +53,11 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
             
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
                 xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
-                ylabel = r'Charging current [mA $\mathdefault{cm^{-2}}$]'
-                if ECSA_norm:
-                    A_sample = ECSA_samples[name]
-                y /= A_sample
-                print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
+                ylabel = r'Charging current [mA]'
+                print(f'{name_print} | No normalizing')
                 cdl, b = get_ECSA_data(x, y, writer, columns, data, name, A_sample_RF, name_print)
-                plt.plot(x, (cdl*x + b) / A_sample, label = name)
-                plt.scatter(x, y / A_sample, marker = markers[symbols_count])
+                plt.plot(x, (cdl*x + b), label = name)
+                plt.scatter(x, y, marker = markers[symbols_count])
             
             elif sheet == 'LSV':
                 xlabel = r'Potential [V, RHE]'
@@ -104,10 +99,10 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     A_sample = ECSA_samples[reference]
                 y *= A_sample *-1
                 x *= A_sample
-                print(f'{name_print} | I*{A_sample:.1f}[cm^2]')
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
                 ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
+                    print(f'{name_print} | I*{A_sample:.1f}[cm^2]')
                     plt.plot(x, y)
                     save_EIS_data(x, data, writer, name, sheet)
                 else:
@@ -117,9 +112,10 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 I_ss = float(df[sheet][name][0])/1000
                 xlabel = r'$\mathdefault{Z_{t, real}\ [V]}$'
                 ylabel = r'$\mathdefault{-Z_{t, imaginary}\ [V]}$'
-                R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)
                 if 'fit' in name:
+                    print(f'{name_print} | No normalizing')
                     plt.plot((x-R_sol)*I_ss, y*I_ss*-1)
+                    R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)
                 else:
                     plt.scatter((x-R_sol)*I_ss, y*I_ss*-1, s = 8, label = name)
             else:
