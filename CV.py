@@ -21,7 +21,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
         ECSA_samples = get_ECSA(df)
     
     for sheet in df: # Iterate sheet name as key in df dictionary
-        plt.figure(figsize=(6.4, 4.8)) # Standardizing a figure size
+        #plt.figure(figsize=(6.4, 4.8)) # Standardizing a figure size
         print(f'--- {sheet} ---')
         columns = list(df[sheet].columns)
         xlabel = df[sheet]['Graph_settings'][1]
@@ -173,7 +173,7 @@ def get_ECSA(df):
 
 def save_overpotential(x, y, writer, offset_Hg, data, name, name_print):
     for i, j in enumerate(y):
-        if 11.0 >= round(j, 1) >= 9.8:
+        if round(j, 1) >= 9.9:
             break
     temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2), 'Max current density [mA cm-2]':round(y[-1],2)}
     data.append(temp)
