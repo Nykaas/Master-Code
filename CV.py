@@ -6,6 +6,7 @@ import math
 from xy_smooth import smooth_xy
 
 from plot import plot_settings
+from plot import get_markersize
 from CE import get_current_efficiency
 
 def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
@@ -49,7 +50,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth)
-                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1)
+                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
             
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
                 xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
@@ -67,7 +68,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth)
-                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1)
+                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
 
             elif sheet == 'Tafel':
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
@@ -77,7 +78,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth)
-                plt.plot(np.log10(abs(y)), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = 0.1)
+                plt.plot(np.log10(abs(y)), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
                 x = np.array(df[sheet][columns[i]].tolist())
                 y = np.array(df[sheet][columns[i+1]].tolist())
                 y /= A_sample
@@ -92,7 +93,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth)
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
-                plt.plot(x, y, label = name, marker = markers[symbols_count], markevery = 0.1)
+                plt.plot(x, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
             
             elif sheet == 'Impedance':
                 if ECSA_norm:

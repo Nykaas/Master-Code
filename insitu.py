@@ -5,6 +5,7 @@ import os
 from xy_smooth import smooth_xy
 
 from plot import plot_settings
+from plot import get_markersize
 
 def in_situ_plot(df, excelfile, smooth, markers):
     A_sample = 6.25 # cm^2
@@ -34,10 +35,10 @@ def in_situ_plot(df, excelfile, smooth, markers):
                 ylabel = 'Cell voltage [V]'
                 x, y = smooth_xy(x, y, smooth)
                 if switch:
-                    plt.plot(x, y, color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600)
+                    plt.plot(x, y, color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
                     switch = False
                 else:
-                    plt.plot(x, y, linestyle = '--', color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600)
+                    plt.plot(x, y, linestyle = '--', color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
                     switch = True
                     color_index += 1
             
@@ -48,7 +49,7 @@ def in_situ_plot(df, excelfile, smooth, markers):
                 xlabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = 'Cell voltage [V]'
                 x, y = smooth_xy(x, y, smooth)
-                plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = 600)
+                plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
 
             elif sheet == 'Efficiency':
                 # Data appending
@@ -94,7 +95,7 @@ def in_situ_plot(df, excelfile, smooth, markers):
                 else:
                     color1 = 'C0'
                     name = r'NF (0.5 A $\mathdefault{cm^{-2}}$)'
-                plt.plot(x/3600, y, label = name, color=color1, marker = markers[markers_idx], markevery = 250)
+                plt.plot(x/3600, y, label = name, color=color1, marker = markers[markers_idx], markevery = 250, markersize = get_markersize())
             
             if 'EIS' in sheet:
                 if 'cm2' in xlabel:

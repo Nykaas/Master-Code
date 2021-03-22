@@ -4,6 +4,7 @@ import numpy as np
 #import math
 
 from plot import plot_settings
+from plot import get_markersize
 from xy_smooth import smooth_xy
 
 def ELSD_plot(df, excelfile, writer, smooth, markers):
@@ -43,12 +44,12 @@ def ELSD_plot(df, excelfile, writer, smooth, markers):
             if 'CV' in sheet: # CV
                 xlabel = r'E [V vs. RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1, markersize = get_markersize())
 
             elif 'OCP' in sheet: # Immersion potential monitoring
                 xlabel = r'Time [min]'
                 ylabel = r'E [V vs. RHE]'
-                plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1, markersize = get_markersize())
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)

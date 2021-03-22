@@ -4,10 +4,11 @@ import numpy as np
 import math
 
 from plot import plot_settings
+from plot import get_markersize
 from CE import get_current_efficiency
 from xy_smooth import smooth_xy
 
-def ED_plot(df, excelfile, writer, smooth, markers, ECSA_norm):
+def ED_plot(df, excelfile, writer, smooth, markers):
     A_sample = 12.5 # cm^2
     CE_data = []
     ECSA = get_ECSA(df)
@@ -74,17 +75,17 @@ def ED_plot(df, excelfile, writer, smooth, markers, ECSA_norm):
             if 'CV' in sheet: # CV
                 xlabel = r'E [V vs. RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x + offset_AgCl, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x + offset_AgCl, y/A_sample, label = name, marker = markers[markers_idx], markevery = 100, markersize = get_markersize())
 
             elif 'CP' in sheet: # Constant potential
                 xlabel = r'Time [s]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.3)
+                plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.3, markersize = get_markersize())
             
             elif 'CI' in sheet: # Constant current
                 xlabel = r'Time [s]'
                 ylabel = r'E [V vs. RHE]'
-                plt.plot(x, y + offset_AgCl, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x, y + offset_AgCl, label = name, marker = markers[markers_idx], markevery = 0.1, markersize = get_markersize())
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
@@ -106,16 +107,20 @@ def get_ECSA(df):
     return ECSA
 
 def get_AgCl_offset(name, sheet):
-    if 'NiSO4' in name:
-        pH = 4.1
-    elif 'NiCl2' in name:
-        pH = 3.9
-    elif 'FeCl2' in name:
-        pH = 0
-    elif 'Watts' in sheet:
+    if 'CV' in sheet:
+        if 'NiSO4' in name:
+            pH = 4.10
+        elif 'NiCl2' in name:
+            pH = 3.90
+        elif 'FeCl2' in name:
+            pH = 3.13
+        elif ',' in name or 'K': # for bath with all
+            pH = 3.32
+        else:
+            print('check pH?')
+            pH = 4.1
+    if 'Watts' in sheet:
         pH = 3.64
-    else:
-        pH = 4.1
     offset_AgCl = 0.197 + (0.0591 * pH) # V
     print(f'AgCl to RHE offset = {offset_AgCl:.2f} V at pH {pH}')
     return offset_AgCl
