@@ -50,6 +50,7 @@ def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = r'E [V vs. RHE]'
                 name = name.replace('C', r'$\degree$C')
+                x, y = smooth_xy(x, y, smooth)
                 plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
 
             elif 'OCP' in sheet: # Immersion potential monitoring
