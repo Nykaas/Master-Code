@@ -81,7 +81,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 plt.plot(np.log10(abs(y)), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = 0.1)
                 x = np.array(df[sheet][columns[i]].tolist())
                 y = np.array(df[sheet][columns[i+1]].tolist())
-                y /= A_sample
+                #y /= A_sample
                 save_overpotential(x, y, writer, offset_Hg, data, name, name_print)
 
             elif sheet == '10to100':

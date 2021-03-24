@@ -6,9 +6,7 @@ import numpy as np
 from plot import plot_settings
 from xy_smooth import smooth_xy
 
-def ELSD_plot(df, excelfile, bath_pH, writer, smooth, markers):
-    offset_Ag = 0.197 + (0.0591 * bath_pH) # V
-    print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
+def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
     ECSA = get_ECSA(df)
     for sheet in df: # Iterate sheet name as key in df dictionary
         if sheet == 'ECSA-cap':
@@ -18,6 +16,10 @@ def ELSD_plot(df, excelfile, bath_pH, writer, smooth, markers):
         markers_idx = 0
         xlabel = df[sheet]['Graph_settings'][1]
         ylabel = df[sheet]['Graph_settings'][2]
+        if 'pH' in sheet:
+            bath_pH = df[sheet]['Graph_settings'][3]
+        offset_Ag = 0.197 + (0.0591 * bath_pH) # V
+        print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
         
         for i in range(1, len(columns), 3): # Iterate data columns
             x = np.array(df[sheet][columns[i]].tolist())
@@ -34,15 +36,21 @@ def ELSD_plot(df, excelfile, bath_pH, writer, smooth, markers):
                 print(f'ECSA NF = {A_sample:.2f}')
            
             else:
-                A_sample = 15 # cm^2
+                A_sample = 5 # cm^2
                 #A_sample = ECSA
                 print(f'Area {name} = {A_sample}')
             
             ### Plot ###
+            #if 'CV' in sheet: # CV
+             #   xlabel = r'E [V vs. RHE]'
+              #  ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+               # plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
+
             if 'CV' in sheet: # CV
-                xlabel = r'E [V vs. RHE]'
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
+                xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
+                ylabel = r'E [V vs. RHE]'
+                name = name.replace('C', r'$\degree$C')
+                plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
 
             elif 'OCP' in sheet: # Immersion potential monitoring
                 xlabel = r'Time [min]'
