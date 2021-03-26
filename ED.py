@@ -49,9 +49,9 @@ def ED_plot(df, excelfile, writer, smooth, markers):
             if 'NiSO4' in name:
                 name = name.replace('NiSO4', r'$\mathdefault{NiSO_{4}}$')
 
-            if 'NiCl2' in name:
-                name = name.replace('NiCl2', r'$\mathdefault{NiCl_{2}}$')
-
+            if 'Cl2' in name:
+                name = name.replace('Cl2', r'$\mathdefault{Cl_{2}}$')
+            
             if 'H3BO3' in name:
                 name = name.replace('H3BO3', r'$\mathdefault{H_{3}}$$\mathdefault{BO_{3}}$')
             
