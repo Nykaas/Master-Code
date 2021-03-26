@@ -60,3 +60,36 @@ def get_area(): # cm^2
         return 12.5
     elif 'In' in excelfile:
         return 6.25
+
+Current efficiency
+from CE import get_current_efficiency
+    CE_data = []
+        CellA5_CE = df[sheet]['Graph_settings'][3]
+                    if CellA5_CE == 'CE': # Current efficiency
+                m_t, m_a, CE, loading, I, t = get_current_efficiency(df, sheet, name)
+                save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, I, t)
+def save_CE_data(m_t, m_a, CE, loading, CE_data, writer, name, I, t):
+    CE_temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current [A]': I, 'Time [s]': t, 'm_t [g]':round(m_t,2), 'm_a [g]':round(m_a,2), 'CE [%]':round(CE,2), 'Loading [mg/cm2]':round(loading,2)}
+    CE_data.append(CE_temp)
+    CE_df = pd.DataFrame(CE_data, columns = ['Sample', 'Current [A]', 'Time [s]', 'm_t [g]', 'm_a [g]', 'CE [%]', 'Loading [mg/cm2]'])
+    CE_df.to_excel(writer, index = False, header=True, sheet_name='CE')
+    writer.save()
+
+def get_AgCl_offset(name, sheet):
+    if 'CV' in sheet:
+        if 'NiSO4' in name:
+            pH = 3.00
+        elif 'NiCl2' in name:
+            pH = 3.00
+        elif 'FeCl2' in name:
+            pH = 3.13
+        elif ',' in name or 'K': # for bath with all
+            pH = 3.32
+        else:
+            print('check pH?')
+            pH = 4.1
+    if 'Watts' in sheet:
+        pH = 3.64
+    offset_AgCl = 0.197 + (0.0591 * pH) # V
+    print(f'AgCl to RHE offset = {offset_AgCl:.2f} V at pH {pH}')
+    return offset_AgCl

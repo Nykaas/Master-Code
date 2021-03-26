@@ -26,7 +26,7 @@ excelfile = excelfiles[3]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 ECSA_norm = True # Normalize currents with ECSA for exsitu only
 smooth = True # Smooths x and y data
-markers = ['v', 'o', 's', '*', 'x','1', '2', '3', '4', '8']
+markers = ['v', 'o', 's', 'x', '*', '1', '2', '3', '4', '8']
 
 
 ### Functions ###
