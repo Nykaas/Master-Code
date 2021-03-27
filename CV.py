@@ -10,11 +10,6 @@ from CE import get_current_efficiency
 
 def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
     A_sample = 12.5 # cm^2
-    #capacitance_data = [] # Remove eventually if not needed
-    #eta_data = []
-    #CV_data = []
-    #EIS_data = []
-    #Zt_data = []
     A_sample_RF = A_sample
     if ECSA_norm:
         reference = 'NF'
@@ -88,7 +83,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm:
-                    A_sample = ECSA_samples[reference]
+                    A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth)
@@ -96,8 +91,8 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 plt.plot(x, y, label = name, marker = markers[symbols_count], markevery = 0.1)
             
             elif sheet == 'Impedance':
-                if ECSA_norm:
-                    A_sample = ECSA_samples[reference]
+                if ECSA_norm and 'fit' not in name:
+                    A_sample = ECSA_samples[name]
                 y *= A_sample *-1
                 x *= A_sample
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'

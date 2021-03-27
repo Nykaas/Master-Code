@@ -14,8 +14,8 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
     if sheet == 'Tafel':
         plt.xlim(0,)
     if sheet == 'Impedance': # Complex plots require equal xticks and yticks
-        plt.xlim(0,15)
-        plt.ylim(0,15)
+        plt.xlim(0,25)
+        plt.ylim(0,25)
     if 'Tafel-Impedance' in sheet: # Complex plots require equal xticks and yticks
         plt.xlim(0,0.03)
         plt.ylim(0,0.03)
