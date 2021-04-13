@@ -31,7 +31,7 @@ def ED_plot(df, excelfile, writer, smooth, markers):
                 idx = name.find('V')
                 E = round(float(name[idx-5:idx-1]) - offset_AgCl, 2) # - offset since float is positive from excel
                 name = name.replace(name[idx-5:idx-1], str(E))
-                name += ' RHE'
+                #name += ' RHE'
                 print(f'Label: AgCl offset {name}')
 
             if '-' in name and 'A' in name: # Change to current density in label

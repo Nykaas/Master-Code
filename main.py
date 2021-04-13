@@ -22,7 +22,7 @@ excelfiles = [
     'ED.xlsx', # 3
     'ELSD.xlsx' # 4
 ]
-excelfile = excelfiles[3]
+excelfile = excelfiles[1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 ECSA_norm = True # Normalize currents with ECSA for exsitu only
 smooth = True # Smooths x and y data

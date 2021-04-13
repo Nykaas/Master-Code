@@ -17,11 +17,11 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
     #Zt_data = []
     A_sample_RF = A_sample
     if ECSA_norm:
-        reference = 'NF'
+        ref_columns = list(df['ECSA-cap'].columns)
+        reference = ref_columns[3]
         ECSA_samples = get_ECSA(df)
     
     for sheet in df: # Iterate sheet name as key in df dictionary
-        plt.figure(figsize=(6.4, 4.8)) # Standardizing a figure size
         print(f'--- {sheet} ---')
         columns = list(df[sheet].columns)
         xlabel = df[sheet]['Graph_settings'][1]
@@ -56,6 +56,8 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
                 ylabel = r'Charging current [mA]'
                 print(f'{name_print} | No normalizing')
+                x = x[~np.isnan(x)]
+                y = y[~np.isnan(y)]
                 cdl, b = get_ECSA_data(x, y, writer, columns, data, name, A_sample_RF, name_print)
                 plt.plot(x, (cdl*x + b), label = name)
                 plt.scatter(x, y, marker = markers[symbols_count])
@@ -165,6 +167,9 @@ def get_ECSA(df):
         name = columns[i+2]
         x = np.array(df['ECSA-cap'][columns[i]].tolist())
         y = np.array(df['ECSA-cap'][columns[i+1]].tolist())
+        x = x[~np.isnan(x)]
+        y = y[~np.isnan(y)]
+        print(x,y)
         cdl, b = np.polyfit(x, y, 1) # cdl [F]
         c = 40e-6 # F/cm^2
         ECSA = cdl / c # ECSA [cm^2]
