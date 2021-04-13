@@ -11,10 +11,6 @@ from CE import get_current_efficiency
 
 def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
     A_sample = 12.5 # cm^2
-    #capacitance_data = [] # Remove eventually if not needed
-    #eta_data = []
-    #EIS_data = []
-    #Zt_data = []
     A_sample_RF = A_sample
     if ECSA_norm:
         ref_columns = list(df['ECSA-cap'].columns)
@@ -90,7 +86,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm:
-                    A_sample = ECSA_samples[reference]
+                    A_sample = ECSA_samples['NF']
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth)
@@ -98,8 +94,8 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 plt.plot(x, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
             
             elif sheet == 'Impedance':
-                if ECSA_norm:
-                    A_sample = ECSA_samples[reference]
+                if ECSA_norm and 'fit' not in name:
+                    A_sample = ECSA_samples[name]
                 y *= A_sample *-1
                 x *= A_sample
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
@@ -178,7 +174,7 @@ def get_ECSA(df):
 
 def save_overpotential(x, y, writer, offset_Hg, data, name, name_print):
     for i, j in enumerate(y):
-        if 11.0 >= round(j, 1) >= 9.8:
+        if round(j, 1) >= 9.9:
             break
     temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2), 'Max current density [mA cm-2]':round(y[-1],2)}
     data.append(temp)
