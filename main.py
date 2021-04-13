@@ -22,13 +22,12 @@ excelfiles = [
     'ED.xlsx', # 3
     'ELD.xlsx', # 4
 ]
-excelfile = excelfiles[1]
+excelfile = excelfiles[-1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 bath_pH = 5 # ED electrolyte pH
 ECSA_norm = False # Normalize currents with ECSA for exsitu only
-smooth = False # Smooths x and y data
+smooth = True # Smooths x and y data
 markers = ['v', 'o', 's', '*', 'x','1', '2', '3', '4', '8']
-
 
 ### Functions ###
 def get_dataframe():

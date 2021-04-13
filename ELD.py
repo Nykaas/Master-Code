@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
-#import pandas as pd
 import numpy as np
-#import math
+import pandas as pd
 
 from plot import plot_settings
 from xy_smooth import smooth_xy
@@ -16,18 +15,18 @@ def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
         markers_idx = 0
         xlabel = df[sheet]['Graph_settings'][1]
         ylabel = df[sheet]['Graph_settings'][2]
-        if 'pH' in sheet:
-            bath_pH = df[sheet]['Graph_settings'][3]
+        bath_pH = 5
         offset_Ag = 0.197 + (0.0591 * bath_pH) # V
-        if 'temp' not in sheet:
-            print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
+        print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
         
         for i in range(1, len(columns), 3): # Iterate data columns
+            data = []
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
-            x, y = smooth_xy(x, y, smooth)
+            if 'Plating' not in sheet:
+                x, y = smooth_xy(x, y, smooth)
             name = columns[i+2]
-            if 'temp' in sheet:
+            if 'pH' in sheet:
                 bath_pH = df[sheet][name][0]
                 offset_Ag = 0.197 + (0.0591 * bath_pH)
                 print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
@@ -52,7 +51,7 @@ def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
                 name = name.replace('C', r'$\degree$C')
                 plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
 
-            if 'CV' in sheet: # CV
+            elif 'CV' in sheet: # Evans diagram
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = r'E [V vs. RHE]'
                 name = name.replace('C', r'$\degree$C')
@@ -62,6 +61,13 @@ def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
                 xlabel = r'Time [min]'
                 ylabel = r'E [V vs. RHE]'
                 plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
+
+            elif 'Plating' in sheet:
+                xlabel = r'E [V vs. RHE]'
+                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                name = name.replace('C', r'$\degree$C')
+                plt.scatter(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], s = 8)
+                save_plating_data(x, y, data, writer, name, sheet, offset_Ag, A_sample)
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
@@ -74,3 +80,10 @@ def get_ECSA(df):
     c = 40e-6 # F/cm^2
     ECSA = cdl / c # ECSA [cm^2]
     return ECSA
+
+def save_plating_data(x, y, data, writer, name, sheet, offset_Ag, A_sample):
+    temp = {'Parameter': name, 'E, ELD [V]':round(x[0] + offset_Ag,2), 'i, ELD [mA cm-2]':round(y[0]/A_sample,2)}
+    data.append(temp)
+    df = pd.DataFrame(data, columns = ['Parameter', 'E, ELD [V]', 'i, ELD [mA cm-2]'])
+    df.to_excel(writer, index = False, header=True, sheet_name='Plating_data')
+    writer.save()
