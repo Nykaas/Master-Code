@@ -6,7 +6,7 @@ from plot import plot_settings
 from plot import get_markersize
 from xy_smooth import smooth_xy
 
-def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
+def ELD_plot(df, excelfile, writer, smooth, markers):
     ECSA = get_ECSA(df)
     for sheet in df: # Iterate sheet name as key in df dictionary
         if sheet == 'ECSA-cap':
@@ -21,7 +21,7 @@ def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
         print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
         
         for i in range(1, len(columns), 3): # Iterate data columns
-            data = []
+            #data = []
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
             if 'Plating' not in sheet:
@@ -42,7 +42,6 @@ def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
            
             else:
                 A_sample = 5 # cm^2
-                #A_sample = ECSA
                 print(f'Area {name} = {A_sample}')
             
             ### Plot ###
@@ -55,7 +54,8 @@ def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
             elif 'CV' in sheet: # Evans diagram
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = r'E [V vs. RHE]'
-                name = name.replace('C', r'$\degree$C')
+                if 'Temperature' in sheet:
+                    name = name.replace('C', r'$\degree$C')
                 plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
 
             elif 'OCP' in sheet: # Immersion potential monitoring
@@ -68,7 +68,7 @@ def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 name = name.replace('C', r'$\degree$C')
                 plt.scatter(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], s = 8)
-                save_plating_data(x, y, data, writer, name, sheet, offset_Ag, A_sample)
+                #save_plating_data(x, y, data, writer, name, sheet, offset_Ag, A_sample)
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
