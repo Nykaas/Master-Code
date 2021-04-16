@@ -10,10 +10,7 @@ from xy_smooth import smooth_xy
 def ED_plot(df, excelfile, writer, smooth, markers):
     A_sample = 12.5 # cm^2
     Eeq_data = []
-    ECSA = get_ECSA(df)
     for sheet in df: # Iterate sheet name as key in df dictionary
-        if sheet == 'ECSA-cap':
-            continue
         print(f'--- {sheet} ---')
         columns = list(df[sheet].columns)
         markers_idx = 0
@@ -56,10 +53,6 @@ def ED_plot(df, excelfile, writer, smooth, markers):
             if 'GC' in sheet or 'Glassy carbon' in name: # Glassy carbon
                 A_sample = 0.196 # cm^2
                 print(f'Area GC = {A_sample}')
-            
-            elif ('NF' in name or 'Nickel felt' in name or 'Carbon paper' in name) and ECSA_norm:
-                A_sample = ECSA
-                print(f'ECSA NF = {A_sample:.2f}')
            
             else:
                 A_sample = 12.5 # cm^2
@@ -101,15 +94,6 @@ def save_Eeq_data(x, y, writer, name, offset_AgCl, Eeq_data, sheet, A_sample):
                 writer.save()
                 #print(sheet, name, i, Ieq, Eeq)
                 break
-
-def get_ECSA(df):
-    columns = list(df['ECSA-cap'].columns)
-    x = np.array(df['ECSA-cap'][columns[1]].tolist())
-    y = np.array(df['ECSA-cap'][columns[2]].tolist())
-    cdl, b = np.polyfit(x, y, 1) # cdl [F]
-    c = 40e-6 # F/cm^2
-    ECSA = cdl / c # ECSA [cm^2]
-    return ECSA
 
 def get_AgCl_offset(name, sheet):
     pH = 3.00
