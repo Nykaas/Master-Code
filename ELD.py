@@ -32,9 +32,9 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                 offset_Ag = 0.197 + (0.0591 * bath_pH)
                 print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
 
-            if 'GC' in sheet or 'Glassy carbon' in name: # Glassy carbon
+            if 'RDE' in sheet or 'RDE' in name: # RDE
                 A_sample = 0.196 # cm^2
-                print(f'Area GC = {A_sample}')
+                print(f'Area RDE = {A_sample}')
             
             elif 'NF' in name or 'Nickel felt' in name:
                 A_sample = ECSA
@@ -51,7 +51,7 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                 name = name.replace('C', r'$\degree$C')
                 plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
 
-            elif 'CV' in sheet: # Evans diagram
+            elif 'LSV' in sheet: # Evans diagram
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = r'E [V vs. RHE]'
                 if 'Temperature' in sheet:
