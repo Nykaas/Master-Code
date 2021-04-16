@@ -6,7 +6,7 @@ from plot import plot_settings
 from plot import get_markersize
 from xy_smooth import smooth_xy
 
-def ELD_plot(df, excelfile, bath_pH, writer, smooth, markers):
+def ELD_plot(df, excelfile, writer, smooth, markers):
     ECSA = get_ECSA(df)
     for sheet in df: # Iterate sheet name as key in df dictionary
         if sheet == 'ECSA-cap':
