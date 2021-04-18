@@ -84,14 +84,14 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
 
             elif sheet == '10to100':
                 xlabel = r'Potential [V, RHE]'
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                ylabel = r'Current density [μA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm:
                     A_sample = ECSA_samples['NF']
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth)
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
-                plt.plot(x, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
+                plt.plot(x, y*1000, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
             
             elif sheet == 'Impedance':
                 if ECSA_norm and 'fit' not in name:
@@ -105,18 +105,18 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     plt.plot(x, y)
                     save_EIS_data(x, data, writer, name, sheet)
                 else:
-                    plt.scatter(x, y, s = 8, label = name)
+                    plt.scatter(x, y, s = get_markersize(), label = name, marker = markers[symbols_count])
 
             elif sheet == 'Tafel-Impedance-1' or sheet == 'Tafel-Impedance-2' or sheet == 'Tafel-Impedance-3':
                 I_ss = float(df[sheet][name][0])/1000
-                xlabel = r'$\mathdefault{Z_{t, real}\ [V]}$'
-                ylabel = r'$\mathdefault{-Z_{t, imaginary}\ [V]}$'
+                xlabel = r'$\mathdefault{Z_{t, real}\ [mV]}$'
+                ylabel = r'$\mathdefault{-Z_{t, imaginary}\ [mV]}$'
                 if 'fit' in name:
                     print(f'{name_print} | No normalizing')
                     R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)
-                    plt.plot((x-R_sol)*I_ss, y*I_ss*-1)
+                    plt.plot(((x-R_sol)*I_ss)*1000, (y*I_ss*-1)*1000)
                 else:
-                    plt.scatter((x-min(x))*I_ss, y*I_ss*-1, s = 8, label = name)
+                    plt.scatter(((x-min(x))*I_ss)*1000, (y*I_ss*-1)*1000, s = get_markersize(), label = name, marker = markers[symbols_count])
             else:
                 plt.plot(x,y)
 
@@ -165,7 +165,6 @@ def get_ECSA(df):
         y = np.array(df['ECSA-cap'][columns[i+1]].tolist())
         x = x[~np.isnan(x)]
         y = y[~np.isnan(y)]
-        print(x,y)
         cdl, b = np.polyfit(x, y, 1) # cdl [F]
         c = 40e-6 # F/cm^2
         ECSA = cdl / c # ECSA [cm^2]
