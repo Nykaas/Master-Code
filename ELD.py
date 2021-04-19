@@ -21,13 +21,12 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
         print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
         
         for i in range(1, len(columns), 3): # Iterate data columns
-            #data = []
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
             if 'Plating' not in sheet:
                 x, y = smooth_xy(x, y, smooth)
-            name = columns[i+2]
-            if 'pH' in sheet:
+                name = columns[i+2]
+            if 'pH' in sheet and 'Plating' not in sheet:
                 bath_pH = df[sheet][name][0]
                 offset_Ag = 0.197 + (0.0591 * bath_pH)
                 print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
@@ -54,8 +53,6 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
             elif 'LSV' in sheet: # Evans diagram
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = r'E [V vs. RHE]'
-                if 'Temperature' in sheet:
-                    name = name.replace('C', r'$\degree$C')
                 plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
 
             elif 'OCP' in sheet: # Immersion potential monitoring
@@ -64,11 +61,20 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                 plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
 
             elif 'Plating' in sheet:
-                xlabel = r'E [V vs. RHE]'
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                name = name.replace('C', r'$\degree$C')
-                plt.scatter(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], s = 8)
-                #save_plating_data(x, y, data, writer, name, sheet, offset_Ag, A_sample)
+                if 'Temperature' in sheet:
+                    xlabel = r'Temperature [K]'
+                elif 'pH' in sheet:
+                    xlabel = r'pH'
+                    offset_Ag = 0
+                else:
+                    xlabel = r'Concentration [M]'
+
+                if 'Ipl' in sheet:
+                    ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                    plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
+                else:
+                    ylabel = r'E [V vs. RHE]'
+                    plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
@@ -81,10 +87,3 @@ def get_ECSA(df):
     c = 40e-6 # F/cm^2
     ECSA = cdl / c # ECSA [cm^2]
     return ECSA
-
-def save_plating_data(x, y, data, writer, name, sheet, offset_Ag, A_sample):
-    temp = {'Parameter': name, 'E, ELD [V]':round(x[0] + offset_Ag,2), 'i, ELD [mA cm-2]':round(y[0]/A_sample,2)}
-    data.append(temp)
-    df = pd.DataFrame(data, columns = ['Parameter', 'E, ELD [V]', 'i, ELD [mA cm-2]'])
-    df.to_excel(writer, index = False, header=True, sheet_name='Plating_data')
-    writer.save()
