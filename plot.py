@@ -21,11 +21,11 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
         plt.ylim(0,30)
     if len(columns)-1 > 3:
         if sheet == 'Efficiency':
-            plt.legend(fontsize = 20, loc = 'lower right')
+            plt.legend(fontsize = 17, loc = 'lower right')
         elif sheet == '10to100':
-            plt.legend(fontsize = 20, loc = 'center', ncol = 5, columnspacing = 1, bbox_to_anchor=(0.5, 1.07))
+            plt.legend(fontsize = 17, loc = 'center', ncol = 5, columnspacing = 1, bbox_to_anchor=(0.5, 1.07))
         else:
-            plt.legend(fontsize = 20)
+            plt.legend(fontsize = 17)
     username = os.getlogin()
     if ECSA_norm:
         filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], f'{sheet}_ECSA') # for data in onedrive
