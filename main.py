@@ -26,8 +26,8 @@ excelfile = excelfiles[-1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 ECSA_norm = False # Normalize currents with ECSA for exsitu only
 smooth = True # Smooths x and y data
-markers = ['v', 'o', 's', 'x', '*', '1', '2', '3', '4', '8']
-
+markers = ['v', 'o', 's', 'x', 'D', '*', 'H', '+', '^', '8', '4', '3', '6'] # 12
+ 
 ### Functions ###
 def get_dataframe():
     filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Data', excelfile) # for data in onedrive
