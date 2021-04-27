@@ -1,10 +1,11 @@
 ### This code executes Faraday's laws of electrolysis to calculate the theoretical loading and plating rate ###
 
-Ni = 0.66
-Fe = 0.06
-P = 0.28
-current_density = 5 # mA/cm2
-minutes = 60
+### Input ###
+Ni = 0.8
+Fe = 0.2
+P = 0
+current_density = 40 # Absolute value mA/cm2
+minutes = 5
 
 ### Alloy element information ###
 Mm_Ni = 58.69 # g/mol
@@ -16,7 +17,7 @@ z_Fe = 2
 sum_Fe = (Fe*z_Fe) / Mm_Fe
 
 Mm_P = 30.97 # g/mol
-z_P = 3
+z_P = 1
 sum_P = (P*z_P) / Mm_P
 
 ### Calculation ###
