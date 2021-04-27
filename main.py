@@ -22,7 +22,7 @@ excelfiles = [
     'ED.xlsx', # 3
     'ELD.xlsx', # 4
 ]
-excelfile = excelfiles[-1]
+excelfile = excelfiles[2]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 ECSA_norm = False # Normalize currents with ECSA for exsitu only
 smooth = True # Smooths x and y data
@@ -51,7 +51,7 @@ def plot(df, excelfile):
     if 'Ex' in excelfile:
         ex_situ_plot(df, writer(ECSA_norm), offset_Hg, excelfile, ECSA_norm, smooth, markers)
     elif 'In' in excelfile:
-        in_situ_plot(df, excelfile, smooth, markers)
+        in_situ_plot(df, writer(ECSA_norm), excelfile, smooth, markers)
     elif 'ED' in excelfile:
         ED_plot(df, excelfile, writer(ECSA_norm), smooth, markers)
     elif 'ELD' in excelfile:

@@ -101,7 +101,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
                 ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
-                    print(f'{name_print} | I*{A_sample:.1f}[cm^2]')
+                    print(f'{name_print} | Ω*{A_sample:.1f}[cm^2]')
                     plt.plot(x, y)
                     save_EIS_data(x, data, writer, name, sheet)
                 else:
