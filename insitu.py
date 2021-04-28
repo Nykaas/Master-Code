@@ -53,7 +53,10 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
 
             elif sheet == 'Durability':
                 x, y = smooth_xy(x, y, smooth, excelfile)
-                plt.plot(x/3600, y, label = name, marker = markers[markers_idx], markevery = 100, markersize = get_markersize())
+                if 'fit' in name:
+                    plt.scatter(x/3600, y, s = get_markersize(), marker = '_')
+                else:
+                    plt.plot(x/3600, y, label = name, marker = markers[markers_idx], markevery = 100, markersize = get_markersize())
                 
             elif sheet == 'EIS':
                 x *= A_sample
