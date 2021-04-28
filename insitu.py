@@ -33,7 +33,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 xlabel = 'Cell voltage [V]'
-                x, y = smooth_xy(x, y, smooth)
+                x, y = smooth_xy(x, y, smooth, excelfile)
                 if switch:
                     plt.plot(x, y, color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
                     switch = False
@@ -47,12 +47,12 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 xlabel = 'Cell voltage [V]'
-                x, y = smooth_xy(x, y, smooth)
+                x, y = smooth_xy(x, y, smooth, excelfile)
                 plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
                 save_Pol_data(y, data, writer, name, sheet)
 
             elif sheet == 'Durability':
-                x, y = smooth_xy(x, y, smooth)
+                x, y = smooth_xy(x, y, smooth, excelfile)
                 plt.plot(x/3600, y, label = name, marker = markers[markers_idx], markevery = 100, markersize = get_markersize())
                 
             elif sheet == 'EIS':
@@ -106,6 +106,11 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                     rects2 = ax.bar(w + width/2, eff_after, width, label='After', color = 'C3')
                     ylabel = 'Efficiency [%]'
                     xlabel = ''
+                    plt.xlabel(xlabel, fontsize = 27, fontweight='bold') # Include fontweight='bold' to bold the label
+                    plt.ylabel(ylabel, fontsize = 27, fontweight='bold') # Include fontweight='bold' to bold the label
+                    #plt.xticks(fontsize = 27)
+                    #plt.yticks(fontsize = 27)
+                    #plt.minorticks_on() # Show the minor grid lines with very faint and almost transparent grey lines
                     plt.xticks(w, labels)
                     def autolabel(rects):
                         for rect in rects:

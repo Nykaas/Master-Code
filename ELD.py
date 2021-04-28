@@ -24,7 +24,7 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
             if 'Plating' not in sheet:
-                x, y = smooth_xy(x, y, smooth)
+                x, y = smooth_xy(x, y, smooth, excelfile)
                 name = columns[i+2]
             if 'pH' in sheet and 'Plating' not in sheet:
                 bath_pH = df[sheet][name][0]

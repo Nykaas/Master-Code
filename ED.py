@@ -20,7 +20,7 @@ def ED_plot(df, excelfile, writer, smooth, markers):
         for i in range(1, len(columns), 3): # Iterate data columns
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
-            x, y = smooth_xy(x, y, smooth)
+            x, y = smooth_xy(x, y, smooth, excelfile)
             name = columns[i+2]
             offset_AgCl = get_AgCl_offset(name, sheet)
 

@@ -45,7 +45,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = smooth_xy(x, y, smooth)
+                x, y = smooth_xy(x, y, smooth, excelfile)
                 plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
             
             elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
@@ -65,7 +65,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = smooth_xy(x, y, smooth)
+                x, y = smooth_xy(x, y, smooth, excelfile)
                 plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
 
             elif sheet == 'Tafel':
@@ -75,7 +75,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = smooth_xy(x, y, smooth)
+                x, y = smooth_xy(x, y, smooth, excelfile)
                 plt.plot(np.log10(abs(y)), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
                 x = np.array(df[sheet][columns[i]].tolist())
                 y = np.array(df[sheet][columns[i+1]].tolist())
@@ -89,7 +89,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     A_sample = ECSA_samples['NF']
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = smooth_xy(x, y, smooth)
+                x, y = smooth_xy(x, y, smooth, excelfile)
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
                 plt.plot(x, y*1000, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
             
