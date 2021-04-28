@@ -52,10 +52,10 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 save_Pol_data(y, data, writer, name, sheet)
 
             elif sheet == 'Durability':
-                x, y = smooth_xy(x, y, smooth, excelfile)
                 if 'fit' in name:
                     plt.scatter(x/3600, y, s = get_markersize(), marker = '_')
                 else:
+                    x, y = smooth_xy(x, y, smooth, excelfile)
                     plt.plot(x/3600, y, label = name, marker = markers[markers_idx], markevery = 100, markersize = get_markersize())
                 
             elif sheet == 'EIS':
@@ -109,8 +109,8 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                     rects2 = ax.bar(w + width/2, eff_after, width, label='After', color = 'C3')
                     ylabel = 'Efficiency [%]'
                     xlabel = ''
-                    plt.xlabel(xlabel, fontsize = 27, fontweight='bold') # Include fontweight='bold' to bold the label
-                    plt.ylabel(ylabel, fontsize = 27, fontweight='bold') # Include fontweight='bold' to bold the label
+                    plt.xlabel(xlabel, fontsize = 27) # Include fontweight='bold' to bold the label
+                    plt.ylabel(ylabel, fontsize = 27) # Include fontweight='bold' to bold the label
                     #plt.xticks(fontsize = 27)
                     #plt.yticks(fontsize = 27)
                     #plt.minorticks_on() # Show the minor grid lines with very faint and almost transparent grey lines
