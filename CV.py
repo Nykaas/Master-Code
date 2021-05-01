@@ -38,7 +38,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 print(f'{sheet} | {name_print} | A to mA legend')
             
             ### Sheet plotting ###
-            if sheet == 'FullRange':
+            if 'FullRange' in sheet:
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm:
@@ -48,7 +48,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 x, y = smooth_xy(x, y, smooth, excelfile)
                 plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
             
-            elif sheet == 'ECSA-cap': # ECSA & RF capacitance method
+            elif 'ECSA-cap' in sheet: # ECSA & RF capacitance method
                 xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
                 ylabel = r'Charging current [mA]'
                 print(f'{name_print} | No normalizing')
@@ -58,7 +58,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 plt.plot(x, (cdl*x + b), label = name)
                 plt.scatter(x, y, marker = markers[symbols_count])
             
-            elif sheet == 'LSV':
+            elif 'LSV' in sheet:
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm:
@@ -68,7 +68,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 x, y = smooth_xy(x, y, smooth, excelfile)
                 plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
 
-            elif sheet == 'Tafel':
+            elif 'Tafel' in sheet:
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = r'Overpotential [V, RHE]'
                 if ECSA_norm:
@@ -80,9 +80,9 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 x = np.array(df[sheet][columns[i]].tolist())
                 y = np.array(df[sheet][columns[i+1]].tolist())
                 y /= A_sample
-                save_overpotential(x, y, writer, offset_Hg, data, name, name_print)
+                save_overpotential(x, y, writer, offset_Hg, data, name, name_print, sheet)
 
-            elif sheet == '10to100':
+            elif '10to100' in sheet:
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [μA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm:
@@ -93,7 +93,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
                 plt.plot(x, y*1000, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
             
-            elif sheet == 'Impedance':
+            elif 'Impedance' in sheet:
                 if ECSA_norm and 'fit' not in name:
                     A_sample = ECSA_samples[name]
                 y *= A_sample *-1
@@ -107,7 +107,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 else:
                     plt.scatter(x, y, s = get_markersize(), label = name, marker = markers[symbols_count])
 
-            elif sheet == 'Tafel-Impedance-1' or sheet == 'Tafel-Impedance-2' or sheet == 'Tafel-Impedance-3':
+            elif 'Tafel-Impedance-1' in sheet or 'Tafel-Impedance-2' in sheet or 'Tafel-Impedance-3' in sheet:
                 I_ss = float(df[sheet][name][0])/1000
                 xlabel = r'$\mathdefault{Z_{t, real}\ [mV]}$'
                 ylabel = r'$\mathdefault{-Z_{t, imaginary}\ [mV]}$'
@@ -171,12 +171,12 @@ def get_ECSA(df):
         ECSA_samples[name] = ECSA
     return ECSA_samples
 
-def save_overpotential(x, y, writer, offset_Hg, data, name, name_print):
+def save_overpotential(x, y, writer, offset_Hg, data, name, name_print, sheet):
     for i, j in enumerate(y):
         if round(j, 1) >= 9.9:
             break
     temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current density [mA cm-2]':round(y[i],2), 'Overpotential [mV]':round((x[i] + offset_Hg - 1.23)*1000,2), 'Max current density [mA cm-2]':round(y[-1],2)}
     data.append(temp)
     df = pd.DataFrame(data, columns = ['Sample','Current density [mA cm-2]', 'Overpotential [mV]', 'Max current density [mA cm-2]'])
-    df.to_excel(writer, index = False, header=True, sheet_name='Overpotential')
+    df.to_excel(writer, index = False, header = True, sheet_name = sheet)
     writer.save()

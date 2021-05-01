@@ -24,6 +24,8 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
             plt.legend(fontsize = 17, loc = 'lower right')
         elif sheet == '10to100':
             plt.legend(fontsize = 17, loc = 'center', ncol = 5, columnspacing = 1, bbox_to_anchor=(0.5, 1.07))
+        elif 'Electrodeposition' in excelfile and len(columns) > 13:
+            plt.legend(fontsize = 17, loc = 'center', ncol = 5, columnspacing = 1, bbox_to_anchor=(0.5, 1.07))
         else:
             plt.legend(fontsize = 17)
     username = os.getlogin()

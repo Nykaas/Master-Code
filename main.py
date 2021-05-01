@@ -21,8 +21,9 @@ excelfiles = [
     'In_Comparison.xlsx', # 2
     'ED.xlsx', # 3
     'ELD.xlsx', # 4
+    'Ex_Electrodeposition.xlsx' # 5
 ]
-excelfile = excelfiles[2]
+excelfile = excelfiles[5]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 ECSA_norm = False # Normalize currents with ECSA for exsitu only
 smooth = True # Smooths x and y data
