@@ -10,7 +10,9 @@ def smooth_xy(x, y, smooth, excelfile):
         if 'In' in excelfile:
             freq = 0.01
         elif 'ED' in excelfile:
-            freq = 0.05
+            freq = 0.01
+        elif 'Electrodeposition' in excelfile:
+            freq = 0.01
         else:
             freq = 0.1
         b, a = signal.butter(4, freq, analog=False)

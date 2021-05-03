@@ -12,6 +12,8 @@ from CE import get_current_efficiency
 def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
     A_sample = 12.5 # cm^2
     A_sample_RF = A_sample
+    if 'Electrodeposition' in excelfile or 'Electroless' in excelfile:
+        ECSA_norm = False
     if ECSA_norm:
         ref_columns = list(df['ECSA-cap'].columns)
         reference = ref_columns[3]
@@ -36,6 +38,14 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 name = name.replace(name[idx+1:idx+5],  f'{current_density:.0f}')
                 name = name.replace('A', r'mA $\mathdefault{cm^{-2}}$')
                 print(f'{sheet} | {name_print} | A to mA legend')
+            
+            if '-' in name and 'V' in name: # Correct Ag/Cl offset in label
+                offset_AgCl = get_AgCl_offset(name, sheet)
+                idx = name.find('V')
+                E = round(float(name[idx-5:idx-1]) - offset_AgCl, 2) # - offset since float is positive from excel
+                name = name.replace(name[idx-5:idx-1], str(E))
+                #name += ' RHE'
+                print(f'Label: AgCl offset {name}')
             
             ### Sheet plotting ###
             if 'FullRange' in sheet:
@@ -65,6 +75,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
+                save_overpotential(x, y, writer, offset_Hg, data, name, name_print, sheet)
                 x, y = smooth_xy(x, y, smooth, excelfile)
                 plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
 
@@ -72,15 +83,13 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = r'Overpotential [V, RHE]'
                 if ECSA_norm:
+                    print(name)
                     A_sample = ECSA_samples[name]
+                    print(ECSA_samples)
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth, excelfile)
                 plt.plot(np.log10(abs(y)), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
-                x = np.array(df[sheet][columns[i]].tolist())
-                y = np.array(df[sheet][columns[i+1]].tolist())
-                y /= A_sample
-                save_overpotential(x, y, writer, offset_Hg, data, name, name_print, sheet)
 
             elif '10to100' in sheet:
                 xlabel = r'Potential [V, RHE]'
@@ -107,7 +116,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 else:
                     plt.scatter(x, y, s = get_markersize(), label = name, marker = markers[symbols_count])
 
-            elif 'Tafel-Impedance-1' in sheet or 'Tafel-Impedance-2' in sheet or 'Tafel-Impedance-3' in sheet:
+            elif 'T-Impedance-1' in sheet or 'T-Impedance-2' in sheet or 'T-Impedance-3' in sheet:
                 I_ss = float(df[sheet][name][0])/1000
                 xlabel = r'$\mathdefault{Z_{t, real}\ [mV]}$'
                 ylabel = r'$\mathdefault{-Z_{t, imaginary}\ [mV]}$'
@@ -180,3 +189,9 @@ def save_overpotential(x, y, writer, offset_Hg, data, name, name_print, sheet):
     df = pd.DataFrame(data, columns = ['Sample','Current density [mA cm-2]', 'Overpotential [mV]', 'Max current density [mA cm-2]'])
     df.to_excel(writer, index = False, header = True, sheet_name = sheet)
     writer.save()
+
+def get_AgCl_offset(name, sheet): # For ED potential labels Ex situ
+    pH = 3.00
+    offset_AgCl = 0.197 + (0.0591 * pH) # V
+    print(f'AgCl to RHE offset = {offset_AgCl:.2f} V at pH {pH}')
+    return offset_AgCl
