@@ -16,7 +16,6 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
         ECSA_norm = False
     if ECSA_norm:
         ref_columns = list(df['ECSA-cap'].columns)
-        reference = ref_columns[3]
         ECSA_samples = get_ECSA(df)
     
     for sheet in df: # Iterate sheet name as key in df dictionary
@@ -46,6 +45,12 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 name = name.replace(name[idx-5:idx-1], str(E))
                 #name += ' RHE'
                 print(f'Label: AgCl offset {name}')
+
+            if name == 'NiFeED/NF':
+                name = name.replace('NiFeED/NF', str(r'NiFe$\mathdefault{_{ED}}$/NF'))
+            
+            if name == 'NiFeELD/NF':
+                name = name.replace('NiFeELD/NF', str(r'NiFe$\mathdefault{_{ELD}}$/NF'))
             
             ### Sheet plotting ###
             if 'FullRange' in sheet:
@@ -83,9 +88,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = r'Overpotential [V, RHE]'
                 if ECSA_norm:
-                    print(name)
                     A_sample = ECSA_samples[name]
-                    print(ECSA_samples)
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 x, y = smooth_xy(x, y, smooth, excelfile)
@@ -94,15 +97,18 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
             elif '10to100' in sheet:
                 xlabel = r'Potential [V, RHE]'
                 ylabel = r'Current density [μA $\mathdefault{cm^{-2}}$]'
-                if ECSA_norm:
+                if ECSA_norm and not 'ED' in name:
                     A_sample = ECSA_samples['NF']
+                if ECSA_norm and 'ED' in name:
+                    A_sample = ECSA_samples['NiFe$\mathdefault{_{ED}}$/NF']
+                if ECSA_norm and 'ELD' in name:
+                    A_sample = ECSA_samples['NiFe$\mathdefault{_{ELD}}$/NF']
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = smooth_xy(x, y, smooth, excelfile)
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
                 plt.plot(x, y*1000, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
             
-            elif 'Impedance' in sheet:
+            elif sheet == 'Impedance':
                 if ECSA_norm and 'fit' not in name:
                     A_sample = ECSA_samples[name]
                 y *= A_sample *-1
@@ -111,19 +117,19 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
                     print(f'{name_print} | Ω*{A_sample:.1f}[cm^2]')
-                    plt.plot(x, y)
+                    plt.plot(x, y, linestyle='dashed')
                     save_EIS_data(x, data, writer, name, sheet)
                 else:
                     plt.scatter(x, y, s = get_markersize(), label = name, marker = markers[symbols_count])
 
-            elif 'T-Impedance-1' in sheet or 'T-Impedance-2' in sheet or 'T-Impedance-3' in sheet:
-                I_ss = float(df[sheet][name][0])/1000
+            elif 'T-Impedance' in sheet:
+                I_ss = float(df[sheet][columns[i+2]][0])/1000
                 xlabel = r'$\mathdefault{Z_{t, real}\ [mV]}$'
                 ylabel = r'$\mathdefault{-Z_{t, imaginary}\ [mV]}$'
                 if 'fit' in name:
                     print(f'{name_print} | No normalizing')
                     R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)
-                    plt.plot(((x-R_sol)*I_ss)*1000, (y*I_ss*-1)*1000)
+                    plt.plot(((x-R_sol)*I_ss)*1000, (y*I_ss*-1)*1000, linestyle='dashed')
                 else:
                     plt.scatter(((x-min(x))*I_ss)*1000, (y*I_ss*-1)*1000, s = get_markersize(), label = name, marker = markers[symbols_count])
             else:
@@ -170,6 +176,10 @@ def get_ECSA(df):
     columns = list(df['ECSA-cap'].columns)
     for i in range(1, len(columns), 3): # Iterate data columns
         name = columns[i+2]
+        if name == 'NiFeED/NF':
+            name = name.replace('NiFeED/NF', str(r'NiFe$\mathdefault{_{ED}}$/NF'))
+        if name == 'NiFeELD/NF':
+            name = name.replace('NiFeELD/NF', str(r'NiFe$\mathdefault{_{ELD}}$/NF'))
         x = np.array(df['ECSA-cap'][columns[i]].tolist())
         y = np.array(df['ECSA-cap'][columns[i+1]].tolist())
         x = x[~np.isnan(x)]

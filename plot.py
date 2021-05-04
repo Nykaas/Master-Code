@@ -15,14 +15,15 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
         plt.xlim(0,)
     if sheet == 'Impedance': # Complex plots require equal xticks and yticks
         plt.xlim(0,25)
-        plt.ylim(0,25)
+        plt.xlim(0,2000)
+        plt.ylim(0,2000)
     if 'Tafel-Impedance' in sheet: # Complex plots require equal xticks and yticks
         plt.xlim(0,30)
         plt.ylim(0,30)
     if len(columns)-1 > 3:
         if sheet == 'Efficiency':
             plt.legend(fontsize = 17, loc = 'lower right')
-        elif sheet == '10to100':
+        elif '10to100' in sheet:
             plt.legend(fontsize = 17, loc = 'center', ncol = 5, columnspacing = 1, bbox_to_anchor=(0.5, 1.11))
         elif 'ED' in excelfile and 'Evstime' in sheet:
             plt.legend(fontsize = 17, loc = 'center', ncol = 2, columnspacing = 1, bbox_to_anchor=(0.5, 1.11))

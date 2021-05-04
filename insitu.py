@@ -38,7 +38,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                     plt.plot(x, y, color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
                     switch = False
                 else:
-                    plt.plot(x, y, linestyle = '--', color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
+                    plt.plot(x, y, linestyle = 'dashed', color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
                     switch = True
                     color_index += 1
             
@@ -65,10 +65,10 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
                 ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
                 if switch:
-                    plt.plot(x, y, color = colors[color_index], label = name, marker = markers[markers_idx])
+                    plt.scatter(x, y, color = colors[color_index], label = name, marker = markers[markers_idx])
                     switch = False
                 else:
-                    plt.plot(x, y, linestyle = ':', color = colors[color_index], label = name, marker = markers[markers_idx])
+                    plt.plot(x, y, linestyle = 'dashed', color = colors[color_index], label = name, marker = markers[markers_idx])
                     switch = True
                     color_index += 1
                 plt.xlim(0, 0.33)
@@ -81,7 +81,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
                 ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
-                    plt.plot(x, y)
+                    plt.plot(x, y, linestyle='dashed')
                     save_EIS_data(x, data, writer, name, sheet)
                     color_index += 1
                 else:
