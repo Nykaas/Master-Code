@@ -131,6 +131,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)
                     plt.plot(((x-R_sol)*I_ss)*1000, (y*I_ss*-1)*1000, linestyle='dashed')
                 else:
+                    print(f'{name_print} | No normalizing')
                     plt.scatter(((x-min(x))*I_ss)*1000, (y*I_ss*-1)*1000, s = get_markersize(), label = name, marker = markers[symbols_count])
             else:
                 plt.plot(x,y)
@@ -152,7 +153,8 @@ def save_EIS_data(x, data, writer, name, sheet):
 def save_tafel_impedance(x, data, writer, name, sheet, I_ss):
     R_sol = min(x)
     R_pol = max(x)-min(x)
-    temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current [mA]':round(I_ss*1000,2), 'Tafel impedance [mV]':round(R_pol*I_ss*1000,2)}
+    bzt = R_pol*I_ss*1000
+    temp = {'Sample': name.replace(r'A $\mathdefault{cm^{-2}}$', 'A cm-2'), 'Current [mA]':round(I_ss*1000,2), 'Tafel impedance [mV]':round(bzt ,2)}
     data.append(temp)
     df = pd.DataFrame(data, columns = ['Sample', 'Current [mA]', 'Tafel impedance [mV]'])
     df.to_excel(writer, index = False, header=True, sheet_name=sheet)

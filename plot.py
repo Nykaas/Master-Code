@@ -12,12 +12,18 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
     #plt.xlim(-0.1,0.2)
     #plt.ylim(-3,3)
     if sheet == 'Tafel':
-        plt.xlim(0,)
+        if ECSA_norm:
+            plt.xlim(-2,)
+        else:
+            plt.xlim(0,)
     if sheet == 'Impedance': # Complex plots require equal xticks and yticks
-        plt.xlim(0,25)
-        plt.xlim(0,2000)
-        plt.ylim(0,2000)
-    if 'Tafel-Impedance' in sheet: # Complex plots require equal xticks and yticks
+        if ECSA_norm:
+            plt.xlim(0,2000)
+            plt.ylim(0,2000)
+        else:
+            plt.xlim(0,25)
+            plt.ylim(0,25)
+    if 'T-Impedance' in sheet: # Complex plots require equal xticks and yticks
         plt.xlim(0,30)
         plt.ylim(0,30)
     if len(columns)-1 > 3:
