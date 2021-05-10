@@ -7,6 +7,7 @@ from xy_smooth import smooth_xy
 
 from plot import plot_settings
 from plot import get_markersize
+from plot import get_markerinterval
 from CE import get_current_efficiency
 
 def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
@@ -46,26 +47,26 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 #name += ' RHE'
                 print(f'Label: AgCl offset {name}')
 
-            if name == 'NiFeED/NF':
+            if 'NiFeED/NF' in name:
                 name = name.replace('NiFeED/NF', str(r'NiFe$\mathdefault{_{ED}}$/NF'))
             
-            if name == 'NiFeELD/NF':
+            if 'NiFeELD/NF' in name:
                 name = name.replace('NiFeELD/NF', str(r'NiFe$\mathdefault{_{ELD}}$/NF'))
             
             ### Sheet plotting ###
             if 'FullRange' in sheet:
-                xlabel = r'Potential [V, RHE]'
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
+                ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm:
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = smooth_xy(x, y, smooth, excelfile)
-                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
+                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
             
             elif 'ECSA-cap' in sheet: # ECSA & RF capacitance method
-                xlabel = r'Scan rate [mV $\mathdefault{s^{-1}}$]'
-                ylabel = r'Charging current [mA]'
+                xlabel = r'$v$ [mV $\mathdefault{s^{-1}}$]'
+                ylabel = r'$\mathit{I_c}$ [mA]'
                 print(f'{name_print} | No normalizing')
                 x = x[~np.isnan(x)]
                 y = y[~np.isnan(y)]
@@ -74,29 +75,29 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 plt.scatter(x, y, marker = markers[symbols_count])
             
             elif 'LSV' in sheet:
-                xlabel = r'Potential [V, RHE]'
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
+                ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm:
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 save_overpotential(x, y, writer, offset_Hg, data, name, name_print, sheet)
-                x, y = smooth_xy(x, y, smooth, excelfile)
-                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
+                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                plt.plot(x + offset_Hg, y, label = name, marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
 
             elif 'Tafel' in sheet:
-                xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
-                ylabel = r'Overpotential [V, RHE]'
+                xlabel = r'log $i$ [mA $\mathdefault{cm^{-2}}$]'
+                ylabel = r'$\eta$ [$\mathdefault{V_{RHE}}$]'
                 if ECSA_norm:
                     A_sample = ECSA_samples[name]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                x, y = smooth_xy(x, y, smooth, excelfile)
-                plt.plot(np.log10(abs(y)), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
+                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                plt.plot(np.log10(abs(y)), x + offset_Hg - 1.23, label = name, marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
 
             elif '10to100' in sheet:
-                xlabel = r'Potential [V, RHE]'
-                ylabel = r'Current density [μA $\mathdefault{cm^{-2}}$]'
+                xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
+                ylabel = r'$i$ [μA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm and not 'ED' in name:
                     A_sample = ECSA_samples['NF']
                 if ECSA_norm and 'ED' in name:
@@ -106,7 +107,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
-                plt.plot(x, y*1000, label = name, marker = markers[symbols_count], markevery = 0.1, markersize = get_markersize())
+                plt.plot(x, y*1000, label = name, marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
             
             elif sheet == 'Impedance':
                 if ECSA_norm and 'fit' not in name:
@@ -114,18 +115,18 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 y *= A_sample *-1
                 x *= A_sample
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
-                ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
+                ylabel = r'$\mathdefault{-Z_{imag}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
                     print(f'{name_print} | Ω*{A_sample:.1f}[cm^2]')
                     plt.plot(x, y, linestyle='dashed')
                     save_EIS_data(x, data, writer, name, sheet)
                 else:
-                    plt.scatter(x, y, s = get_markersize(), label = name, marker = markers[symbols_count])
+                    plt.scatter(x, y, s = get_markersize()*5, label = name, marker = markers[symbols_count])
 
             elif 'T-Impedance' in sheet:
                 I_ss = float(df[sheet][columns[i+2]][0])/1000
                 xlabel = r'$\mathdefault{Z_{t, real}\ [mV]}$'
-                ylabel = r'$\mathdefault{-Z_{t, imaginary}\ [mV]}$'
+                ylabel = r'$\mathdefault{-Z_{t, imag}\ [mV]}$'
                 if 'fit' in name:
                     print(f'{name_print} | No normalizing')
                     R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)

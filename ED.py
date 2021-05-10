@@ -3,9 +3,12 @@ import pandas as pd
 import numpy as np
 import math
 
+from scipy import integrate
+
 from plot import plot_settings
 from plot import get_markersize
 from xy_smooth import smooth_xy
+from plot import get_markerinterval
 
 def ED_plot(df, excelfile, writer, smooth, markers):
     A_sample = 12.5 # cm^2
@@ -20,8 +23,8 @@ def ED_plot(df, excelfile, writer, smooth, markers):
         for i in range(1, len(columns), 3): # Iterate data columns
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
-            x, y = smooth_xy(x, y, smooth, excelfile)
             name = columns[i+2]
+            x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
             offset_AgCl = get_AgCl_offset(name, sheet)
 
             if '-' in name and 'V' in name: # Correct Ag/Cl offset in label
@@ -61,8 +64,8 @@ def ED_plot(df, excelfile, writer, smooth, markers):
             ### Plot ###
             if 'CV' in sheet: # CV
                 xlabel = r'E [V vs. RHE]'
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x + offset_AgCl, y/A_sample, label = name, marker = markers[markers_idx], markevery = 100, markersize = get_markersize())
+                ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
+                plt.plot(x + offset_AgCl, y/A_sample, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 
                 if 'Electrolytes' in sheet:
                     plt.xlim(right=-0.4)
@@ -70,13 +73,15 @@ def ED_plot(df, excelfile, writer, smooth, markers):
 
             elif 'CP' in sheet: # Constant potential
                 xlabel = r'Time [s]'
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.3, markersize = get_markersize())
+                ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
+                y_int = integrate.cumtrapz(y/1000, x, initial=0) # 
+                print('Q = ', int(y_int[-1]))
+                plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
             
             elif 'CI' in sheet: # Constant current
                 xlabel = r'Time [s]'
-                ylabel = r'E [V vs. RHE]'
-                plt.plot(x, y + offset_AgCl, label = name, marker = markers[markers_idx], markevery = 0.1, markersize = get_markersize())
+                ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
+                plt.plot(x, y + offset_AgCl, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)

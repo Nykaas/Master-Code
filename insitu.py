@@ -6,6 +6,7 @@ from xy_smooth import smooth_xy
 
 from plot import plot_settings
 from plot import get_markersize
+from plot import get_markerinterval
 
 def in_situ_plot(df, writer, excelfile, smooth, markers):
     A_sample = 6.25 # cm^2
@@ -26,44 +27,53 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
             name = columns[i+2]
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
+
+            if 'NiFeED/NF' in name:
+                name = name.replace('NiFeED/NF', str(r'NiFe$\mathdefault{_{ED}}$/NF'))
+            
+            if 'NiFeELD/NF' in name:
+                name = name.replace('NiFeELD/NF', str(r'NiFe$\mathdefault{_{ELD}}$/NF'))
             
             ### Sheet plotting ###
             if sheet == 'Polarization':
                 y /= A_sample
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                xlabel = 'Cell voltage [V]'
-                x, y = smooth_xy(x, y, smooth, excelfile)
+                ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
+                xlabel = r'$\mathit{E_{cell}}$ [V]'
+                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
                 if switch:
-                    plt.plot(x, y, color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
+                    plt.plot(x, y, color = colors[color_index], label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                     switch = False
                 else:
-                    plt.plot(x, y, linestyle = 'dashed', color = colors[color_index], label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
+                    plt.plot(x, y, linestyle = 'dashed', color = colors[color_index], label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                     switch = True
                     color_index += 1
             
-            elif sheet == 'Polarization_1h' or sheet == 'Polarization_end':
+            elif sheet == 'Polarization_1h' or sheet == 'Polarization_end' or sheet == 'Polarization_end_full':
                 y /= A_sample
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                xlabel = 'Cell voltage [V]'
-                x, y = smooth_xy(x, y, smooth, excelfile)
-                plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = 600, markersize = get_markersize())
+                ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
+                xlabel = r'$\mathit{E_{cell}}$ [V]'
+                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 save_Pol_data(y, data, writer, name, sheet)
+                plt.xlim(1.55, 1.95)
 
-            elif sheet == 'Durability':
+            elif 'Durability' in sheet:
+                xlabel = r'$Time$ [h]'
+                ylabel = r'$\mathit{E_{cell}}$ [V]'
                 if 'fit' in name:
                     plt.scatter(x/3600, y, s = get_markersize(), marker = '_')
                 else:
-                    x, y = smooth_xy(x, y, smooth, excelfile)
-                    plt.plot(x/3600, y, label = name, marker = markers[markers_idx], markevery = 100, markersize = get_markersize())
+                    x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                    plt.plot(x/3600, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 
             elif sheet == 'EIS':
                 x *= A_sample
                 y *= A_sample *-1
                 print(f'{name} | Ω*{A_sample:.2f}[cm^2]')
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
-                ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
+                ylabel = r'$\mathdefault{-Z_{imag}\ [Ω \ cm^2]}$'
                 if switch:
                     plt.scatter(x, y, color = colors[color_index], label = name, marker = markers[markers_idx])
                     switch = False
@@ -79,19 +89,19 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 y *= A_sample *-1
                 print(f'{name} | Ω*{A_sample:.2f}[cm^2]')
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
-                ylabel = r'$\mathdefault{-Z_{imaginary}\ [Ω \ cm^2]}$'
+                ylabel = r'$\mathdefault{-Z_{imag}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
                     plt.plot(x, y, linestyle='dashed')
                     save_EIS_data(x, data, writer, name, sheet)
                     color_index += 1
                 else:
-                    plt.scatter(x, y, s = get_markersize(), label = name, marker = markers[markers_idx])                    
-                plt.xlim(0, 0.33)
-                plt.ylim(0, 0.33)
+                    plt.scatter(x, y, s = get_markersize()*5, label = name, marker = markers[markers_idx])                    
+                plt.xlim(0, 1.4)
+                plt.ylim(0, 1.4)
 
             elif sheet == 'Efficiency':
                 # Data appending
-                labels = ['NF', 'Ir/NF'] # add 'NiFe/NF ED', 'NiFe/NF ELD' when available
+                labels = ['NF', 'Ir/NF', r'NiFe$\mathdefault{_{ED}}$/NF'] # add 'NiFe/NF ELD' when available
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')              
                 for k,j in enumerate(y):
                     if j/A_sample >= 500:
@@ -105,16 +115,11 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                     w = np.arange(len(labels))
                     width = 0.35
                     fig, ax = plt.subplots(figsize=(9,7))
-                    rects1 = ax.bar(w - width/2, eff_start, width, label = 'Before', color = 'C7')
-                    rects2 = ax.bar(w + width/2, eff_after, width, label='After', color = 'C3')
+                    rects1 = ax.bar(w - width/2, eff_start, width, label = 'Pre', color = 'C7')
+                    rects2 = ax.bar(w + width/2, eff_after, width, label= 'Post', color = 'C3')
                     ylabel = 'Efficiency [%]'
                     xlabel = ''
-                    plt.xlabel(xlabel, fontsize = 27) # Include fontweight='bold' to bold the label
-                    plt.ylabel(ylabel, fontsize = 27) # Include fontweight='bold' to bold the label
-                    #plt.xticks(fontsize = 27)
-                    #plt.yticks(fontsize = 27)
-                    #plt.minorticks_on() # Show the minor grid lines with very faint and almost transparent grey lines
-                    plt.xticks(w, labels)
+                    plt.xticks(w, labels, fontsize = 27)
                     def autolabel(rects):
                         for rect in rects:
                             height = rect.get_height()

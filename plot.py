@@ -2,8 +2,11 @@ import os
 import matplotlib.pyplot as plt
 
 def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
-    plt.xlabel(xlabel, fontsize = 17) # Include fontweight='bold' to bold the label
-    plt.ylabel(ylabel, fontsize = 17) # Include fontweight='bold' to bold the label
+    if sheet == 'Efficiency':
+        plt.ylabel(ylabel, fontsize = 27)
+    else:
+        plt.xlabel(xlabel, fontsize = 17) # Include fontweight='bold' to bold the label
+        plt.ylabel(ylabel, fontsize = 17) # Include fontweight='bold' to bold the label
     plt.xticks(fontsize = 17)
     plt.yticks(fontsize = 17)
     #plt.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.5)
@@ -18,14 +21,18 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
             plt.xlim(0,)
     if sheet == 'Impedance': # Complex plots require equal xticks and yticks
         if ECSA_norm:
-            plt.xlim(0,2000)
-            plt.ylim(0,2000)
+            plt.xlim(0, 800)
+            plt.ylim(0, 800)
         else:
-            plt.xlim(0,25)
-            plt.ylim(0,25)
+            plt.xlim(0, 25)
+            plt.ylim(0, 25)
     if 'T-Impedance' in sheet: # Complex plots require equal xticks and yticks
-        plt.xlim(0,30)
-        plt.ylim(0,30)
+        plt.xlim(0, 30)
+        plt.ylim(0, 30)
+
+    if 'Durability' in sheet:
+        plt.xlim(0, 6)
+  
     if len(columns)-1 > 3:
         if sheet == 'Efficiency':
             plt.legend(fontsize = 17, loc = 'lower right')
@@ -45,3 +52,6 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
 
 def get_markersize():
     return 4
+
+def get_markerinterval(x):
+    return int(len(x)*0.1)

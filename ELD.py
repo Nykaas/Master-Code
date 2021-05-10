@@ -5,6 +5,7 @@ import pandas as pd
 from plot import plot_settings
 from plot import get_markersize
 from xy_smooth import smooth_xy
+from plot import get_markerinterval
 
 def ELD_plot(df, excelfile, writer, smooth, markers):
     ECSA = get_ECSA(df)
@@ -24,8 +25,8 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
             if 'Plating' not in sheet:
-                x, y = smooth_xy(x, y, smooth, excelfile)
                 name = columns[i+2]
+                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
             if 'pH' in sheet and 'Plating' not in sheet:
                 bath_pH = df[sheet][name][0]
                 offset_Ag = 0.197 + (0.0591 * bath_pH)
@@ -45,20 +46,20 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
             
             ### Plot ###
             if 'CXV' in sheet: # CV
-                xlabel = r'E [V vs. RHE]'
-                ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
+                xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
+                ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
                 name = name.replace('C', r'$\degree$C')
-                plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
+                plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
 
             elif 'LSV' in sheet: # Evans diagram
-                xlabel = r'log i [mA $\mathdefault{cm^{-2}}$]'
-                ylabel = r'E [V vs. RHE]'
-                plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
+                xlabel = r'log $i$ [mA $\mathdefault{cm^{-2}}$]'
+                ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
+                plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
 
             elif 'OCP' in sheet: # Immersion potential monitoring
                 xlabel = r'Time [min]'
-                ylabel = r'E [V vs. RHE]'
-                plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
+                ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
+                plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
 
             elif 'Plating' in sheet:
                 if 'Temperature' in sheet:
@@ -70,11 +71,11 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                     xlabel = r'Concentration [M]'
 
                 if 'Ipl' in sheet:
-                    ylabel = r'Current density [mA $\mathdefault{cm^{-2}}$]'
-                    plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = 0.1)
+                    ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
+                    plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
                 else:
-                    ylabel = r'E [V vs. RHE]'
-                    plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = 0.1)
+                    ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
+                    plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
