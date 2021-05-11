@@ -14,6 +14,4 @@ df = pd.DataFrame(data, columns = ['Time [s]', 'E [V]'])
 df.to_csv(filepath, header=True, index=None, sep='\t', mode='w')
 print('Data from Ir/NF regression saved.')
 # plt.plot(xfit, yfit)
-# for i in range(0, len(xfit)):
-#     plt.scatter(xfit[i]/3600, yfit[i], s = 20, marker = '_')
 # plt.show()
