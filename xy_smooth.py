@@ -14,7 +14,7 @@ def smooth_xy(x, y, smooth, excelfile, name, sheet):
                 freq = 0.02
             else:
                 freq = 0.02
-        elif 'ED' in excelfile:
+        elif 'ED' or 'ELD' in excelfile:
             freq = 0.01
         elif 'Electrodeposition' in excelfile:
             freq = 0.01

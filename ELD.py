@@ -17,7 +17,12 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
         markers_idx = 0
         xlabel = df[sheet]['Graph_settings'][1]
         ylabel = df[sheet]['Graph_settings'][2]
-        bath_pH = 5
+
+        if 'OCP' in sheet:
+            bath_pH = df[sheet]['Graph_settings'][3]
+        else:
+            bath_pH = 5
+            
         offset_Ag = 0.197 + (0.0591 * bath_pH) # V
         print(f'AgCl to RHE offset = {offset_Ag:.2f} V at pH {bath_pH}')
         
@@ -27,6 +32,7 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
             if 'Plating' not in sheet:
                 name = columns[i+2]
                 x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+
             if 'pH' in sheet and 'Plating' not in sheet:
                 bath_pH = df[sheet][name][0]
                 offset_Ag = 0.197 + (0.0591 * bath_pH)
@@ -56,7 +62,7 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                 ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
                 plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
 
-            elif 'OCP' in sheet: # Immersion potential monitoring
+            elif 'OCP' in sheet: # Potential transient
                 xlabel = r'$t$ [min]'
                 ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
                 plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
@@ -72,10 +78,10 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
 
                 if 'Ipl' in sheet:
                     ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
-                    plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
+                    plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx])
                 else:
                     ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
-                    plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
+                    plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx])
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
