@@ -57,18 +57,18 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                 plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
 
             elif 'OCP' in sheet: # Immersion potential monitoring
-                xlabel = r'Time [min]'
+                xlabel = r'$t$ [min]'
                 ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
                 plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
 
             elif 'Plating' in sheet:
                 if 'Temperature' in sheet:
-                    xlabel = r'Temperature [K]'
+                    xlabel = r'$T$ [K]'
                 elif 'pH' in sheet:
                     xlabel = r'pH'
                     offset_Ag = 0
                 else:
-                    xlabel = r'Concentration [M]'
+                    xlabel = r'$C$ [M]'
 
                 if 'Ipl' in sheet:
                     ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
