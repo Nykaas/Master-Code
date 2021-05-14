@@ -13,6 +13,6 @@ yfit = [((-4.24E-06 * i) + 1.598820) for i in xfit]
 data = {'Time [s]':xfit, 'E [V]':yfit}
 df = pd.DataFrame(data, columns = ['Time [s]', 'E [V]'])
 df.to_csv(filepath, header=True, index=None, sep='\t', mode='w')
-print('Data from ED regression saved.')
+print('Data from NiFeED/NF regression saved.')
 #plt.plot(xfit, yfit)
 #plt.show()

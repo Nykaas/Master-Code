@@ -18,7 +18,7 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
         xlabel = df[sheet]['Graph_settings'][1]
         ylabel = df[sheet]['Graph_settings'][2]
 
-        if 'OCP' in sheet:
+        if 'OCP' in sheet or 'NiFe' in sheet:
             bath_pH = df[sheet]['Graph_settings'][3]
         else:
             bath_pH = 5

@@ -7,7 +7,11 @@ uncertainty = {
     'ED_loading': [1.98, 1.66, 1.22],
     'ED_Overpotential': [308, 305, 331], # Ex_Uncertainty
     'ED_ECSA': [460.15, 715.91, 370.61], # Ex_Uncertainty
-    'ED_bzt': [14.72, 16.27, 17.41] # Ex_Uncertainty
+    'ED_bzt': [14.72, 16.27, 17.41], # Ex_Uncertainty
+    'ELD_loading': [1.62, 1.76, 1.26],
+    'ELD_Overpotential': [324, 321, 319], # Ex_Uncertainty
+    'ELD_ECSA': [285.91, 239.55, 297.73], # Ex_Uncertainty
+    'ELD_bzt': [13.72, 14.33, 14.86] # Ex_Uncertainty
 }
 
 for key in uncertainty:

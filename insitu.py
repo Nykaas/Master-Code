@@ -91,17 +91,21 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
                 ylabel = r'$\mathdefault{-Z_{imag}\ [Ω \ cm^2]}$'
                 if 'fit' in name:
-                    plt.plot(x, y, linestyle='dashed')
+                    plt.plot(x, y, linestyle = 'dashed', label = name.split()[0], marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                     save_EIS_data(x, data, writer, name, sheet)
                     color_index += 1
+                #else:
+                #    plt.scatter(x, y, s = get_markersize()*5, label = name, marker = markers[markers_idx])                    
+                if sheet == 'EIS_1h':
+                    plt.xlim(0, 0.35)
+                    plt.ylim(0, 0.35)
                 else:
-                    plt.scatter(x, y, s = get_markersize()*5, label = name, marker = markers[markers_idx])                    
-                plt.xlim(0, 1.4)
-                plt.ylim(0, 1.4)
+                    plt.xlim(0, 1.2)
+                    plt.ylim(0, 1.2)
 
             elif sheet == 'Efficiency':
                 # Data appending
-                labels = ['NF', 'Ir/NF', r'NiFe$\mathdefault{_{ED}}$/NF'] # add 'NiFe/NF ELD' when available
+                labels = ['NF', 'Ir/NF', r'NiFe$\mathdefault{_{ED}}$/NF', r'NiFe$\mathdefault{_{ELD}}$/NF'] # add 'NiFe/NF ELD' when available
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')              
                 for k,j in enumerate(y):
                     if j/A_sample >= 500:
