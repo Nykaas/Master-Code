@@ -98,11 +98,11 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
             elif '10to100' in sheet:
                 xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
                 ylabel = r'$i$ [μA $\mathdefault{cm^{-2}}$]'
-                if ECSA_norm and not 'ED' in name:
+                if ECSA_norm and not 'ED' in sheet:
                     A_sample = ECSA_samples['NF']
-                if ECSA_norm and 'ED' in name:
+                if ECSA_norm and 'ED' in sheet:
                     A_sample = ECSA_samples['NiFe$\mathdefault{_{ED}}$/NF']
-                if ECSA_norm and 'ELD' in name:
+                if ECSA_norm and 'ELD' in sheet:
                     A_sample = ECSA_samples['NiFe$\mathdefault{_{ELD}}$/NF']
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
