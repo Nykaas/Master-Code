@@ -72,14 +72,14 @@ def ED_plot(df, excelfile, writer, smooth, markers):
                     save_Eeq_data(x, y, writer, name, offset_AgCl, Eeq_data, sheet, A_sample)
 
             elif 'CP' in sheet: # Constant potential
-                xlabel = r'Time [s]'
+                xlabel = r'$t$ [s]'
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
                 y_int = integrate.cumtrapz(y/1000, x, initial=0) # 
                 print('Q = ', int(y_int[-1]))
                 plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
             
             elif 'CI' in sheet: # Constant current
-                xlabel = r'Time [s]'
+                xlabel = r'$t$ [s]'
                 ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
                 plt.plot(x, y + offset_AgCl, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
             

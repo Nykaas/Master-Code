@@ -23,9 +23,10 @@ excelfiles = [
     'ELD.xlsx', # 4
     'Ex_Electrodeposition.xlsx', # 5
     'Ex_Electroless.xlsx', # 6
-    'Ex_Uncertainty.xlsx' # 7
+    'Ex_Uncertainty.xlsx', # 7
+    'ED_Electrolytes.xlsx' # 8
 ]
-excelfile = excelfiles[0]
+excelfile = excelfiles[3]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 ECSA_norm = True # Normalize currents with ECSA for exsitu only
 smooth = True # Smooths x and y data

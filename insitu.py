@@ -60,7 +60,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 plt.xlim(1.55, 1.95)
 
             elif 'Durability' in sheet:
-                xlabel = r'$Time$ [h]'
+                xlabel = r'$t$ [h]'
                 ylabel = r'$\mathit{E_{cell}}$ [V]'
                 if 'fit' in name:
                     plt.scatter(x/3600, y, s = get_markersize(), marker = '_')
