@@ -59,9 +59,10 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
                 if ECSA_norm:
                     A_sample = ECSA_samples[name]
+                y_op = y/A_sample_RF
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                save_overpotential(x, y, writer, offset_Hg, data, name, name_print, sheet)
+                save_overpotential(x, y_op, writer, offset_Hg, data, name, sheet)
                 x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
                 plt.plot(x + offset_Hg, y, label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
 
@@ -184,7 +185,7 @@ def get_ECSA(df):
         ECSA_samples[name] = ECSA
     return ECSA_samples
 
-def save_overpotential(x, y, writer, offset_Hg, data, name, name_print, sheet):
+def save_overpotential(x, y, writer, offset_Hg, data, name, sheet):
     for i, j in enumerate(y):
         if round(j, 1) >= 9.9:
             break
