@@ -105,7 +105,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
 
             elif sheet == 'Efficiency':
                 # Data appending
-                labels = ['NF', 'Ir/NF', r'NiFe$\mathdefault{_{ED}}$/NF', r'NiFe$\mathdefault{_{ELD}}$/NF'] # add 'NiFe/NF ELD' when available
+                labels = ['NF', r'NiFe$\mathdefault{_{ED}}$/NF', r'NiFe$\mathdefault{_{ELD}}$/NF', 'Ir/NF']
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')              
                 for k,j in enumerate(y):
                     if j/A_sample >= 500:
