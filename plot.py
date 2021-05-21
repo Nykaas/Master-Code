@@ -1,7 +1,8 @@
 import os
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
 
-def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
+def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, ax):
     if sheet == 'Efficiency':
         plt.ylabel(ylabel, fontsize = 27)
     else:
@@ -38,6 +39,10 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
             plt.legend(fontsize = 17, loc = 'lower right')
         elif '10to100' in sheet:
             plt.legend(fontsize = 17, loc = 'center', ncol = 5, columnspacing = 1, bbox_to_anchor=(0.5, 1.11))
+        elif 'Stability' in sheet:
+            plt.legend(fontsize = 17, loc = 'center', ncol = 5, columnspacing = 1, bbox_to_anchor=(0.5, 1.11))
+            ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+            ax.xaxis.set_major_locator(plt.MaxNLocator(5))
         elif 'ED' in excelfile and 'Evstime' in sheet:
             plt.legend(fontsize = 17, loc = 'center', ncol = 2, columnspacing = 1, bbox_to_anchor=(0.5, 1.11))
         else:
@@ -49,6 +54,7 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
         filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], sheet) # for data in onedrive
     plt.savefig(filepath, dpi = 300, bbox_inches='tight')
     plt.clf()
+
 
 def get_markersize():
     return 4

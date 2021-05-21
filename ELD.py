@@ -84,7 +84,7 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                     plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx])
             
             markers_idx += 1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ax = None, ECSA_norm=False)
 
 def get_ECSA(df):
     columns = list(df['ECSA-cap'].columns)

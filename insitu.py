@@ -49,7 +49,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                     switch = True
                     color_index += 1
             
-            elif sheet == 'Polarization_1h' or sheet == 'Polarization_end' or sheet == 'Polarization_end_full':
+            elif sheet == 'Polarization_1h' or sheet == 'Polarization_end':
                 y /= A_sample
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
@@ -138,7 +138,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                     plt.ylim(0,100)
 
             markers_idx +=1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False, ax = None)
 
 ### Functions ###
 def save_EIS_data(x, data, writer, name, sheet):

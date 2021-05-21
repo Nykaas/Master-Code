@@ -12,6 +12,7 @@ from plot import get_markerinterval
 def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
     A_sample = 12.5 # cm^2
     A_sample_RF = A_sample
+    colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6']
     if 'Electrodeposition' in excelfile or 'Electroless' in excelfile:
         ECSA_norm = False
     if ECSA_norm:
@@ -21,7 +22,11 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
         print(f'--- {sheet} ---')
         columns = list(df[sheet].columns)
         symbols_count = 0
+        color_index = 0
         data = []
+        switch = True
+        fig, ax = plt.subplots()
+
         for i in range(1, len(columns), 3): # Iterate data columns
             x = np.array(df[sheet][columns[i]].tolist())
             y = np.array(df[sheet][columns[i+1]].tolist())
@@ -78,9 +83,27 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
                     A_sample = ECSA_samples[name_10]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
-                name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
-                plt.plot(x, y*1000, label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
+                plt.plot(x + offset_Hg, y*1000, label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
             
+            elif sheet == 'Stability':
+                xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
+                ylabel = r'$i$ [μA $\mathdefault{cm^{-2}}$]'
+                if ECSA_norm:
+                    if 'ED' in name:
+                        name_10 = df[sheet]['Graph_settings'][3] # Cell A5 in excel 10-100 sheet
+                    elif 'ELD' in name:
+                        name_10 = df[sheet]['Graph_settings'][4] # Cell A6 in excel 10-100 sheet
+                    A_sample = ECSA_samples[name_10]
+                y /= A_sample
+                print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
+                if switch:
+                    ax.plot(x + offset_Hg, y*1000, color = colors[color_index+1], label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
+                    switch = False
+                else:
+                    ax.plot(x + offset_Hg, y*1000, linestyle = 'dashed', color = colors[color_index+1], label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
+                    switch = True
+                    color_index += 1
+
             elif sheet == 'Impedance':
                 if ECSA_norm and 'fit' not in name:
                     A_sample = ECSA_samples[name]
@@ -111,7 +134,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
 
             symbols_count += 1
 
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, ax)
 
 ### Functions ###
 def save_EIS_data(x, data, writer, name, sheet):
@@ -178,24 +201,28 @@ def get_AgCl_offset(): # For ED potential labels Ex situ
     return offset_AgCl
 
 def get_label(name):
-    if name == 'NiFeED/NF':
+    if 'NiFeED/NF' in name:
         name = name.replace('NiFeED/NF', str(r'NiFe$\mathdefault{_{ED}}$/NF'))
-
-    if name == 'NiFeELD/NF':
+    if 'NiFeELD/NF' in name:
         name = name.replace('NiFeELD/NF', str(r'NiFe$\mathdefault{_{ELD}}$/NF'))
-
     if 'A' in str(name): # Change to current density in label
         idx = name.find('-')
         current_density = (float(name[idx+1:idx+5])/A_sample) * 1000 # A to mA
         name = name.replace(name[idx+1:idx+5],  f'{current_density:.0f}')
         name = name.replace('A', r'mA $\mathdefault{cm^{-2}}$')
         print(f'{sheet} | {name_print} | A to mA legend')
-    
     if '-' in name and 'V' in name: # Correct Ag/Cl offset in label
+        print(name)
         offset_AgCl = get_AgCl_offset()
         idx = name.find('V')
         E = round(float(name[idx-5:idx-1]) - offset_AgCl, 2) # - offset since float is positive from excel
         name = name.replace(name[idx-5:idx-1], str(E))
         print(f'Label: AgCl offset {name}')
-    
+    if 'mV/s' in name:
+        name = name.replace('mV/s', r'mV $\mathdefault{s^{-1}}$')
+    if '1st' in name:
+        name = name.replace('1st', r'$\mathdefault{1^{st}}$')
+    if '10000th' in name:
+        name = name.replace('10000th', r'$\mathdefault{10000^{th}}$')
+
     return name
