@@ -86,22 +86,27 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 plt.plot(x + offset_Hg, y*1000, label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
             
-            elif sheet == 'Stability':
+            elif 'Stability' in sheet:
                 xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
                 ylabel = r'$i$ [μA $\mathdefault{cm^{-2}}$]'
+                if 'NF' in sheet:
+                    spec_color = colors[0]
+                elif 'ED' in sheet:
+                    spec_color = colors[1]
+                elif 'ELD' in sheet:
+                    spec_color = colors[2]
+                else:
+                    spec_color = colors[color_index+1]
                 if ECSA_norm:
-                    if 'ED' in name:
-                        name_10 = df[sheet]['Graph_settings'][3] # Cell A5 in excel 10-100 sheet
-                    elif 'ELD' in name:
-                        name_10 = df[sheet]['Graph_settings'][4] # Cell A6 in excel 10-100 sheet
+                    name_10 = df[sheet]['Graph_settings'][3] # Cell A5 in excel 10-100 sheet
                     A_sample = ECSA_samples[name_10]
                 y /= A_sample
                 print(f'{name_print} | I/{A_sample:.1f}[cm^2]')
                 if switch:
-                    ax.plot(x + offset_Hg, y*1000, color = colors[color_index+1], label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
+                    ax.plot(x + offset_Hg, y*1000, color = spec_color, label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
                     switch = False
                 else:
-                    ax.plot(x + offset_Hg, y*1000, linestyle = 'dashed', color = colors[color_index+1], label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
+                    ax.plot(x + offset_Hg, y*1000, linestyle = 'dashed', color = spec_color, label = get_label(name), marker = markers[symbols_count], markevery = get_markerinterval(x), markersize = get_markersize())
                     switch = True
                     color_index += 1
 
