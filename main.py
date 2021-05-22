@@ -26,9 +26,10 @@ excelfiles = [
     'Ex_Uncertainty.xlsx', # 7
     'ED_Electrolytes.xlsx' # 8
 ]
-excelfile = excelfiles[3]
+excelfile = excelfiles[2]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
-ECSA_norm = True # Normalize currents with ECSA for exsitu only
+ECSA_norm = False # Normalize currents with ECSA for exsitu only
+In_situ_correction = False # Correct in situ voltages for cell resistance
 smooth = True # Smooths x and y data
 markers = ['v', 'o', 's', 'x', 'D', '*', 'H', '+', '^', '8', '4', '3', '6'] # 12
  
@@ -55,7 +56,7 @@ def plot(df, excelfile):
     if 'Ex' in excelfile:
         ex_situ_plot(df, writer(ECSA_norm), offset_Hg, excelfile, ECSA_norm, smooth, markers)
     elif 'In' in excelfile:
-        in_situ_plot(df, writer(ECSA_norm), excelfile, smooth, markers)
+        in_situ_plot(df, writer(ECSA_norm), excelfile, smooth, markers, ECSA_norm, In_situ_correction)
     elif 'ED' in excelfile:
         ED_plot(df, excelfile, writer(ECSA_norm), smooth, markers)
     elif 'ELD' in excelfile:
@@ -67,5 +68,7 @@ plot(df, excelfile)
 
 if ECSA_norm and 'Ex' in excelfile:
     print(f'Plots/Data from {excelfile} normalized by ECSA saved in {(timer()-start):.2f}s! Have a great day {username.capitalize()}.')
+elif In_situ_correction and 'In' in excelfile:
+    print(f'Plots/Data from {excelfile} normalized by SA and iR-corrected saved in {(timer()-start):.2f}s! Have a great day {username.capitalize()}.')
 else:
     print(f'Plots/Data from {excelfile} normalized by SA saved in {(timer()-start):.2f}s! Have a great day {username.capitalize()}.')

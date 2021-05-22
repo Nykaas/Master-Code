@@ -8,7 +8,7 @@ from plot import plot_settings
 from plot import get_markersize
 from plot import get_markerinterval
 
-def in_situ_plot(df, writer, excelfile, smooth, markers):
+def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_correction):
     A_sample = 6.25 # cm^2
     colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6']
     for sheet in df: # Iterate sheet name as key in df dictionary
@@ -28,6 +28,10 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
             xlabel = df[sheet]['Graph_settings'][1]
             ylabel = df[sheet]['Graph_settings'][2]
 
+            if In_situ_correction and 'EIS' not in sheet:
+                R = 6.25 * df[sheet][name][0]
+                print(f'Cell voltage corrected for ohmic resistance : {int(1000*R)} [mohm cm2]')
+
             if 'NiFeED/NF' in name:
                 name = name.replace('NiFeED/NF', str(r'NiFe$\mathdefault{_{ED}}$/NF'))
             
@@ -41,6 +45,8 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
                 xlabel = r'$\mathit{E_{cell}}$ [V]'
                 x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                if In_situ_correction:
+                    x -= (y/1000)*R
                 if switch:
                     plt.plot(x, y, color = colors[color_index], label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                     switch = False
@@ -55,13 +61,23 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
                 xlabel = r'$\mathit{E_{cell}}$ [V]'
                 x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                if In_situ_correction:
+                    x -= (y/1000)*R
                 plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 save_Pol_data(y, data, writer, name, sheet)
-                plt.xlim(1.55, 1.95)
+                if In_situ_correction:
+                    if sheet == 'Polarization_1h':
+                        plt.xlim(1.5, 1.85)
+                    else:
+                        plt.xlim(1.3, 1.8)
+                else:
+                    plt.xlim(1.55, 1.95)
 
             elif 'Durability' in sheet:
                 xlabel = r'$t$ [h]'
                 ylabel = r'$\mathit{E_{cell}}$ [V]'
+                if In_situ_correction:
+                    y -= 3.125*R
                 if 'fit' in name:
                     plt.scatter(x/3600, y, s = get_markersize(), marker = '_')
                 else:
@@ -81,8 +97,8 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                     plt.plot(x, y, linestyle = 'dashed', color = colors[color_index], label = name, marker = markers[markers_idx])
                     switch = True
                     color_index += 1
-                plt.xlim(0, 0.33)
-                plt.ylim(0, 0.33)     
+                plt.xlim(0, 0.8)
+                plt.ylim(0, 0.8)     
             
             elif sheet == 'EIS_1h' or sheet == 'EIS_end':
                 x *= A_sample
@@ -97,11 +113,11 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                 #else:
                 #    plt.scatter(x, y, s = get_markersize()*5, label = name, marker = markers[markers_idx])                    
                 if sheet == 'EIS_1h':
-                    plt.xlim(0, 0.35)
-                    plt.ylim(0, 0.35)
+                    plt.xlim(0, 0.3)
+                    plt.ylim(0, 0.3)
                 else:
-                    plt.xlim(0, 1.2)
-                    plt.ylim(0, 1.2)
+                    plt.xlim(0, 0.8)
+                    plt.ylim(0, 0.8)
 
             elif sheet == 'Efficiency':
                 # Data appending
@@ -138,7 +154,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers):
                     plt.ylim(0,100)
 
             markers_idx +=1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction)
 
 ### Functions ###
 def save_EIS_data(x, data, writer, name, sheet):

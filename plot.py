@@ -1,7 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 
-def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
+def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction):
     if sheet == 'Efficiency':
         plt.ylabel(ylabel, fontsize = 27)
     else:
@@ -45,6 +45,8 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm):
     username = os.getlogin()
     if ECSA_norm:
         filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], f'{sheet}_ECSA') # for data in onedrive
+    elif In_situ_correction and 'In' in excelfile:
+        filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], f'{sheet}_iR') # for data in onedrive
     else:
         filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, excelfile[:-5], sheet) # for data in onedrive
     plt.savefig(filepath, dpi = 300, bbox_inches='tight')
