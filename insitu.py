@@ -55,7 +55,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                     switch = True
                     color_index += 1
             
-            elif sheet == 'Polarization_1h' or sheet == 'Polarization_end' or sheet == 'Polarization_end_full':
+            elif sheet == 'Polarization_1h' or sheet == 'Polarization_end':
                 y /= A_sample
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
@@ -121,7 +121,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
 
             elif sheet == 'Efficiency':
                 # Data appending
-                labels = ['NF', 'Ir/NF', r'NiFe$\mathdefault{_{ED}}$/NF', r'NiFe$\mathdefault{_{ELD}}$/NF'] # add 'NiFe/NF ELD' when available
+                labels = ['NF', r'NiFe$\mathdefault{_{ED}}$/NF', r'NiFe$\mathdefault{_{ELD}}$/NF', 'Ir/NF']
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')              
                 for k,j in enumerate(y):
                     if j/A_sample >= 500:
@@ -154,7 +154,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                     plt.ylim(0,100)
 
             markers_idx +=1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction, ax = None)
 
 ### Functions ###
 def save_EIS_data(x, data, writer, name, sheet):

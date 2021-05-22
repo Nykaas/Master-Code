@@ -63,7 +63,7 @@ def ED_plot(df, excelfile, writer, smooth, markers):
             
             ### Plot ###
             if 'CV' in sheet: # CV
-                xlabel = r'E [V vs. RHE]'
+                xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
                 plt.plot(x + offset_AgCl, y/A_sample, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 
@@ -84,7 +84,7 @@ def ED_plot(df, excelfile, writer, smooth, markers):
                 plt.plot(x, y + offset_AgCl, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
             
             markers_idx += 1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False, ax = None)
 
 def save_Eeq_data(x, y, writer, name, offset_AgCl, Eeq_data, sheet, A_sample):
     y_ = y
