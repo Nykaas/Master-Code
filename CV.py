@@ -9,7 +9,7 @@ from plot import plot_settings
 from plot import get_markersize
 from plot import get_markerinterval
 
-def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
+def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, In_situ_correction):
     A_sample = 12.5 # cm^2
     A_sample_RF = A_sample
     colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6']
@@ -135,7 +135,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers):
 
             symbols_count += 1
 
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, ax)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction, ax)
 
 ### Functions ###
 def save_EIS_data(x, data, writer, name, sheet):

@@ -27,10 +27,10 @@ excelfiles = [
     'ED_Electrolytes.xlsx', # 8
     'Ex_Stability.xlsx' # 9
 ]
-excelfile = excelfiles[2]
+excelfile = excelfiles[-1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
-ECSA_norm = False # Normalize currents with ECSA for exsitu only
-In_situ_correction = False # Correct in situ voltages for cell resistance
+ECSA_norm = True # Normalize currents with ECSA for exsitu only
+In_situ_correction = True # Correct in situ voltages for cell resistance
 smooth = True # Smooths x and y data
 markers = ['v', 'o', 's', 'x', 'D', '*', 'H', '+', '^', '8', '4', '3', '6'] # 12
  
@@ -55,7 +55,7 @@ def writer(ECSA_norm):
     
 def plot(df, excelfile):    
     if 'Ex' in excelfile:
-        ex_situ_plot(df, writer(ECSA_norm), offset_Hg, excelfile, ECSA_norm, smooth, markers)
+        ex_situ_plot(df, writer(ECSA_norm), offset_Hg, excelfile, ECSA_norm, smooth, markers, In_situ_correction)
     elif 'In' in excelfile:
         in_situ_plot(df, writer(ECSA_norm), excelfile, smooth, markers, ECSA_norm, In_situ_correction)
     elif 'ED' in excelfile:
