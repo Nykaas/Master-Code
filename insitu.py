@@ -11,6 +11,7 @@ from plot import get_markerinterval
 def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_correction):
     A_sample = 6.25 # cm^2
     colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6']
+    ECSA_norm = False
     for sheet in df: # Iterate sheet name as key in df dictionary
         print(f'--- {sheet} ---')
         columns = list(df[sheet].columns)
@@ -65,25 +66,20 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                     x -= (y/1000)*R
                 plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 save_Pol_data(y, data, writer, name, sheet)
-                if In_situ_correction:
-                    if sheet == 'Polarization_1h':
-                        plt.xlim(1.5, 1.85)
-                    else:
-                        plt.xlim(1.3, 1.8)
-                else:
-                    plt.xlim(1.55, 1.95)
 
             elif 'Durability' in sheet:
                 xlabel = r'$t$ [h]'
                 ylabel = r'$\mathit{E_{cell}}$ [V]'
                 if In_situ_correction:
                     y -= 3.125*R
-                if 'fit' in name:
-                    plt.scatter(x/3600, y, s = get_markersize(), marker = '_')
-                else:
-                    x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
-                    plt.plot(x/3600, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
-                
+                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                x /= 3600
+                a, b = np.polyfit(x, y, 1)
+                plt.plot(x, a*x + b, color=colors[color_index], linestyle='dashed')
+                plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
+                color_index += 1
+                save_reg_durability(a, b, name, sheet, data, writer)
+
             elif sheet == 'EIS':
                 x *= A_sample
                 y *= A_sample *-1
@@ -170,5 +166,12 @@ def save_Pol_data(y, data, writer, name, sheet):
     temp = {'Sample': name, 'Max current [mA/cm2]':round(max(y))}
     data.append(temp)
     df = pd.DataFrame(data, columns = ['Sample', 'Max current [mA/cm2]'])
+    df.to_excel(writer, index = False, header=True, sheet_name=sheet)
+    writer.save()
+
+def save_reg_durability(a, b, name, sheet, data, writer):
+    temp = {'Sample' : name, 'a [mV]': a*1000, 'b [V]': b}
+    data.append(temp)
+    df = pd.DataFrame(data, columns = ['Sample', 'a [mV]', 'b [V]'])
     df.to_excel(writer, index = False, header=True, sheet_name=sheet)
     writer.save() 

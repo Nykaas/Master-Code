@@ -25,7 +25,8 @@ excelfiles = [
     'Ex_Electroless.xlsx', # 6
     'Ex_Uncertainty.xlsx', # 7
     'ED_Electrolytes.xlsx', # 8
-    'Ex_Stability.xlsx' # 9
+    'Ex_Stability.xlsx', # 9
+    'In_Comparison_ED3.xlsx' # 10
 ]
 excelfile = excelfiles[-1]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH

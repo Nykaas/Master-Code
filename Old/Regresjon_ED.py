@@ -5,14 +5,14 @@ import os
 username = os.getlogin()
 filepath = os.path.join(r'C:\Users', username, r'OneDrive\Master Thesis\3 Project plan\Lab\Plots\Draft', username, r'In_Comparison\Regression_ED.txt')
 
-start = 3635 # Start time in seconds
-end = 23458 # End time in seconds
+start = 3600 # Start time in seconds
+end = 31022 # End time in seconds
 
 xfit = [i for i in range(start, end + 1) if i % 600 == 0 or i == start or i == end]
-yfit = [((-4.24E-06 * i) + 1.598820) for i in xfit]
+yfit = [((2E-06 * i) + 1.6463) for i in xfit]
 data = {'Time [s]':xfit, 'E [V]':yfit}
 df = pd.DataFrame(data, columns = ['Time [s]', 'E [V]'])
 df.to_csv(filepath, header=True, index=None, sep='\t', mode='w')
 print('Data from NiFeED/NF regression saved.')
-#plt.plot(xfit, yfit)
-#plt.show()
+plt.plot(xfit, yfit)
+plt.show()

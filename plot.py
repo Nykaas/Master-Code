@@ -10,29 +10,26 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_
         plt.ylabel(ylabel, fontsize = 17) # Include fontweight='bold' to bold the label
     plt.xticks(fontsize = 17)
     plt.yticks(fontsize = 17)
-    #plt.grid(b=True, which='major', color='#999999', linestyle='-', alpha=0.5)
     plt.minorticks_on() # Show the minor grid lines with very faint and almost transparent grey lines
-    #plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
-    #plt.xlim(-0.1,0.2)
-    #plt.ylim(-3,3)
-    if sheet == 'Tafel':
-        if ECSA_norm:
+    
+    if 'Ex_' in excelfile:
+        if sheet == 'Tafel':
             plt.xlim(-2,)
-        else:
-            plt.xlim(0,)
-    if sheet == 'Impedance': # Complex plots require equal xticks and yticks
-        if ECSA_norm:
+        elif sheet == 'Impedance': # Complex plots require equal xticks and yticks
             plt.xlim(0, 800)
             plt.ylim(0, 800)
-        else:
-            plt.xlim(0, 25)
-            plt.ylim(0, 25)
-    if 'T-Impedance' in sheet: # Complex plots require equal xticks and yticks
-        plt.xlim(0, 30)
-        plt.ylim(0, 30)
+        elif 'T-Impedance' in sheet: # Complex plots require equal xticks and yticks
+            plt.xlim(0, 30)
+            plt.ylim(0, 30)
 
-    if 'Durability' in sheet:
-        plt.xlim(0, 6)
+    if 'In_' in excelfile:
+        if 'Durability' in sheet:
+            plt.xlim(0, 6)
+        elif 'EIS' in sheet:
+            plt.xlim(0, 0.35)
+            plt.ylim(0, 0.35)
+        elif 'Pol' in sheet:
+            plt.xlim(1.5)
   
     if len(columns)-1 > 3:
         if sheet == 'Efficiency':
