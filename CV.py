@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import os
-import math
 from xy_smooth import smooth_xy
 
 from plot import plot_settings

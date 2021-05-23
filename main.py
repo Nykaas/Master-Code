@@ -1,8 +1,5 @@
 import os
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from pathlib import Path
 from timeit import default_timer as timer
 
 from CV import ex_situ_plot
@@ -28,7 +25,7 @@ excelfiles = [
     'Ex_Stability.xlsx', # 9
     'In_Comparison_ED3.xlsx' # 10
 ]
-excelfile = excelfiles[-1]
+excelfile = excelfiles[0]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 ECSA_norm = True # Normalize currents with ECSA for exsitu only
 In_situ_correction = True # Correct in situ voltages for cell resistance

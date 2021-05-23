@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import os
 from xy_smooth import smooth_xy
 
 from plot import plot_settings
@@ -78,7 +77,8 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 plt.plot(x, a*x + b, color=colors[color_index], linestyle='dashed')
                 plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 color_index += 1
-                save_reg_durability(a, b, name, sheet, data, writer)
+                a, b = save_reg_durability(a, b, name, sheet, data, writer)
+                #annotate(a, b, y, name)
 
             elif sheet == 'EIS':
                 x *= A_sample
@@ -174,4 +174,16 @@ def save_reg_durability(a, b, name, sheet, data, writer):
     data.append(temp)
     df = pd.DataFrame(data, columns = ['Sample', 'a [mV]', 'b [V]'])
     df.to_excel(writer, index = False, header=True, sheet_name=sheet)
-    writer.save() 
+    writer.save()
+    return a, b
+
+def annotate(a, b, y, name):
+    mid = int(len(y) / 2)
+    text = f'{a*1000:.2f}' + r' mV$\mathdefault{h^{-1}}$' + f'{b:.2f} V'
+    plt.annotate(
+        text,
+        xy=(3, y[mid]), # 3 h , half y len
+        xytext=(0.2, y[mid]), # text pos
+        arrowprops=dict(facecolor='black', arrowstyle='simple'),
+        fontsize=14
+    )

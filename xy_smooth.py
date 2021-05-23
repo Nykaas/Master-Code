@@ -1,7 +1,5 @@
-import pandas as pd
 import numpy as np
 from scipy import signal
-import math
 
 def smooth_xy(x, y, smooth, excelfile, name, sheet):
     x = x[~np.isnan(x)]
