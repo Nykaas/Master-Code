@@ -41,7 +41,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 y /= A_sample
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
-                xlabel = r'$\mathit{E_{cell}}$ [V]'
+                xlabel = r'$E_{\mathdefault{cell}}$ [V]'
                 x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
                 if In_situ_correction:
                     x -= (y/1000)*R
@@ -57,7 +57,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 y /= A_sample
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
-                xlabel = r'$\mathit{E_{cell}}$ [V]'
+                xlabel = r'$E_{\mathdefault{cell}}$ [V]'
                 x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
                 if In_situ_correction:
                     x -= (y/1000)*R
@@ -66,7 +66,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
 
             elif 'Durability' in sheet:
                 xlabel = r'$t$ [h]'
-                ylabel = r'$\mathit{E_{cell}}$ [V]'
+                ylabel = r'$E_{\mathdefault{cell}}$ [V]'
                 if In_situ_correction:
                     y -= 3.125*R
                 x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
@@ -79,11 +79,11 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 #annotate(a, b, y, name)
 
             elif sheet == 'EIS':
-                x *= A_sample
-                y *= A_sample *-1
+                x *= A_sample * 1000
+                y *= A_sample *-1000
                 print(f'{name} | Ω*{A_sample:.2f}[cm^2]')
-                xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
-                ylabel = r'$\mathdefault{-Z_{imag}\ [Ω \ cm^2]}$'
+                xlabel = r'$Z_{\mathdefault{real}}\ [\mathdefault{mΩ \ cm^2]}$'
+                ylabel = r'$-Z_{\mathdefault{imag}}\ [\mathdefault{mΩ \ cm^2]}$'
                 if switch:
                     plt.scatter(x, y, color = colors[color_index], label = name, marker = markers[markers_idx])
                     switch = False
@@ -91,15 +91,15 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                     plt.plot(x, y, linestyle = 'dashed', color = colors[color_index], label = name, marker = markers[markers_idx])
                     switch = True
                     color_index += 1
-                plt.xlim(0, 0.8)
-                plt.ylim(0, 0.8)     
+                plt.xlim(0, 800)
+                plt.ylim(0, 800)     
             
             elif sheet == 'EIS_1h' or sheet == 'EIS_end':
-                x *= A_sample
-                y *= A_sample *-1
+                x *= A_sample * 1000
+                y *= A_sample *-1000
                 print(f'{name} | Ω*{A_sample:.2f}[cm^2]')
-                xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
-                ylabel = r'$\mathdefault{-Z_{imag}\ [Ω \ cm^2]}$'
+                xlabel = r'$Z_{\mathdefault{real}}\ [\mathdefault{mΩ \ cm^2]}$'
+                ylabel = r'$-Z_{\mathdefault{imag}}\ [\mathdefault{mΩ \ cm^2]}$'
                 if 'fit' in name:
                     plt.plot(x, y, linestyle = 'dashed', label = name.split()[0], marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                     save_EIS_data(x, data, writer, name, sheet)
@@ -107,11 +107,11 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 #else:
                 #    plt.scatter(x, y, s = get_markersize()*5, label = name, marker = markers[markers_idx])                    
                 if sheet == 'EIS_1h':
-                    plt.xlim(0, 0.3)
-                    plt.ylim(0, 0.3)
+                    plt.xlim(0, 300)
+                    plt.ylim(0, 300)
                 else:
-                    plt.xlim(0, 0.8)
-                    plt.ylim(0, 0.8)
+                    plt.xlim(0, 800)
+                    plt.ylim(0, 800)
 
             markers_idx +=1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction, ax = None)

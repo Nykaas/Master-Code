@@ -26,8 +26,8 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_
         if 'Durability' in sheet:
             plt.xlim(0, 6)
         elif 'EIS' in sheet:
-            plt.xlim(0, 0.35)
-            plt.ylim(0, 0.35)
+            plt.xlim(0, 350)
+            plt.ylim(0, 350)
         elif 'Pol' in sheet:
             plt.xlim(1.5)
   

@@ -44,7 +44,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
             
             elif 'ECSA-cap' in sheet: # ECSA & RF capacitance method
                 xlabel = r'$v$ [mV $\mathdefault{s^{-1}}$]'
-                ylabel = r'$\mathit{I_c}$ [mA]'
+                ylabel = r'$I_\mathdefault{c}$ [mA]'
                 print(f'{name_print} | No normalizing')
                 x = x[~np.isnan(x)]
                 y = y[~np.isnan(y)]
@@ -113,8 +113,8 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                     A_sample = ECSA_samples[name]
                 y *= A_sample *-1
                 x *= A_sample
-                xlabel = r'$\mathdefault{Z_{real}\ [Ω \ cm^2]}$'
-                ylabel = r'$\mathdefault{-Z_{imag}\ [Ω \ cm^2]}$'
+                xlabel = r'$Z_{\mathdefault{real}}\ [\mathdefault{Ω \ cm^2]}$'
+                ylabel = r'$-Z_{\mathdefault{imag}}\ [\mathdefault{Ω \ cm^2]}$'
                 if 'fit' in name:
                     print(f'{name_print} | Ω*{A_sample:.1f}[cm^2]')
                     plt.plot(x, y, linestyle='dashed')
@@ -124,8 +124,8 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
 
             elif 'T-Impedance' in sheet:
                 I_ss = float(df[sheet][columns[i+2]][0])/1000
-                xlabel = r'$\mathdefault{Z_{t, real}\ [mV]}$'
-                ylabel = r'$\mathdefault{-Z_{t, imag}\ [mV]}$'
+                xlabel = r'$Z_{\mathdefault{t, real}}$ [mV]'
+                ylabel = r'$-Z_{\mathdefault{t, imag}}$ [mV]'
                 if 'fit' in name:
                     print(f'{name_print} | No normalizing')
                     R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)
