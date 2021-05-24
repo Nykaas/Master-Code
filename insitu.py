@@ -101,7 +101,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 xlabel = r'$Z_{\mathdefault{real}}\ [\mathdefault{mΩ \ cm^2]}$'
                 ylabel = r'$-Z_{\mathdefault{imag}}\ [\mathdefault{mΩ \ cm^2]}$'
                 if 'fit' in name:
-                    plt.plot(x, y, linestyle = 'dashed', label = name.split()[0], marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
+                    plt.plot(x*1000, y*1000, linestyle = 'dashed', label = name.split()[0], marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                     save_EIS_data(x, data, writer, name, sheet)
                     color_index += 1
                 #else:
