@@ -93,3 +93,41 @@ def get_AgCl_offset(name, sheet):
     offset_AgCl = 0.197 + (0.0591 * pH) # V
     print(f'AgCl to RHE offset = {offset_AgCl:.2f} V at pH {pH}')
     return offset_AgCl
+
+### In situ efficiency ###
+eff_start = []
+eff_after = []
+
+elif sheet == 'Efficiency':
+                # Data appending
+                labels = ['NF', r'NiFe$\mathdefault{_{ED}}$/NF', r'NiFe$\mathdefault{_{ELD}}$/NF', 'Ir/NF']
+                print(f'{name} | I/{A_sample:.2f}[cm^2]')              
+                for k,j in enumerate(y):
+                    if j/A_sample >= 500:
+                        if 'before' in name:
+                            eff_start.append(round(100*(1.48/x[k]), 1))
+                        else:
+                            eff_after.append(round(100*(1.48/x[k]), 1))
+                        break
+                # Plotting
+                if len(eff_after) == len(labels):
+                    w = np.arange(len(labels))
+                    width = 0.35
+                    fig, ax = plt.subplots(figsize=(9,7))
+                    rects1 = ax.bar(w - width/2, eff_start, width, label = 'Pre', color = 'C7')
+                    rects2 = ax.bar(w + width/2, eff_after, width, label= 'Post', color = 'C3')
+                    ylabel = 'Efficiency [%]'
+                    xlabel = ''
+                    plt.xticks(w, labels, fontsize = 27)
+                    def autolabel(rects):
+                        for rect in rects:
+                            height = rect.get_height()
+                            ax.annotate('{}'.format(height),
+                                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                                        xytext=(0, 3),  # 3 points vertical offset
+                                        textcoords="offset points",
+                                        ha='center', va='bottom', fontsize = 20)
+                    autolabel(rects1)
+                    autolabel(rects2)
+                    fig.tight_layout()
+                    plt.ylim(0,100)

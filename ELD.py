@@ -70,7 +70,7 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                 if 'Temperature' in sheet:
                     xlabel = r'$T$ [K]'
                 elif 'pH' in sheet:
-                    xlabel = r'pH'
+                    xlabel = r'$pH$'
                     offset_Ag = 0
                 else:
                     xlabel = r'$C$ [M]'
@@ -83,7 +83,7 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                     plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx])
             
             markers_idx += 1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ax = None, ECSA_norm=False)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ax = None, ECSA_norm=False, In_situ_correction=False)
 
 def get_ECSA(df):
     columns = list(df['ECSA-cap'].columns)
