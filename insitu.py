@@ -95,8 +95,8 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 plt.ylim(0, 800)     
             
             elif sheet == 'EIS_1h' or sheet == 'EIS_end':
-                x *= A_sample * 1000
-                y *= A_sample *-1000
+                x *= A_sample
+                y *= A_sample *-1
                 print(f'{name} | Ω*{A_sample:.2f}[cm^2]')
                 xlabel = r'$Z_{\mathdefault{real}}\ [\mathdefault{mΩ \ cm^2]}$'
                 ylabel = r'$-Z_{\mathdefault{imag}}\ [\mathdefault{mΩ \ cm^2]}$'
