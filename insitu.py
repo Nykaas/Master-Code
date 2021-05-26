@@ -69,13 +69,17 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 ylabel = r'$E_{\mathdefault{cell}}$ [V]'
                 if In_situ_correction:
                     y -= 3.125*R
-                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                
                 x /= 3600
+                x = x[~np.isnan(x)]
+                y = y[~np.isnan(y)]
                 a, b = np.polyfit(x, y, 1)
+                a, b = save_reg_durability(a, b, name, sheet, data, writer)
+                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
                 plt.plot(x, a*x + b, color=colors[color_index], linestyle='dashed')
                 plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 color_index += 1
-                a, b = save_reg_durability(a, b, name, sheet, data, writer)
+                
                 #annotate(a, b, y, name)
 
             elif sheet == 'EIS':
