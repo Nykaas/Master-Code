@@ -58,11 +58,11 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 print(f'{name} | I/{A_sample:.2f}[cm^2]')
                 ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
                 xlabel = r'$E_{\mathdefault{cell}}$ [V]'
-                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
                 if In_situ_correction:
                     x -= (y/1000)*R
-                plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 save_Pol_data(x, y, data, writer, name, sheet)
+                x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
+                plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
 
             elif 'Durability' in sheet:
                 xlabel = r'$t$ [h]'
