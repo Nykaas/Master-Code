@@ -62,7 +62,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 if In_situ_correction:
                     x -= (y/1000)*R
                 plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
-                save_Pol_data(y, data, writer, name, sheet)
+                save_Pol_data(x, y, data, writer, name, sheet)
 
             elif 'Durability' in sheet:
                 xlabel = r'$t$ [h]'
@@ -126,10 +126,10 @@ def save_EIS_data(x, data, writer, name, sheet):
     df.to_excel(writer, index = False, header=True, sheet_name=sheet)
     writer.save()
 
-def save_Pol_data(y, data, writer, name, sheet):
-    temp = {'Sample': name, 'Max current [mA/cm2]':round(max(y))}
+def save_Pol_data(x, y, data, writer, name, sheet):
+    temp = {'Sample': name, 'Max current [mA/cm2]':round(max(y)), 'Cell voltage [V]': round(x[np.where(y==max(y))][0],2)}
     data.append(temp)
-    df = pd.DataFrame(data, columns = ['Sample', 'Max current [mA/cm2]'])
+    df = pd.DataFrame(data, columns = ['Sample', 'Max current [mA/cm2]', 'Cell voltage [V]'])
     df.to_excel(writer, index = False, header=True, sheet_name=sheet)
     writer.save()
 
