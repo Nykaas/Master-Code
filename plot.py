@@ -14,7 +14,8 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_
     
     if 'Ex_' in excelfile:
         if sheet == 'Tafel':
-            plt.xlim(-2,)
+            plt.xlim(-1.5, )
+            plt.ylim(0.25, )
         elif sheet == 'Impedance': # Complex plots require equal xticks and yticks
             plt.xlim(0, 800)
             plt.ylim(0, 800)
@@ -24,7 +25,7 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_
 
     if 'In_' in excelfile:
         if 'Durability' in sheet:
-            plt.xlim(0, 6)
+            plt.xlim(0, )
         elif 'EIS' in sheet:
             plt.xlim(0, 350)
             plt.ylim(0, 350)
@@ -40,6 +41,10 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_
             plt.legend(fontsize = 17, loc = 'center', ncol = 5, columnspacing = 1, bbox_to_anchor=(0.5, 1.11))
             ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
             ax.xaxis.set_major_locator(plt.MaxNLocator(5))
+        elif 'Durability' in sheet:
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+            ax.yaxis.set_major_locator(plt.MaxNLocator(6))
+            plt.legend(fontsize = 17)
         elif 'ED' in excelfile and 'Evstime' in sheet:
             plt.legend(fontsize = 17, loc = 'center', ncol = 2, columnspacing = 1, bbox_to_anchor=(0.5, 1.11))
         else:

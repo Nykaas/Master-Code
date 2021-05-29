@@ -83,7 +83,7 @@ def ED_plot(df, excelfile, writer, smooth, markers):
                 plt.plot(x, y + offset_AgCl, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
             
             markers_idx += 1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False, ax = None)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm=False, In_situ_correction=False, ax = None)
 
 def save_Eeq_data(x, y, writer, name, offset_AgCl, Eeq_data, sheet, A_sample):
     y_ = y

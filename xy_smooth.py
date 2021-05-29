@@ -8,9 +8,13 @@ def smooth_xy(x, y, smooth, excelfile, name, sheet):
         if 'In_' in excelfile:
             if sheet == 'Durability':
                 if name == 'NF':
-                    freq = 0.0015
+                    freq = 0.001
+                elif 'ED' in name:
+                    freq = 0.0005
+                elif 'ELD' in name:
+                    freq = 0.0006
                 else:
-                    freq = 0.005
+                    freq = 0.001
             elif sheet == 'Polarization_1h':
                 if 'ED' in name or 'ELD' in name:
                     freq = 0.001
@@ -25,12 +29,30 @@ def smooth_xy(x, y, smooth, excelfile, name, sheet):
                     freq = 0.0005
 
         elif 'Ex_' in excelfile:
-            if 'Electrodeposition' in excelfile:
+            if 'LSV' in sheet:
+                if 'ELD' in name:
+                    freq = 0.05
+                else:
+                    freq = 0.05
+            elif 'Tafel' in sheet:
+                if 'ELD' in name:
+                    freq = 0.03
+                elif 'ED' in name:
+                    freq = 0.04
+                else:
+                    freq = 0.05
+            elif 'Electrodeposition' in excelfile:
                 freq = 0.01
             else:
                 freq = 0.1
-        elif 'ED' or 'ELD' in excelfile:
-            freq = 0.01
+        elif 'ED_' or 'ELD_' in excelfile:
+            if 'Electrolytes' in excelfile:
+                if 'All' in sheet:
+                    freq = 0.03
+                else:
+                    freq = 0.05
+            else:
+                freq = 0.01
         else:
             print('No smooth')
         b, a = signal.butter(4, freq, analog=False)

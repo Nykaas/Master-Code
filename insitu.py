@@ -18,6 +18,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
         color_index = 0
         markers_idx = 0
         data = []
+        fig, ax = plt.subplots()
 
         for i in range(1, len(columns), 3): # Iterate data columns
             x = np.array(df[sheet][columns[i]].tolist())
@@ -76,8 +77,8 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 a, b = np.polyfit(x, y, 1)
                 a, b = save_reg_durability(a, b, name, sheet, data, writer)
                 x, y = smooth_xy(x, y, smooth, excelfile, name, sheet)
-                plt.plot(x, a*x + b, color=colors[color_index], linestyle='dashed')
-                plt.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
+                ax.plot(x, a*x + b, color=colors[color_index], linestyle='dashed')
+                ax.plot(x, y, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
                 color_index += 1
                 
                 #annotate(a, b, y, name)
@@ -118,7 +119,7 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                     plt.ylim(0, 800)
 
             markers_idx +=1
-        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction, ax = None)
+        plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction, ax)
 
 ### Functions ###
 def save_EIS_data(x, data, writer, name, sheet):
