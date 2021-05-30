@@ -120,7 +120,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                     plt.plot(x, y, linestyle='dashed')
                     save_EIS_data(x, data, writer, name, sheet)
                 else:
-                    plt.scatter(x, y, s = get_markersize()*5, label = get_label(name), marker = markers[symbols_count])
+                    plt.scatter(x, y, s = get_markersize(), label = get_label(name), marker = markers[symbols_count])
 
             elif 'T-Impedance' in sheet:
                 I_ss = float(df[sheet][columns[i+2]][0])/1000
