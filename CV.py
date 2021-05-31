@@ -117,10 +117,11 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                 ylabel = r'$-Z_{\mathdefault{imag}}\ [\mathdefault{Ω \ cm^2]}$'
                 if 'fit' in name:
                     print(f'{name_print} | Ω*{A_sample:.1f}[cm^2]')
-                    plt.plot(x, y, linestyle='dashed')
+                    plt.plot(x, y, linestyle = 'dashed', color = colors[color_index])
                     save_EIS_data(x, data, writer, name, sheet)
+                    color_index += 1
                 else:
-                    plt.scatter(x, y, s = get_markersize(), label = get_label(name), marker = markers[symbols_count])
+                    plt.scatter(x, y, s = get_markersize(), color = colors[color_index], label = get_label(name), marker = markers[symbols_count])
 
             elif 'T-Impedance' in sheet:
                 I_ss = float(df[sheet][columns[i+2]][0])/1000
@@ -129,10 +130,12 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                 if 'fit' in name:
                     print(f'{name_print} | No normalizing')
                     R_sol = save_tafel_impedance(x, data, writer, name, sheet, I_ss)
-                    plt.plot(((x-R_sol)*I_ss)*1000, (y*I_ss*-1)*1000, linestyle='dashed')
+                    plt.plot(((x-R_sol)*I_ss)*1000, (y*I_ss*-1)*1000, linestyle='dashed', color = colors[color_index])
+                    color_index += 1
                 else:
                     print(f'{name_print} | No normalizing')
-                    plt.scatter(((x-min(x))*I_ss)*1000, (y*I_ss*-1)*1000, s = get_markersize(), label = get_label(name), marker = markers[symbols_count])
+                    plt.scatter(((x-min(x))*I_ss)*1000, (y*I_ss*-1)*1000, s = get_markersize(), label = get_label(name), marker = markers[symbols_count], color = colors[color_index])
+                    
             else:
                 plt.plot(x,y)
 

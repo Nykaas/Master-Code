@@ -106,17 +106,11 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 xlabel = r'$Z_{\mathdefault{real}}\ [\mathdefault{mΩ \ cm^2]}$'
                 ylabel = r'$-Z_{\mathdefault{imag}}\ [\mathdefault{mΩ \ cm^2]}$'
                 if 'fit' in name:
-                    plt.plot(x*1000, y*1000, linestyle = 'dashed', label = name.split()[0], marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
+                    plt.plot(x*1000, y*1000, linestyle = 'dashed')
                     save_EIS_data(x, data, writer, name, sheet)
                     color_index += 1
-                #else:
-                #    plt.scatter(x, y, s = get_markersize()*5, label = name, marker = markers[markers_idx])                    
-                if sheet == 'EIS_1h':
-                    plt.xlim(0, 300)
-                    plt.ylim(0, 300)
                 else:
-                    plt.xlim(0, 800)
-                    plt.ylim(0, 800)
+                    plt.scatter(x*1000, y*1000, s = get_markersize(), label = name, marker = markers[markers_idx])
 
             markers_idx +=1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction, ax)
