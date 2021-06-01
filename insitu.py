@@ -107,10 +107,10 @@ def in_situ_plot(df, writer, excelfile, smooth, markers, ECSA_norm, In_situ_corr
                 ylabel = r'$-Z_{\mathdefault{imag}}\ [\mathdefault{mΩ \ cm^2]}$'
                 if 'fit' in name:
                     plt.plot(x*1000, y*1000, linestyle = 'dashed')
-                    save_EIS_data(x, data, writer, name, sheet)
+                    save_EIS_data(x, data, writer, name, sheet, color = colors[color_index])
                     color_index += 1
                 else:
-                    plt.scatter(x*1000, y*1000, s = get_markersize(), label = name, marker = markers[markers_idx])
+                    plt.scatter(x*1000, y*1000, s = get_markersize(), label = name, marker = markers[markers_idx], color = colors[color_index])
 
             markers_idx +=1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_correction, ax)
