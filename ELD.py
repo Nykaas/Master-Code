@@ -50,21 +50,15 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                 print(f'Area {name} = {A_sample}')
             
             ### Plot ###
-            if 'CXV' in sheet: # CV
-                xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
-                ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
-                name = name.replace('C', r'$\degree$C')
-                plt.plot(x + offset_Ag, y/A_sample, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
-
-            elif 'LSV' in sheet: # Evans diagram
+            if 'LSV' in sheet: # Evans diagram
                 xlabel = r'log $i$ [mA $\mathdefault{cm^{-2}}$]'
                 ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
-                plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
+                plt.plot(np.log10(abs(y/A_sample)), x + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
 
             elif 'OCP' in sheet: # Potential transient
                 xlabel = r'$t$ [min]'
                 ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
-                plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x))
+                plt.plot(x/60, y + offset_Ag, label = name, marker = markers[markers_idx], markevery = get_markerinterval(x), markersize = get_markersize())
 
             elif 'Plating' in sheet:
                 if 'Temperature' in sheet:
@@ -77,10 +71,10 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
 
                 if 'Ipl' in sheet:
                     ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
-                    plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx])
+                    plt.plot(x, y/A_sample, label = name, marker = markers[markers_idx], markersize = get_markersize())
                 else:
                     ylabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
-                    plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx])
+                    plt.plot(x, y + offset_Ag, label = name, marker = markers[markers_idx], markersize = get_markersize())
             
             markers_idx += 1
         plot_settings(xlabel, ylabel, columns, sheet, excelfile, ax = None, ECSA_norm=False, In_situ_correction=False)

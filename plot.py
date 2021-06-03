@@ -26,6 +26,19 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_
     if 'In_' in excelfile:
         if 'Durability' in sheet:
             plt.xlim(0, )
+        elif 'Impedance' in excelfile:
+            if '01' in sheet:
+                plt.xlim(0, 900)
+                plt.ylim(0, 900)
+            elif '02' in sheet:
+                plt.xlim(0, 350)
+                plt.ylim(0, 350)
+            elif '03' in sheet:
+                plt.xlim(0, 300)
+                plt.ylim(0, 300)
+            else:
+                plt.xlim(0, 250)
+                plt.ylim(0, 250)
         elif 'EIS' in sheet:
             plt.xlim(0, 350)
             plt.ylim(0, 350)
@@ -61,7 +74,7 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_
 
 
 def get_markersize():
-    return 4
+    return 6
 
 def get_markerinterval(x):
     return int(len(x)*0.1)

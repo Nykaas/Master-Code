@@ -50,7 +50,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                 y = y[~np.isnan(y)]
                 cdl, b = get_ECSA_data(x, y, writer, columns, data, name, A_sample_RF, name_print)
                 plt.plot(x, (cdl*x + b), label = get_label(name))
-                plt.scatter(x, y, marker = markers[symbols_count])
+                plt.scatter(x, y, marker = markers[symbols_count], s = get_markersize()**2)
             
             elif 'LSV' in sheet:
                 xlabel = r'$E$ [$\mathdefault{V_{RHE}}$]'
@@ -121,7 +121,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                     save_EIS_data(x, data, writer, name, sheet)
                     color_index += 1
                 else:
-                    plt.scatter(x, y, s = get_markersize(), color = colors[color_index], label = get_label(name), marker = markers[symbols_count])
+                    plt.scatter(x, y, s = get_markersize()**2, color = colors[color_index], label = get_label(name), marker = markers[symbols_count])
 
             elif 'T-Impedance' in sheet:
                 I_ss = float(df[sheet][columns[i+2]][0])/1000
@@ -134,7 +134,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                     color_index += 1
                 else:
                     print(f'{name_print} | No normalizing')
-                    plt.scatter(((x-min(x))*I_ss)*1000, (y*I_ss*-1)*1000, s = get_markersize(), label = get_label(name), marker = markers[symbols_count], color = colors[color_index])
+                    plt.scatter(((x-min(x))*I_ss)*1000, (y*I_ss*-1)*1000, s = get_markersize()**2, label = get_label(name), marker = markers[symbols_count], color = colors[color_index])
                     
             else:
                 plt.plot(x,y)
