@@ -151,7 +151,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                             yoffset = 1
                         plt.annotate(j, (i, j), textcoords="offset points", xytext=(-25,yoffset), ha='center', size = 17)
                 elif 'ecsa' in name:
-                    plt.bar(w, y, width, label = "ECSA")
+                    plt.bar(w, y, width, label = "ECSA", hatch = '.')
                     for i,j in enumerate(y):
                         if j < 0:
                             yoffset = -15
@@ -159,7 +159,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                             yoffset = 1
                         plt.annotate(j, (i, j), textcoords="offset points", xytext=(0,yoffset), ha='center', size = 17)
                 elif 'bzt' in name:
-                    plt.bar(w+0.2, y, width, label = r"$b\mathdefault{_{Z\mathdefault{_{t}}}}$")
+                    plt.bar(w+0.2, y, width, label = r"$b\mathdefault{_{Z\mathdefault{_{t}}}}$", hatch = '/')
                     for i,j in enumerate(y):
                         if j < 0:
                             yoffset = -15
@@ -175,7 +175,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                             yoffset = 1
                         plt.annotate(j, (i, j), textcoords="offset points", xytext=(-25,yoffset), ha='center', size = 17)
                 elif 'rct' in name:
-                    plt.bar(w, y, width, label = r"$R\mathdefault{_{CT}}$")
+                    plt.bar(w, y, width, label = r"$R\mathdefault{_{CT}}$", hatch = '.')
                     for i,j in enumerate(y):
                         if j < 0:
                             yoffset = -15
@@ -183,7 +183,7 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                             yoffset = 1
                         plt.annotate(j, (i, j), textcoords="offset points", xytext=(0,yoffset), ha='center', size = 17)
                 elif 'cdl' in name:
-                    plt.bar(w+0.2, y, width, label = r"$C\mathdefault{_{DL}}$")
+                    plt.bar(w+0.2, y, width, label = r"$C\mathdefault{_{DL}}$", hatch = '/')
                     for i,j in enumerate(y):
                         if j < 0:
                             yoffset = -15

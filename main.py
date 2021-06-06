@@ -25,7 +25,7 @@ excelfiles = [
     'Ex_Stability.xlsx', # 9
     'In_Impedance.xlsx' # 10
 ]
-excelfile = excelfiles[4]
+excelfile = excelfiles[0]
 offset_Hg = 0.93 # V at 14 pH 1.0 M KOH
 ECSA_norm = True # Normalize currents with ECSA for exsitu only
 In_situ_correction = True # Correct in situ voltages for cell resistance
