@@ -64,10 +64,10 @@ def ELD_plot(df, excelfile, writer, smooth, markers):
                 if 'Temperature' in sheet:
                     xlabel = r'$T$ [K]'
                 elif 'pH' in sheet:
-                    xlabel = r'$pH$'
+                    xlabel = 'pH'
                     offset_Ag = 0
                 else:
-                    xlabel = r'$C$ [M]'
+                    xlabel = r'Concentration [M]'
 
                 if 'Ipl' in sheet:
                     ylabel = r'$i$ [mA $\mathdefault{cm^{-2}}$]'
