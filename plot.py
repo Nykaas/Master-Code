@@ -22,6 +22,10 @@ def plot_settings(xlabel, ylabel, columns, sheet, excelfile, ECSA_norm, In_situ_
         elif 'T-Impedance' in sheet: # Complex plots require equal xticks and yticks
             plt.xlim(0, 30)
             plt.ylim(0, 30)
+        elif sheet == 'Delta_performance':
+            plt.ylim(-47, 30)
+        elif sheet == 'Delta_EIS':
+            plt.ylim(-80, 150)
 
     if 'In_' in excelfile:
         if 'Durability' in sheet:

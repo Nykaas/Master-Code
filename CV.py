@@ -135,7 +135,64 @@ def ex_situ_plot(df, writer, offset_Hg, excelfile, ECSA_norm, smooth, markers, I
                 else:
                     print(f'{name_print} | No normalizing')
                     plt.scatter(((x-min(x))*I_ss)*1000, (y*I_ss*-1)*1000, s = get_markersize()**2, label = get_label(name), marker = markers[symbols_count], color = colors[color_index])
-                    
+            
+            elif 'Delta' in sheet:
+                #pos = np.arange(0,3)
+                width = 0.2
+                yoffset = 1
+                labels = ['NF', r'NiFe$\mathdefault{_{ED}}$/NF', r'NiFe$\mathdefault{_{ELD}}$/NF']
+                w = np.arange(len(labels))
+                if 'eta' in name:
+                    plt.bar(w-0.2, y, width, label = r"$\eta\mathdefault{_{10}}$")
+                    for i,j in enumerate(y):
+                        if j < 0:
+                            yoffset = -15
+                        else:
+                            yoffset = 1
+                        plt.annotate(j, (i, j), textcoords="offset points", xytext=(-25,yoffset), ha='center', size = 17)
+                elif 'ecsa' in name:
+                    plt.bar(w, y, width, label = "ECSA")
+                    for i,j in enumerate(y):
+                        if j < 0:
+                            yoffset = -15
+                        else:
+                            yoffset = 1
+                        plt.annotate(j, (i, j), textcoords="offset points", xytext=(0,yoffset), ha='center', size = 17)
+                elif 'bzt' in name:
+                    plt.bar(w+0.2, y, width, label = r"$b\mathdefault{_{Z\mathdefault{_{t}}}}$")
+                    for i,j in enumerate(y):
+                        if j < 0:
+                            yoffset = -15
+                        else:
+                            yoffset = 1
+                        plt.annotate(j, (i, j), textcoords="offset points", xytext=(25,yoffset), ha='center', size = 17)
+                elif 'rohm' in name:
+                    plt.bar(w-0.2, y, width, label = r"$R\mathdefault{_{Ω}}$")
+                    for i,j in enumerate(y):
+                        if j < 0:
+                            yoffset = -15
+                        else:
+                            yoffset = 1
+                        plt.annotate(j, (i, j), textcoords="offset points", xytext=(-25,yoffset), ha='center', size = 17)
+                elif 'rct' in name:
+                    plt.bar(w, y, width, label = r"$R\mathdefault{_{CT}}$")
+                    for i,j in enumerate(y):
+                        if j < 0:
+                            yoffset = -15
+                        else:
+                            yoffset = 1
+                        plt.annotate(j, (i, j), textcoords="offset points", xytext=(0,yoffset), ha='center', size = 17)
+                elif 'cdl' in name:
+                    plt.bar(w+0.2, y, width, label = r"$C\mathdefault{_{DL}}$")
+                    for i,j in enumerate(y):
+                        if j < 0:
+                            yoffset = -15
+                        else:
+                            yoffset = 1
+                        plt.annotate(j, (i, j), textcoords="offset points", xytext=(25,yoffset), ha='center', size = 17)
+                plt.xticks(w, labels, fontsize = 17)
+                ylabel = "Change [%]"
+                xlabel = ''
             else:
                 plt.plot(x,y)
 
